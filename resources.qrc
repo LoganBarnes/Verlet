@@ -1,0 +1,45 @@
+<RCC>
+    <qresource prefix="/shaders">
+        <file alias="default.frag">res/shaders/shader.frag</file>
+        <file alias="default.vert">res/shaders/shader.vert</file>
+        <file alias="cubemap.vert">res/shaders/cubemap.vert</file>
+        <file alias="cubemap.frag">res/shaders/cubemap.frag</file>
+        <file alias="sparse.vert">res/shaders/sparse.vert</file>
+        <file alias="sparse.frag">res/shaders/sparse.frag</file>
+        <file alias="ray.vert">res/shaders/ray.vert</file>
+        <file alias="ray.frag">res/shaders/ray.frag</file>
+        <file alias="ray2.frag">res/shaders/ray2.frag</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file alias="one.jpg">res/images/one.jpg</file>
+        <file alias="two.jpg">res/images/two.jpg</file>
+        <file alias="three.jpg">res/images/three.jpg</file>
+        <file alias="water.jpg">res/images/water.jpg</file>
+        <file alias="water2.jpg">res/images/water2.jpg</file>
+        <file alias="laps1.png">res/images/laps1.png</file>
+        <file alias="laps2.png">res/images/laps2.png</file>
+        <file alias="laps3.png">res/images/laps3.png</file>
+        <file alias="first.png">res/images/first.png</file>
+        <file alias="second.png">res/images/second.png</file>
+        <file alias="third.png">res/images/third.png</file>
+    </qresource>
+    <qresource prefix="/cubemap">
+        <file alias="posx.jpg">res/cubemap/posx.jpg</file>
+        <file alias="negx.jpg">res/cubemap/negx.jpg</file>
+        <file alias="posy.jpg">res/cubemap/posy.jpg</file>
+        <file alias="negy.jpg">res/cubemap/negy.jpg</file>
+        <file alias="posz.jpg">res/cubemap/posz.jpg</file>
+        <file alias="negz.jpg">res/cubemap/negz.jpg</file>
+    </qresource>
+    <qresource prefix="/objects">
+        <file alias="level_easy.obj">res/objects/level_easy.obj</file>
+        <file alias="level_hard.obj">res/objects/level_hard.obj</file>
+        <file alias="level_island.obj">res/objects/level_island.obj</file>
+        <file alias="level_easy_navmesh.obj">res/objects/level_easy_navmesh.obj</file>
+        <file alias="level_island_navmesh.obj">res/objects/level_island_navmesh.obj</file>
+        <file alias="level_island_navmesh_eroded.obj">res/objects/level_island_navmesh_eroded.obj</file>
+        <file alias="test.obj">res/objects/test.obj</file>
+        <file alias="level_raceway.obj">res/objects/level_raceway.obj</file>
+        <file alias="level_raceway_navmesh.obj">res/objects/level_raceway_navmesh.obj</file>
+    </qresource>
+</RCC>
