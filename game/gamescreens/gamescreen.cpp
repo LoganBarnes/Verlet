@@ -7,7 +7,7 @@
 
 #include <glm/gtc/constants.hpp>
 
-#include <debugprinting.h>
+//#include <debugprinting.h>
 
 GameScreen::GameScreen(Application *parent)
     : Screen(parent)
@@ -28,24 +28,27 @@ GameScreen::GameScreen(Application *parent)
     m_world->setPlayer(player);
     m_world->addManager(gcm);
 //    m_world->setGravity(glm::vec3(0, -10, 0));
+    // there is nothing for the player to interact with right now so adding gravity would
+    // make the camera position fall into the abyss.
 
     setCamera(cam);
 
 
 
-    // how lights are created (10 is the maximum in the shader for now)
+    /////////////// how lights are created (10 is the maximum in the shader for now)///////////////////
+    // light struct
     Light *light;
+
     for (int i = 0; i < 10; i++)
     {
         float angle = i*.2f*glm::pi<float>();
 
         light = new Light();
-        light->id = i;
-        light->type = POINT;
-        light->color = glm::vec3(.5);
-        light->posDir = glm::vec3(cos(angle) * 5, 10, sin(angle) * 5 - 15); // position or direction depending on light type
+        light->id = i;                  // index into array in shader
+        light->type = POINT;            // can be POINT or DIRECTIONAL for now
+        light->color = glm::vec3(.2f);  // rgb color
+        light->posDir = glm::vec3(cos(angle) * 10, 10, sin(angle) * 10 - 15);// position or direction depending on light type
 
-        cout << glm::to_string(light->posDir) << endl;
         m_tempLights.append(light);
     }
 }
@@ -69,17 +72,31 @@ void GameScreen::onRender(Graphics *g)
 {
     /////////////////graphics class basics///////////////////
 
-    // ambient
+    // ambient intensity for the world
     g->setWorldColor(.2f, .2f, .2f);
 
+    // a translation matrix representing a shape's position/scale/rotation
+    // gets passed to the graphics object each time a shape is drawn.
     glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(.1f));
-    g->setAllWhite(true);
+
+    /*
+     * Adding and drawing lights.
+     * (lights don't need to be drawn but it can help to see them in the scene)
+     */
+    g->setAllWhite(true);// this sets all objects to be completely white
     foreach(Light *light, m_tempLights)
     {
-        g->addLight(*light);
-        g->drawSphere(glm::translate(glm::mat4(), light->posDir) * trans);
+        g->addLight(*light); // add a light struct to the scene
+        g->drawSphere(glm::translate(glm::mat4(), light->posDir) * trans); // draw a sphere for the light
     }
-    g->setAllWhite(false);
+    g->setAllWhite(false); // back to normal rendering
+
+
+    /*
+     * Drawing shapes.
+     * Set the color of the shape (including transparency and shininess)
+     * then call the appropriate draw<shape>() method.
+     */
 
     // sphere
     trans = glm::translate(glm::mat4(), glm::vec3(-5, 0, -15));
@@ -87,28 +104,28 @@ void GameScreen::onRender(Graphics *g)
     g->drawSphere(trans);
 
     // cone
-    trans = glm::translate(glm::mat4(), glm::vec3(-3, 0, -15));
+    trans = glm::translate(glm::mat4(), glm::vec3(-2.5, 0, -15));
     g->setColor(1, .5, 0, 1, 0);
     g->drawCone(trans);
 
     // cube
-    trans = glm::translate(glm::mat4(), glm::vec3(-1, 0, -15));
+    trans = glm::translate(glm::mat4(), glm::vec3(0, 0, -15));
     g->setColor(.5, 1, 0, 1, 0);
     g->drawCube(trans);
 
     // cylinder
-    trans = glm::translate(glm::mat4(), glm::vec3(1, 0, -15));
+    trans = glm::translate(glm::mat4(), glm::vec3(2.5, 0, -15));
     g->setColor(0, 1, .3, 1, 0);
     g->drawCylinder(trans);
 
     // quad
-    trans = glm::translate(glm::mat4(), glm::vec3(3, 0, -15));
+    trans = glm::translate(glm::mat4(), glm::vec3(5, 0, -15));
     g->setColor(0, 0, 1, 1, 0);
     g->drawQuad(trans);
 
     /////////////////////////////////////////////////////////
 
-    // draw world
+    // draw world (draws whatever has been added to the world)
     m_world->onDraw(g);
 }
 

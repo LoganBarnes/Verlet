@@ -8,7 +8,6 @@
 #include "camera.h"
 #include "cubemap.h"
 #include "shape.h"
-#include "line.h"
 #include "cone.h"
 #include "cube.h"
 #include "cylinder.h"
@@ -18,12 +17,12 @@
 
 enum GraphicsMode
 {
-    DEFAULT, SPARSE, CUBEMAP, DRAW2D, RAY
+    DEFAULT, SPARSE, CUBEMAP, DRAW2D
 };
 
 enum ShapeType
 {
-    LINE, QUAD, CUBE, CYLINDER, SPHERE, CONE
+    QUAD, CUBE, CYLINDER, SPHERE, CONE
 };
 
 enum LightType
@@ -91,22 +90,15 @@ public:
     void addLight(const Light &light);
 
     void drawLineSeg(glm::vec3 p1, glm::vec3 p2, float width, GLenum mode = GL_TRIANGLE_STRIP);
-    void drawLine(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawQuad(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawCone(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawCube(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawCylinder(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawSphere(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
-    void drawFaceCube(glm::mat4 trans, int info);
     void drawParticles(glm::vec3 source, float fuzziness);
 
-    void resetParticles();
-    void setParticleForce(glm::vec3 force);
-
-    // ray stuff
-    void rayAddObjects(ObjectsInfo *info);
-    void rayAddTransparents(ObjectsInfo *info);
-    void rayDrawQuad();
+    void particlesReset();
+    void particlesSetForce(glm::vec3 force);
 
     static GLuint loadShaders(const char *vertex_file_path, const char *fragment_file_path);
 
@@ -121,7 +113,6 @@ private:
     QHash<QString, GLint> m_defaultLocs;
     QHash<QString, GLint> m_sparseLocs;
     QHash<QString, GLint> m_cubeLocs;
-    QHash<QString, GLint> m_rayLocs;
 
     QHash<QString, GLint> m_textures;
 
@@ -129,7 +120,6 @@ private:
     GLuint m_defaultShader;
     GLuint m_sparseShader;
     GLuint m_cubeShader;
-    GLuint m_rayShader;
 
     CubeMap *m_cubeMap;
 
@@ -137,14 +127,11 @@ private:
     glm::mat4 m_currView;
     glm::mat4 m_currScale;
 
-    Shape *m_line;
     Shape *m_quad;
     Shape *m_cone;
     Shape *m_cube;
     Shape *m_cyl;
     Shape *m_sphere;
-    Shape *m_faceCube;
-    Shape *m_rayQuad;
 
     bool m_useCubeMap;
     bool m_usingAtlas;

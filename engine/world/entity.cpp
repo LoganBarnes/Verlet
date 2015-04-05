@@ -108,9 +108,6 @@ void Entity::drawFromList(Graphics *g, QList<RenderShape *> shapes, glm::mat4 po
 
         switch (rs->type)
         {
-        case LINE:
-            g->drawLine(trans);
-            break;
         case QUAD:
             g->drawQuad(trans);
             break;

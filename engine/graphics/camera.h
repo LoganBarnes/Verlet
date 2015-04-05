@@ -15,11 +15,10 @@ public:
     glm::mat4 getFrustumMatrix();
     glm::vec4 getLook();
     glm::vec4 getEye();
-//    glm::vec4 getFocus();
+    float getAspectRatio();
 
     void setAspectRatio(float a);
     void orientLook(glm::vec4 &eye, glm::vec4 &look, glm::vec4 &up);
-//    void setThirdPersonDistance(float dist);
 
     void moveHorizontal(glm::vec2 dir);
     void moveAlongU(float mag);

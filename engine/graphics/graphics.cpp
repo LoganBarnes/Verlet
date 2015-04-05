@@ -20,22 +20,17 @@ using namespace std;
 
 Graphics::Graphics()
 {
-    m_line = new Line(1);
     m_quad = new Shape(10);
     m_cone = new Cone(50);
     m_cube = new Cube(10);
     m_cyl = new Cylinder(50);
     m_sphere = new Sphere(50);
-    m_faceCube = new FaceCube();
-    m_rayQuad = new Shape(-1);
 
     m_cubeMap = new CubeMap();
     m_useCubeMap = false;
     m_usingAtlas = false;
-    m_subImages = glm::vec2(1.f);
 
     m_defaultLocs.clear();
-    m_sparseLocs.clear();
     m_cubeLocs.clear();
 
     m_currProj = glm::mat4();
@@ -52,14 +47,11 @@ Graphics::Graphics()
 Graphics::~Graphics()
 {
     // shapes
-    delete m_line;
     delete m_quad;
     delete m_cone;
     delete m_cube;
     delete m_cyl;
     delete m_sphere;
-    delete m_faceCube;
-    delete m_rayQuad;
 
     // skybox
     delete m_cubeMap;
@@ -114,17 +106,6 @@ void Graphics::init()
     m_sparseLocs["repeatUV"] = glGetUniformLocation(m_sparseShader, "repeatUV");
 
 
-    m_rayShader = Graphics::loadShaders(
-                ":/shaders/ray.vert",
-                ":/shaders/ray2.frag");
-
-    m_rayLocs["viewport"] = glGetUniformLocation(m_rayShader, "viewport");
-    m_rayLocs["filmToWorld"] = glGetUniformLocation(m_rayShader, "filmToWorld");
-    m_rayLocs["camEye"] = glGetUniformLocation(m_rayShader, "camEye");
-    m_rayLocs["envMap"] = glGetUniformLocation(m_rayShader, "envMap");
-    m_rayLocs["time"] = glGetUniformLocation(m_rayShader, "time");
-
-
     m_cubeShader = Graphics::loadShaders(
                 ":/shaders/cubemap.vert",
                 ":/shaders/cubemap.frag");
@@ -135,14 +116,12 @@ void Graphics::init()
 
     m_cubeMap->init();
 
-    m_line->init(m_defaultShader);
     m_quad->init(m_defaultShader);
     m_cone->init(m_defaultShader);
     m_cube->init(m_defaultShader);
     m_cyl->init(m_defaultShader);
     m_sphere->init(m_defaultShader);
-    m_faceCube->init(m_sparseShader);
-    m_rayQuad->init(m_rayShader);
+//    m_rayQuad->init(m_rayShader);
 
     loadTexturesFromDirectory();
 
@@ -198,20 +177,6 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
                 glm::value_ptr(m_currProj));
         glUniformMatrix4fv(m_sparseLocs["view"], 1, GL_FALSE,
                 glm::value_ptr(m_currView));
-        break;
-    case RAY:
-        m_currentShader = m_rayShader;
-        glUseProgram(m_rayShader);
-
-        // Set scene uniforms.
-        glUniformMatrix4fv(m_rayLocs["filmToWorld"], 1, GL_FALSE,
-                glm::value_ptr(glm::inverse(m_currScale * m_currView)));
-        glUniform4fv(m_rayLocs["camEye"], 1,
-                glm::value_ptr((glm::inverse(m_currView) * glm::vec4(0, 0, 0, 1))));
-        glUniform2f(m_rayLocs["viewport"], m_w, m_h);
-        glUniform1i(m_rayLocs["envMap"], 1);
-        glUniform1f(m_rayLocs["time"], (m_timer.elapsed() * 0.001f));
-        m_cubeMap->bindTexture();
         break;
     case CUBEMAP:
         break;
@@ -276,7 +241,6 @@ void Graphics::setAtlas(const QString &key)
         glActiveTexture(GL_TEXTURE0);
 
         m_usingAtlas = true;
-//        m_subImages = numSubImages;
     }
     else
     {
@@ -368,13 +332,13 @@ void Graphics::drawCubeMap(Camera *camera)
 }
 
 
-void Graphics::resetParticles()
+void Graphics::particlesReset()
 {
     m_pe->resetParticles();
 }
 
 
-void Graphics::setParticleForce(glm::vec3 force)
+void Graphics::particlesSetForce(glm::vec3 force)
 {
     m_pe->setForce(force);
 }
@@ -418,7 +382,8 @@ void Graphics::drawLineSeg(glm::vec3 p1, glm::vec3 p2, float width, GLenum mode)
 
     if (glm::dot(d, d) < 0.00001f)
     {
-        m_line->transformAndRender(m_currentShader,
+        m_quad->transformAndRender(m_currentShader,
+                                   glm::translate(glm::mat4(), p1) *
                                    glm::scale(glm::mat4(), glm::vec3(0.00001f)), mode);
         return;
     }
@@ -431,12 +396,6 @@ void Graphics::drawLineSeg(glm::vec3 p1, glm::vec3 p2, float width, GLenum mode)
     trans *= glm::rotate(glm::mat4(), glm::angle(dn, v), glm::cross(v, dn));
     trans *= glm::scale(glm::mat4(), glm::vec3(width, dmag, width));
     m_cyl->transformAndRender(m_currentShader, trans, mode);
-}
-
-
-void Graphics::drawLine(glm::mat4 trans, GLenum mode)
-{
-    m_line->transformAndRender(m_defaultShader, trans, mode);
 }
 
 
@@ -470,12 +429,6 @@ void Graphics::drawSphere(glm::mat4 trans, GLenum mode)
 }
 
 
-void Graphics::drawFaceCube(glm::mat4 trans, int faces)
-{
-    m_faceCube->transformAndRender(m_currentShader, trans, faces);
-}
-
-
 void Graphics::drawParticles(glm::vec3 source, float fuzziness)
 {
     m_pe->setFuzziness(fuzziness);
@@ -488,51 +441,6 @@ void Graphics::drawParticles(glm::vec3 source, float fuzziness)
 
 
 
-
-
-
-void Graphics::rayAddObjects(ObjectsInfo *info)
-{
-    int size = info->invs.size();
-    for (int i = 0; i < size; i++)
-    {
-        std::ostringstream os;
-        os << i;
-        std::string indexString = "[" + os.str() + "]"; // e.g. [0], [1], etc.
-
-        glUniformMatrix4fv(glGetUniformLocation(m_rayShader, ("invs" + indexString).c_str()), 1, GL_FALSE, glm::value_ptr(info->invs[i]));
-        glUniform4fv(glGetUniformLocation(m_rayShader, ("colors" + indexString).c_str()), 1, glm::value_ptr(info->colors[i]));
-        glUniform1i(glGetUniformLocation(m_rayShader, ("types" + indexString).c_str()), info->shapeType[i]);
-    }
-    glUniform1i(glGetUniformLocation(m_rayShader, "NUM_OBJECTS"), size);
-
-    delete info;
-}
-
-
-void Graphics::rayAddTransparents(ObjectsInfo *info)
-{
-    int size = info->invs.size();
-    for (int i = 0; i < size; i++)
-    {
-        std::ostringstream os;
-        os << i;
-        std::string indexString = "[" + os.str() + "]"; // e.g. [0], [1], etc.
-
-        glUniformMatrix4fv(glGetUniformLocation(m_rayShader, ("invsT" + indexString).c_str()), 1, GL_FALSE, glm::value_ptr(info->invs[i]));
-        glUniform4fv(glGetUniformLocation(m_rayShader, ("colorsT" + indexString).c_str()), 1, glm::value_ptr(info->colors[i]));
-        glUniform1i(glGetUniformLocation(m_rayShader, ("typesT" + indexString).c_str()), info->shapeType[i]);
-    }
-    glUniform1i(glGetUniformLocation(m_rayShader, "NUM_TRANSPARENTS"), size);
-
-    delete info;
-}
-
-
-void Graphics::rayDrawQuad()
-{
-    m_rayQuad->render();
-}
 
 
 

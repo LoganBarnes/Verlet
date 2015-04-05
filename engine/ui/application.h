@@ -48,7 +48,6 @@ private:
     Screen *m_currentScreen;
 
     Graphics *m_g;
-    bool m_rayMode;
 
     int m_width, m_height;
 //    Leap::Controller *m_leapController;

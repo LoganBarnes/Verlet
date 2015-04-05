@@ -6,7 +6,6 @@ Application::Application()
 
     // create graphics object
     m_g = new Graphics();
-    m_rayMode = false;
 //    m_leapController = NULL;
 }
 
@@ -104,11 +103,9 @@ void Application::onRender()
         if (m_g->cubeMapIsActive())
             m_g->drawCubeMap(m_currentScreen->getCamera());
 
-        if (!m_rayMode)
-        {
-            m_g->setGraphicsMode(DEFAULT);
-            m_g->setColor(0.f, 0.f, 0.f, 1.f, 1.f);
-        }
+        m_g->setGraphicsMode(DEFAULT);
+        m_g->setColor(0.f, 0.f, 0.f, 1.f, 0.f);
+
         m_g->setCamera(m_currentScreen->getCamera(), m_width, m_height);
         m_currentScreen->onRender(m_g);
 
@@ -174,10 +171,6 @@ void Application::onResize(int w, int h)
 
 GLuint Application::getShader(GraphicsMode gm)
 {
-    if (gm == RAY)
-        m_rayMode = true;
-    else
-        m_rayMode = false;
     return m_g->setGraphicsMode(gm);
 }
 

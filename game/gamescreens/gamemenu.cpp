@@ -5,15 +5,19 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
 
+#include "debugprinting.h"
+
 GameMenu::GameMenu(Application *parent)
     : Screen(parent)
 {
 //    m_parentApp->useLeapMotion(true);
 
+    float aspect = m_camera->getAspectRatio();
+
     m_startButton = new Button();
     m_startButton->setCenter(0.f, 0.f);
-    m_startButton->setSize(.4, .5);
-//    m_startButton->setImage("gameButtonImage.png");
+    m_startButton->setSize(.3, aspect * .3);
+    m_startButton->setImage("play.png");
 
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.05, .05, .05));
     m_cursor[3][2] = -.999f;
@@ -104,6 +108,9 @@ void GameMenu::onResize(int w, int h)
     Screen::onResize(w, h);
 
     float aspect = w * 1.f / h;
+
+    m_startButton->setSize(.3, aspect * .3);
+
     glm::vec4 pos = m_cursor[3];
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.03f / aspect, .03f, 1));
     m_cursor[3] = pos;

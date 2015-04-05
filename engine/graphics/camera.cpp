@@ -56,10 +56,10 @@ glm::vec4 Camera::getEye()
     return m_eye;
 }
 
-//float Camera::getThirdPersonDistance()
-//{
-//    return m_thirdDist;
-//}
+float Camera::getAspectRatio()
+{
+    return m_aspectRatio;
+}
 
 void Camera::setAspectRatio(float a)
 {
@@ -67,16 +67,6 @@ void Camera::setAspectRatio(float a)
     setProjectionMatrix();
     setFrustumMatrix();
 }
-
-//void Camera::setEye(glm::vec4 &eye)
-//{
-//    orientLook(eye, m_look, m_up);
-//}
-
-//void Camera::setThirdPersonDistance(float dist)
-//{
-//    m_thirdDist = dist;
-//}
 
 void Camera::orientLook(glm::vec4 &eye, glm::vec4 &look, glm::vec4 &up)
 {

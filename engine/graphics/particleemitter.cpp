@@ -131,7 +131,7 @@ void ParticleEmitter::initGL(int vertexLocation){
     glGenBuffers(1, &m_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
-    // @TODO: Fill in the buffer with data for the vertex positions and texture coordinates.
+    // @TODO: change to quad.
     float radius = .02f;
     float points[] = {
         -radius ,  radius,  radius, // 4

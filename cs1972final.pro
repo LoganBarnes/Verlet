@@ -1,6 +1,6 @@
 QT += core gui opengl
 
-TARGET = cs1972
+TARGET = cs1972final
 TEMPLATE = app
 
 unix:!macx {
@@ -13,21 +13,37 @@ macx {
     QMAKE_MAC_SDK = macosx10.9
 }
 
-# If you add your own folders, add them to INCLUDEPATH and DEPENDPATH, e.g.
-INCLUDEPATH += glm engine game shaders \
-               engine/common engine/ui engine/graphics \
-               engine/shapes engine/world engine/voxel \
-               engine/collisions engine/objects engine/leap \
-               game/gamescreens game/world game/entities \ # game
-               res/images res/images/cubemap res/levels
-DEPENDPATH +=  glm engine game shaders \
-               engine/common engine/ui engine/graphics \
-               engine/shapes engine/world engine/voxel \
-               engine/collisions engine/objects engine/leap \
-               game/gamescreens game/world game/entities \ # game
-               res/images res/images/cubemap res/levels
+INCLUDEPATH +=  glm engine game shaders \
+                engine/common \
+                engine/ui \
+                engine/graphics \
+                engine/shapes \
+                engine/world \
+                engine/collisions \
+                engine/objects engine/leap \
+                game/gamescreens \
+                game/world \
+                game/entities \
+                res/images \
+                res/images/cubemap \
+                res/levels
+
+DEPENDPATH +=   glm engine game shaders \
+                engine/common \
+                engine/ui \
+                engine/graphics \
+                engine/shapes \
+                engine/world \
+                engine/collisions \
+                engine/objects engine/leap \
+                game/gamescreens \
+                game/world \
+                game/entities \
+                res/images \
+                res/images/cubemap \
+                res/levels
+
 DEFINES += TIXML_USE_STL
-OTHER_FILES += shaders/shader.frag shaders/shader.vert
 
 SOURCES += \
     engine/main.cpp \
@@ -45,7 +61,6 @@ SOURCES += \
     engine/graphics/camera.cpp \
     engine/graphics/actioncamera.cpp \
     engine/graphics/particleemitter.cpp \
-    engine/graphics/raygraphics.cpp \
     engine/graphics/meshbuffer.cpp \
     engine/world/world.cpp \
     engine/world/entity.cpp \
@@ -58,7 +73,6 @@ SOURCES += \
     engine/shapes/sphere.cpp \
     engine/shapes/cone.cpp \
     engine/shapes/facecube.cpp \
-    engine/shapes/line.cpp \
     engine/collisions/collisioncylinder.cpp \
     engine/collisions/geometriccollisionmanager.cpp \
     engine/collisions/ellipsoid.cpp \
@@ -66,8 +80,6 @@ SOURCES += \
     engine/collisions/triangle.cpp \
     engine/collisions/collisionsphere.cpp \
     engine/particles/verletmanager.cpp \
-    engine/voxel/chunk.cpp \
-    engine/voxel/voxelmanager.cpp \
 ### game
     game/gamescreens/gamescreen.cpp \
     game/entities/gameplayer.cpp \
@@ -75,7 +87,6 @@ SOURCES += \
     game/world/gameworld.cpp
 
 HEADERS += \
-    engine/vector/vector.h \
     engine/ui/mainwindow.h \
     engine/ui/view.h \
     engine/ui/application.h \
@@ -91,7 +102,6 @@ HEADERS += \
     engine/graphics/camera.h \
     engine/graphics/actioncamera.h \
     engine/graphics/particleemitter.h \
-    engine/graphics/raygraphics.h \
     engine/graphics/meshbuffer.h \
     engine/world/world.h \
     engine/world/entity.h \
@@ -105,7 +115,6 @@ HEADERS += \
     engine/shapes/sphere.h \
     engine/shapes/cone.h \
     engine/shapes/facecube.h \
-    engine/shapes/line.h \
     engine/collisions/collisionshape.h \
     engine/collisions/collisioncylinder.h \
     engine/collisions/triangle.h \
@@ -114,10 +123,6 @@ HEADERS += \
     engine/collisions/collisionmanager.h \
     engine/collisions/collisionsphere.h \
     engine/particles/verletmanager.h \
-    engine/particles/constraint.h \
-    engine/voxel/chunk.h \
-    engine/voxel/voxelmanager.h \
-    engine/voxel/chunkbuilder.h \
 ### game
     game/gamescreens/gamescreen.h \
     game/gamescreens/gamemenu.h \
