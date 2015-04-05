@@ -95,7 +95,7 @@ public:
     void drawQuad(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawCone(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawCube(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
-    void drawCyl(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
+    void drawCylinder(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawSphere(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawFaceCube(glm::mat4 trans, int info);
     void drawParticles(glm::vec3 source, float fuzziness);

@@ -1,10 +1,9 @@
 #include "view.h"
 #include <QApplication>
 #include <QKeyEvent>
-#include "platformermenu.h"
+#include "gamemenu.h"
 
 #include <iostream>
-using namespace std;
 
 View::View(QGLFormat format, QWidget *parent) : QGLWidget(format, parent)
 {
@@ -54,8 +53,7 @@ void View::initializeGL()
     }
 
     // init the Graphics object.
-    m_app->init(new PlatformerMenu(m_app));
-//    m_app->onResize(width(), height());
+    m_app->init(new GameMenu(m_app));
 
     // Enable depth testing, so that objects are occluded based on depth instead of drawing order.
     glEnable(GL_DEPTH_TEST);
@@ -104,12 +102,12 @@ void View::paintGL()
         if (counter >= freq)
         {
             float avg = (totalfps / counter);
-            cout << "Avg fps: " << avg << endl;
+            std::cout << "Avg fps: " << avg << std::endl;
 
             if (avg < 20.f)
-                cout << "ERMAHGERD YE GEME ES SLEEEWWWWWW (fps: " << fps << ")" << endl;
+                std::cout << "ERMAHGERD YE GEME ES SLEEEWWWWWW (fps: " << fps << ")" << std::endl;
             else if (avg < 30.f)
-                cout << "Ya done messed up dawg. Get it together. (fps: " << fps << ")" << endl;
+                std::cout << "Ya done messed up dawg. Get it together. (fps: " << fps << ")" << std::endl;
 
             totalfps = 0.f;
             counter = 0;

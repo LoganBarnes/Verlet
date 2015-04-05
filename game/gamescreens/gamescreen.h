@@ -11,7 +11,7 @@ class GamePlayer;
 class GameScreen : public Screen
 {
 public:
-    GameScreen(Application *parent, int laps);
+    GameScreen(Application *parent);
     virtual ~GameScreen();
 
     // update and render
@@ -35,6 +35,9 @@ private:
 
     ObjectHandler *m_oh;
     GameWorld *m_world;
+
+
+    QList<Light*> m_tempLights;
 
 };
 

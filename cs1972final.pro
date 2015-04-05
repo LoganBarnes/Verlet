@@ -122,7 +122,8 @@ HEADERS += \
     game/gamescreens/gamescreen.h \
     game/gamescreens/gamemenu.h \
     game/world/gameworld.h \
-    game/entities/gameplayer.h
+    game/entities/gameplayer.h \
+    engine/common/debugprinting.h
 
 
 FORMS += engine/ui/mainwindow.ui

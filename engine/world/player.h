@@ -41,6 +41,7 @@ protected:
 
 private:
     float m_eyeHeight;
+
 };
 
 #endif // PLAYER_H

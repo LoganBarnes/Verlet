@@ -7,10 +7,7 @@
 #include <QTime>
 #include <QTimer>
 #include <glm/glm.hpp>
-#include <iostream>
 #include "application.h"
-
-using namespace std;
 
 class View : public QGLWidget
 {

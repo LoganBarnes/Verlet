@@ -10,11 +10,6 @@ GameWorld::~GameWorld()
 }
 
 
-void GameWorld::setLights()
-{
-}
-
-
 Triangle *GameWorld::intersectWorld(glm::vec3 p, glm::vec3 d, float *t)
 {
     QList<Triangle *> tris = this->getMesh();

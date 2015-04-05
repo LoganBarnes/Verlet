@@ -11,10 +11,6 @@ public:
 
     Triangle *intersectWorld(glm::vec3 p, glm::vec3 d, float *t);
 
-private:
-    void setLights();
-
-    QList<Light*> m_lights;
 };
 
 #endif // GAMEWORLD_H

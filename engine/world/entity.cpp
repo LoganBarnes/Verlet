@@ -121,7 +121,7 @@ void Entity::drawFromList(Graphics *g, QList<RenderShape *> shapes, glm::mat4 po
             g->drawCube(trans);
             break;
         case CYLINDER:
-            g->drawCyl(trans);
+            g->drawCylinder(trans);
             break;
         case SPHERE:
             g->drawSphere(trans);

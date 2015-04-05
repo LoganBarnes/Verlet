@@ -4,7 +4,7 @@
 GamePlayer::GamePlayer(ActionCamera *camera, glm::vec3 pos)
     : Player(camera, pos)
 {
-    m_offset = 10.f;
+    m_offset = 0.f;
     m_camera->setOffset(m_offset);
 
     Ellipsoid *e = new Ellipsoid(glm::vec3(0, 0, 0), glm::vec3(.49f, .98f, .49f), "player");

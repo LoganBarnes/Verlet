@@ -458,7 +458,7 @@ void Graphics::drawCube(glm::mat4 trans, GLenum mode)
 }
 
 
-void Graphics::drawCyl(glm::mat4 trans, GLenum mode)
+void Graphics::drawCylinder(glm::mat4 trans, GLenum mode)
 {
     m_cyl->transformAndRender(m_currentShader, trans, mode);
 }
