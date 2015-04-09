@@ -22,8 +22,6 @@ View::View(QGLFormat format, QWidget *parent) : QGLWidget(format, parent)
     // create game application
     m_app = new Application();
 
-    m_mouseDown = false;
-
     m_fpsInit = false;
     fps = 0;
 
@@ -133,7 +131,6 @@ void View::resizeGL(int w, int h)
 
 void View::mousePressEvent(QMouseEvent *event)
 {
-    m_mouseDown = true;
     m_app->onMousePressed(event);
 }
 
@@ -146,21 +143,19 @@ void View::mouseMoveEvent(QMouseEvent *event)
     // in that direction. Note that it is important to check that deltaX and
     // deltaY are not zero before recentering the mouse, otherwise there will
     // be an infinite loop of mouse move events.
+
     int deltaX = event->x() - width() / 2;
     int deltaY = event->y() - height() / 2;
     if (!deltaX && !deltaY) return;
+
     QCursor::setPos(mapToGlobal(QPoint(width() / 2, height() / 2)));
 
     // TODO: Handle mouse movements here
-    if (m_mouseDown)
-        m_app->onMouseDragged(event, deltaX, deltaY);
-    else
-        m_app->onMouseMoved(event, deltaX, deltaY);
+    m_app->onMouseMoved(event, deltaX, deltaY);
 }
 
 void View::mouseReleaseEvent(QMouseEvent *event)
 {
-    m_mouseDown = false;
     m_app->onMouseReleased(event);
 }
 
@@ -173,12 +168,16 @@ void View::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) QApplication::quit();
 
-    // TODO: Handle keyboard presses here
     m_app->onKeyPressed(event);
 }
 
 void View::keyReleaseEvent(QKeyEvent *event)
 {
+    if (event->key() == m_app->getMouseDecoupleKey())
+    {
+        QCursor::setPos(mapToGlobal(QPoint(width() / 2, height() / 2)));
+    }
+
     m_app->onKeyReleased(event);
 }
 

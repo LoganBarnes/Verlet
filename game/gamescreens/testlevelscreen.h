@@ -1,14 +1,17 @@
-#ifndef GAMEMENU_H
-#define GAMEMENU_H
+#ifndef TESTLEVELSCREEN_H
+#define TESTLEVELSCREEN_H
 
 #include "screen.h"
-#include "button.h"
 
-class GameMenu : public Screen
+class GameWorld;
+class ObjectHandler;
+class OBJ;
+
+class TestLevelScreen : public Screen
 {
 public:
-    GameMenu(Application *parent);
-    virtual ~GameMenu();
+    TestLevelScreen(Application *parent);
+    virtual ~TestLevelScreen();
 
     // update and render
     virtual void onTick(float secs);
@@ -26,14 +29,20 @@ public:
     virtual void onKeyPressed(QKeyEvent *e);
     virtual void onKeyReleased(QKeyEvent *e);
 
+    // resize
     virtual void onResize(int w, int h);
 
 private:
-    Button *m_startButton;
-    // Button m_settingsButton;
-    // Button m_controlsButton;
+    void render2D(Graphics *g);
+    void adjustDeltasForLeap(float *deltaX, float *deltaY);
+
+    GameWorld *m_world;
+    ObjectHandler *m_oh;
+    OBJ *m_level;
 
     glm::mat4 m_cursor;
+    bool m_drawCursor;
+
 };
 
-#endif // GAMEMENU_H
+#endif // TESTLEVELSCREEN_H

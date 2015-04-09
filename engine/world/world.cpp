@@ -92,7 +92,6 @@ void World::onTick(float secs)
     foreach(MovableEntity *me, m_movableEntities)
     {
         me->applyForce(m_gravity * me->getMass());
-//        cout << me << endl;
     }
 
     // update (tick) movableEntities

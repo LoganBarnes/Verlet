@@ -10,6 +10,9 @@ public:
     virtual ~GamePlayer();
 
     virtual void onTick(float secs);
+    virtual void onMouseMoved(QMouseEvent *, float deltaX, float deltaY);
+
+    bool m_usingLeap; // temp hack
 
 };
 

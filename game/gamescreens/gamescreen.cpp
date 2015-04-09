@@ -21,6 +21,7 @@ GameScreen::GameScreen(Application *parent)
     cam->setCenter(playerPos);
 
     GamePlayer *player = new GamePlayer(cam, playerPos);
+//    player->m_usingLeap = true;
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
 
@@ -135,12 +136,12 @@ void GameScreen::render2D(Graphics *)
 }
 
 
-void GameScreen::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY)
+void GameScreen::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos)
 {
     m_world->onMouseMoved(e, deltaX*.5f, deltaY*.5);
 }
 
-void GameScreen::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY)
+void GameScreen::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos)
 {
     m_world->onMouseMoved(e, deltaX, deltaY);
 }

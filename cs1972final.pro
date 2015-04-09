@@ -84,7 +84,8 @@ SOURCES += \
     game/gamescreens/gamescreen.cpp \
     game/entities/gameplayer.cpp \
     game/gamescreens/gamemenu.cpp \
-    game/world/gameworld.cpp
+    game/world/gameworld.cpp \
+    game/gamescreens/testlevelscreen.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -128,7 +129,8 @@ HEADERS += \
     game/gamescreens/gamemenu.h \
     game/world/gameworld.h \
     game/entities/gameplayer.h \
-    engine/common/debugprinting.h
+    engine/common/debugprinting.h \
+    game/gamescreens/testlevelscreen.h
 
 
 FORMS += engine/ui/mainwindow.ui
@@ -145,7 +147,9 @@ DEPENDPATH+=/usr/local/Cellar/glew/1.11.0/include
 RESOURCES += \
     resources.qrc
 
-#macx: LIBS += -L$$PWD/leap/ -lLeap
+macx {
+    LIBS += -L$$PWD/leap/ -lLeap
 
-#INCLUDEPATH += $$PWD/leap/include
-#DEPENDPATH += $$PWD/leap/include
+    INCLUDEPATH += $$PWD/leap/include
+    DEPENDPATH += $$PWD/leap/include
+}

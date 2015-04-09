@@ -1,6 +1,7 @@
 #include "gamemenu.h"
 #include "application.h"
-#include "gamescreen.h"
+//#include "gamescreen.h"
+#include "testlevelscreen.h"
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
@@ -31,6 +32,7 @@ GameMenu::~GameMenu()
 // update and render
 void GameMenu::onTick(float)
 {
+    m_parentApp->setMouseDecoupled(true);
     ///////////////commented leap motion stuff//////////////////////
 
 //    if (!m_parentApp->isUsingLeapMotion())
@@ -83,23 +85,25 @@ void GameMenu::onRender(Graphics *g)
 
 }
 
-void GameMenu::onMouseMoved(QMouseEvent *, float deltaX, float deltaY)
+void GameMenu::onMouseMoved(QMouseEvent *, float, float, glm::vec3 pos)
 {
-    float newX = m_cursor[3][0] + deltaX * 0.005f;
-    float newY = m_cursor[3][1] - deltaY * 0.005f;
-    m_cursor[3][0] = glm::clamp(newX, -1.f, 1.f);
-    m_cursor[3][1] = glm::clamp(newY, -1.f, 1.f);
+    m_cursor[3][0] = pos.x;
+    m_cursor[3][1] = pos.y;
 
     float c = .5f;
     m_startButton->setColor(c, c, c);
-    if (m_startButton->contains(newX, newY))
+    if (m_startButton->contains(pos.x, pos.y))
         m_startButton->setColor(1, 1, 1);
 }
 
 void GameMenu::onMousePressed(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton && m_startButton->contains(m_cursor[3][0], m_cursor[3][1]))
-        m_parentApp->addScreen(new GameScreen(m_parentApp));
+    {
+        m_parentApp->setMouseDecoupled(false);
+        m_parentApp->addScreen(new TestLevelScreen(m_parentApp));
+//    m_parentApp->addScreen(new GameScreen(m_parentApp));
+    }
 }
 
 
@@ -116,10 +120,14 @@ void GameMenu::onResize(int w, int h)
     m_cursor[3] = pos;
 }
 
+void GameMenu::onKeyReleased(QKeyEvent *e)
+{
+    if (e->key() == Qt::Key_L)
+        m_parentApp->useLeapMotion(!m_parentApp->isUsingLeapMotion());
+}
 
 // unused in menu
 void GameMenu::onMouseReleased(QMouseEvent *) {}
-void GameMenu::onMouseDragged(QMouseEvent *, float, float) {}
+void GameMenu::onMouseDragged(QMouseEvent *, float, float, glm::vec3) {}
 void GameMenu::onMouseWheel(QWheelEvent *) {}
 void GameMenu::onKeyPressed(QKeyEvent *) {}
-void GameMenu::onKeyReleased(QKeyEvent *) {}

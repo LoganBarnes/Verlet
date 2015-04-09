@@ -24,7 +24,7 @@ public:
     void setEyeHeight(float height);
 
     // mouse events
-    virtual void onMouseMoved(QMouseEvent *e, float deltaX, float deltaY);
+    virtual void onMouseMoved(QMouseEvent *, float deltaX, float deltaY);
 
     // key events
     virtual void onKeyPressed(QKeyEvent *e);

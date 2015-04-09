@@ -41,7 +41,10 @@ private slots:
 private:
     Application *m_app;
 
-    bool m_mouseDown;
+//    bool m_mouseDown;
+//    bool m_decouple;
+
+//    glm::vec3 m_mousePos; // z is 1 if decoupled, 0 otherwise
 
     bool m_fpsInit;
     int freq;
