@@ -6,13 +6,9 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
 
-#include "debugprinting.h"
-
 GameMenu::GameMenu(Application *parent)
     : Screen(parent)
 {
-//    m_parentApp->useLeapMotion(true);
-
     float aspect = m_camera->getAspectRatio();
 
     m_startButton = new Button();
@@ -67,7 +63,7 @@ void GameMenu::onMousePressed(QMouseEvent *e)
     {
         m_parentApp->setMouseDecoupled(false);
         m_parentApp->addScreen(new TestLevelScreen(m_parentApp));
-//    m_parentApp->addScreen(new GameScreen(m_parentApp));
+//        m_parentApp->addScreen(new GameScreen(m_parentApp));
     }
 }
 
@@ -100,7 +96,7 @@ void GameMenu::onLeapKeyTap(glm::vec3)
     {
         m_parentApp->setMouseDecoupled(false);
         m_parentApp->addScreen(new TestLevelScreen(m_parentApp));
-//    m_parentApp->addScreen(new GameScreen(m_parentApp));
+//        m_parentApp->addScreen(new GameScreen(m_parentApp));
     }
 }
 
