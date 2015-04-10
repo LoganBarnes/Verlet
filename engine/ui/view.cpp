@@ -144,13 +144,22 @@ void View::mouseMoveEvent(QMouseEvent *event)
     // deltaY are not zero before recentering the mouse, otherwise there will
     // be an infinite loop of mouse move events.
 
-    int deltaX = event->x() - width() / 2;
-    int deltaY = event->y() - height() / 2;
-    if (!deltaX && !deltaY) return;
+    int halfWidthI = width() / 2;
+    int halfHightI = height() / 2;
 
-    QCursor::setPos(mapToGlobal(QPoint(width() / 2, height() / 2)));
+    int deltaXI = event->x() - halfWidthI;
+    int deltaYI = event->y() - halfHightI;
+    if (!deltaXI && !deltaYI) return;
 
-    // TODO: Handle mouse movements here
+    QCursor::setPos(mapToGlobal(QPoint(halfWidthI, halfHightI)));
+
+    // sets mouse deltas between -1 and 1
+    float halfWidth = width() * .5f;
+    float halfHeight = height() * .5f;
+
+    float deltaX = (event->x() - halfWidth) / halfWidth;
+    float deltaY = (event->y() - halfHeight) / halfHeight;
+
     m_app->onMouseMoved(event, deltaX, deltaY);
 }
 

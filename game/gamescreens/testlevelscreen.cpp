@@ -38,7 +38,8 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.02f / cam->getAspectRatio(), .02f, .02f));
     m_cursor[3][2] = -.999f;
 
-    m_drawCursor = false;
+    m_drawCursor = true;
+    m_deltas = glm::vec2(0);
 }
 
 
@@ -97,29 +98,29 @@ void TestLevelScreen::render2D(Graphics *g)
 void TestLevelScreen::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos)
 {
     if (m_parentApp->isUsingLeapMotion())
-        this->adjustDeltasForLeap(&deltaX, &deltaY);
+    {
+        deltaX *= 1.5f;
+        deltaY *= 1.5f;
+    }
 
-    m_world->onMouseMoved(e, deltaX*.5f, deltaY*.5);
+    m_world->onMouseMoved(e, deltaX * 1000.f, deltaY * 1000.f);
 
     m_cursor[3][0] = pos.x;
     m_cursor[3][1] = pos.y;
-
-    if (pos.z > 0.1f)
-        m_drawCursor = true;
 }
 
 void TestLevelScreen::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos)
 {
     if (m_parentApp->isUsingLeapMotion())
-        this->adjustDeltasForLeap(&deltaX, &deltaY);
+    {
+        deltaX *= 1.5f;
+        deltaY *= 1.5f;
+    }
 
-    m_world->onMouseMoved(e, deltaX, deltaY);
+    m_world->onMouseMoved(e, deltaX * 1000.f, deltaY * 1000.f);
 
     m_cursor[3][0] = pos.x;
     m_cursor[3][1] = pos.y;
-
-    if (pos.z > 0.1f)
-        m_drawCursor = true;
 }
 
 void TestLevelScreen::onKeyPressed(QKeyEvent *e)
@@ -134,8 +135,7 @@ void TestLevelScreen::onKeyPressed(QKeyEvent *e)
 
 void TestLevelScreen::onKeyReleased(QKeyEvent *e )
 {
-    if (e->key() == Qt::Key_Shift) m_drawCursor = false;
-    else if (e->key() == Qt::Key_L)
+    if (e->key() == Qt::Key_L)
         m_parentApp->useLeapMotion(!m_parentApp->isUsingLeapMotion());
 
     m_world->onKeyReleased(e);
@@ -150,13 +150,6 @@ void TestLevelScreen::onResize(int w, int h)
     glm::vec4 pos = m_cursor[3];
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.02f * inverseAspect, .02f, 1));
     m_cursor[3] = pos;
-}
-
-void TestLevelScreen::adjustDeltasForLeap(float *deltaX, float *deltaY)
-{
-    *deltaX = glm::pow(*deltaX  * .05f, 2.f) * 1.5f * glm::sign(*deltaX);
-    *deltaY = glm::pow(*deltaY * .03f, 3.f) * 1.f;// * glm::sign(*deltaY);
-    *deltaY = 0.f;
 }
 
 

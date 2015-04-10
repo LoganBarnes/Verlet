@@ -136,14 +136,14 @@ void GameScreen::render2D(Graphics *)
 }
 
 
-void GameScreen::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos)
+void GameScreen::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY, glm::vec3)
 {
-    m_world->onMouseMoved(e, deltaX*.5f, deltaY*.5);
+    m_world->onMouseMoved(e, deltaX * 1000.f, deltaY * 1000.f);
 }
 
-void GameScreen::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos)
+void GameScreen::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY, glm::vec3)
 {
-    m_world->onMouseMoved(e, deltaX, deltaY);
+    m_world->onMouseMoved(e, deltaX * 1000.f, deltaY * 1000.f);
 }
 
 void GameScreen::onKeyPressed(QKeyEvent *e)

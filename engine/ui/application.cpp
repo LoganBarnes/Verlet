@@ -91,33 +91,37 @@ void Application::useLeapMotion(bool useLeap)
     }
 }
 
-Leap::Frame Application::getLeapFrame()
-{
-    return m_leapController->frame();
-}
-
 void Application::onTick(float secs)
 {
     m_g->update();
 
+    if (isUsingLeapMotion())
+        handleLeapMouseEvents();
+
     if (m_currentScreen)
         m_currentScreen->onTick(secs);
 
-    if (!isUsingLeapMotion())
-        return;
 
-    handleLeapMouseEvents();
 }
 
 void Application::handleLeapMouseEvents()
 {
-    Leap::Frame frame = getLeapFrame();
+    Leap::Frame frame = m_leapController->frame();
 
     // nothing is detected
     if (frame.hands().count() == 0)
+    {
+        m_previousLeapFrame = frame;
         return;
+    }
 
     Leap::Vector pos = frame.hands().rightmost().palmPosition();
+
+    if (m_previousLeapFrame.hands().count() == 0)
+    {
+        m_prevPos = glm::vec3(pos.x, pos.y - 200.f, 200.f) * 0.005f;
+        m_prevPos = glm::clamp(m_prevPos, -1.f, 1.f);
+    }
 
     if (frame.fingers().extended().count() == 0)
     {
@@ -148,30 +152,26 @@ void Application::handleLeapMouseEvents()
 
     float deltaX = 0, deltaY = 0;
 
-    if (m_decoupleMouse || m_permanentDecouple)
+    m_mousePos = glm::vec3(pos.x, pos.y - 200.f, 200.f) * 0.005f;
+    m_mousePos = glm::clamp(m_mousePos, -1.f, 1.f);
+
+    if (!m_decoupleMouse && !m_permanentDecouple)
     {
-        m_mousePos.x = pos.x / 200.f;
-        m_mousePos.y = pos.y / 200.f - 1.f;
-        m_mousePos = glm::clamp(m_mousePos, -1.f, 1.f);
-        m_mousePos.z = 1;
-    }
-    else
-    {
-        deltaX = pos.x;
-        deltaY = 200.f - pos.y;
+        deltaX = m_mousePos.x - m_prevPos.x;
+        deltaY = m_prevPos.y - m_mousePos.y;
+        m_prevPos = m_mousePos;
         m_mousePos = glm::vec3(0);
     }
+    else
+        m_prevPos = m_mousePos;
+
 
     if (m_mouseDown)
         m_currentScreen->onMouseDragged(NULL, deltaX, deltaY, m_mousePos);
     else
         m_currentScreen->onMouseMoved(NULL, deltaX, deltaY, m_mousePos);
 
-//    if (frame.hands().count() > 0 && frame.fingers().count() == 0)
-//        std::cout << "CLIIIIIIIIIIIIIIIIIIIIIICKEEEEEEEEEEEEEEEED" << std::endl;
-
-//    if (frame.hands().count() > 0)
-//        std::cout << frame.fingers().extended().count() << std::endl;
+    m_previousLeapFrame = frame;
 }
 
 void Application::onRender()
@@ -208,10 +208,10 @@ void Application::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY)
 {
     if (m_currentScreen)
     {
-        if (m_decoupleMouse || m_permanentDecouple)
+        if (!m_leapController && (m_decoupleMouse || m_permanentDecouple))
         {
-            m_mousePos.x += deltaX * 0.005f;
-            m_mousePos.y -= deltaY * 0.005f;
+            m_mousePos.x += deltaX;
+            m_mousePos.y -= deltaY;
             deltaY = 0;
             deltaX = 0;
             m_mousePos = glm::clamp(m_mousePos, -1.f, 1.f);

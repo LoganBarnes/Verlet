@@ -25,7 +25,6 @@ public:
     // leap motion stuff for personal mac
     void useLeapMotion(bool useLeap);
     bool isUsingLeapMotion();
-    Leap::Frame getLeapFrame();
 
     // update and render
     void onTick(float secs);
@@ -67,11 +66,13 @@ private:
     bool m_mouseDown;
 
     glm::vec3 m_mousePos; // z is 1 if decoupled, 0 otherwise
+    glm::vec3 m_prevPos;
 
     Graphics *m_g;
 
     int m_width, m_height;
     Leap::Controller *m_leapController;
+    Leap::Frame m_previousLeapFrame;
 
 };
 

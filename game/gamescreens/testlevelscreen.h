@@ -42,6 +42,7 @@ private:
 
     glm::mat4 m_cursor;
     bool m_drawCursor;
+    glm::vec2 m_deltas;
 
 };
 
