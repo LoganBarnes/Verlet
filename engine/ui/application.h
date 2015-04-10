@@ -25,6 +25,7 @@ public:
     // leap motion stuff for personal mac
     void useLeapMotion(bool useLeap);
     bool isUsingLeapMotion();
+    void leapEnableKeyTapGesture();
 
     // update and render
     void onTick(float secs);

@@ -26,6 +26,8 @@ public:
     virtual void onKeyPressed(QKeyEvent *e);
     virtual void onKeyReleased(QKeyEvent *e);
 
+    virtual void onLeapKeyTap(glm::vec3 pos);
+
     virtual void onResize(int w, int h);
 
 private:

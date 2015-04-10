@@ -91,6 +91,13 @@ void Application::useLeapMotion(bool useLeap)
     }
 }
 
+void Application::leapEnableKeyTapGesture()
+{
+    if (m_leapController)
+        m_leapController->enableGesture(Leap::Gesture::TYPE_KEY_TAP);
+
+}
+
 void Application::onTick(float secs)
 {
     m_g->update();
@@ -123,32 +130,32 @@ void Application::handleLeapMouseEvents()
         m_prevPos = glm::clamp(m_prevPos, -1.f, 1.f);
     }
 
-    if (frame.fingers().extended().count() == 0)
-    {
-        if (!m_mouseDown)
-        {
-            QMouseEvent qme(QEvent::MouseButtonPress,
-                            QPoint(0,0),
-                            Qt::LeftButton,
-                            Qt::NoButton,
-                            Qt::NoModifier);
-            this->onMousePressed(&qme);
-        }
-        m_mouseDown = true;
-    }
-    else
-    {
-        if (m_mouseDown)
-        {
-            QMouseEvent qme(QEvent::MouseButtonRelease,
-                            QPoint(0,0),
-                            Qt::LeftButton,
-                            Qt::NoButton,
-                            Qt::NoModifier);
-            this->onMouseReleased(&qme);
-        }
-        m_mouseDown = false;
-    }
+//    if (frame.fingers().extended().count() == 0)
+//    {
+//        if (!m_mouseDown)
+//        {
+//            QMouseEvent qme(QEvent::MouseButtonPress,
+//                            QPoint(0,0),
+//                            Qt::LeftButton,
+//                            Qt::NoButton,
+//                            Qt::NoModifier);
+//            this->onMousePressed(&qme);
+//        }
+//        m_mouseDown = true;
+//    }
+//    else
+//    {
+//        if (m_mouseDown)
+//        {
+//            QMouseEvent qme(QEvent::MouseButtonRelease,
+//                            QPoint(0,0),
+//                            Qt::LeftButton,
+//                            Qt::NoButton,
+//                            Qt::NoModifier);
+//            this->onMouseReleased(&qme);
+//        }
+//        m_mouseDown = false;
+//    }
 
     float deltaX = 0, deltaY = 0;
 
@@ -165,6 +172,27 @@ void Application::handleLeapMouseEvents()
     else
         m_prevPos = m_mousePos;
 
+
+    foreach (Leap::Gesture gesture, frame.gestures())
+    {
+        switch (gesture.type()) {
+            case Leap::Gesture::TYPE_CIRCLE:
+                //Handle circle gestures
+                break;
+            case Leap::Gesture::TYPE_KEY_TAP:
+                m_currentScreen->onLeapKeyTap(m_mousePos);
+                break;
+            case Leap::Gesture::TYPE_SCREEN_TAP:
+                //Handle screen tap gestures
+                break;
+            case Leap::Gesture::TYPE_SWIPE:
+                //Handle swipe gestures
+                break;
+            default:
+                //Handle unrecognized gestures
+                break;
+        }
+    }
 
     if (m_mouseDown)
         m_currentScreen->onMouseDragged(NULL, deltaX, deltaY, m_mousePos);

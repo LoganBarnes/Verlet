@@ -38,6 +38,8 @@ public:
     virtual void onKeyPressed(QKeyEvent *e) = 0;
     virtual void onKeyReleased(QKeyEvent *e) = 0;
 
+    virtual void onLeapKeyTap(glm::vec3) {}
+
     // return screen camera
     Camera *getCamera() const
     {

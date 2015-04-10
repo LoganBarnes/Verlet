@@ -33,41 +33,6 @@ GameMenu::~GameMenu()
 void GameMenu::onTick(float)
 {
     m_parentApp->setMouseDecoupled(true);
-    ///////////////commented leap motion stuff//////////////////////
-
-//    if (!m_parentApp->isUsingLeapMotion())
-//        return;
-
-//    Leap::Frame frame = m_parentApp->getLeapFrame();
-//    Leap::Vector pos = frame.hands().rightmost().palmPosition();
-
-//    float newX = pos.x / 200.f;
-//    if (newX < -1.f)
-//        newX = -1.f;
-//    else if (newX > 1.f)
-//        newX = 1.f;
-//    m_cursor[3][0] = newX;
-
-//    float newY = pos.y / 200.f - 1.f;
-//    if (newY < -1.f)
-//        newY = -1.f;
-//    else if (newY > 1.f)
-//        newY = 1.f;
-//    m_cursor[3][1] = newY;
-
-//    float c = .5f;
-//    m_startButton->setColor(c, c, c);
-//    if (m_startButton->contains(newX, newY))
-//    {
-//        m_level = 1;
-//        m_startButton->setColor(1, 1, 1);
-//    }
-
-//    if (frame.hands().count() > 0 && frame.fingers().count() == 0)
-//        cout << "CLIIIIIIIIIIIIIIIIIIIIIICKEEEEEEEEEEEEEEEED" << endl;
-
-//    if (frame.hands().count() > 0)
-//        cout << frame.fingers().extended().count() << endl;
 }
 
 void GameMenu::onRender(Graphics *g)
@@ -123,7 +88,20 @@ void GameMenu::onResize(int w, int h)
 void GameMenu::onKeyReleased(QKeyEvent *e)
 {
     if (e->key() == Qt::Key_L)
+    {
         m_parentApp->useLeapMotion(!m_parentApp->isUsingLeapMotion());
+        m_parentApp->leapEnableKeyTapGesture();
+    }
+}
+
+void GameMenu::onLeapKeyTap(glm::vec3)
+{
+    if (m_startButton->contains(m_cursor[3][0], m_cursor[3][1]))
+    {
+        m_parentApp->setMouseDecoupled(false);
+        m_parentApp->addScreen(new TestLevelScreen(m_parentApp));
+//    m_parentApp->addScreen(new GameScreen(m_parentApp));
+    }
 }
 
 // unused in menu
