@@ -53,4 +53,6 @@ Doxyfile
 moc_mainwindow.cpp
 moc_view.cpp
 ui_mainwindow.h
+qrc_resources.cpp
+Makefile
 
