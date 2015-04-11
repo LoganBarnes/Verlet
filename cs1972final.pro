@@ -3,6 +3,10 @@ QT += core gui opengl
 TARGET = cs1972final
 TEMPLATE = app
 
+# project build directories
+DESTDIR     = $$system(pwd)
+OBJECTS_DIR = $$DESTDIR/bin
+
 unix:!macx {
     LIBS += -lGLU
     QMAKE_CXXFLAGS += -std=c++11
