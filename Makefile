@@ -4426,18 +4426,7 @@ bin/testlevelscreen.o: game/gamescreens/testlevelscreen.cpp game/gamescreens/tes
 		game/entities/gameplayer.h \
 		engine/collisions/geometriccollisionmanager.h \
 		engine/world/manager.h \
-		engine/collisions/collisionshape.h \
-		glm/gtx/string_cast.hpp \
-		glm/gtx/integer.hpp \
-		glm/gtx/integer.inl \
-		glm/gtx/quaternion.hpp \
-		glm/gtc/constants.hpp \
-		glm/gtc/constants.inl \
-		glm/gtc/quaternion.hpp \
-		glm/gtc/quaternion.inl \
-		glm/gtx/norm.hpp \
-		glm/gtx/norm.inl \
-		glm/gtx/string_cast.inl
+		engine/collisions/collisionshape.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o bin/testlevelscreen.o game/gamescreens/testlevelscreen.cpp
 
 bin/qrc_resources.o: qrc_resources.cpp 
