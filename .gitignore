@@ -50,4 +50,7 @@ Doxyfile
 *.hpp
 *.inl
 
+moc_mainwindow.cpp
+moc_view.cpp
+ui_mainwindow.h
 
