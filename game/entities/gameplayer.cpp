@@ -29,7 +29,7 @@ GamePlayer::GamePlayer(ActionCamera *camera, glm::vec3 pos)
     rs->repeatV = 1.f;
     this->addRenderShape(rs);
 
-//    m_usingLeap = true;
+//    m_usingLeap = false;
 }
 
 
@@ -45,15 +45,15 @@ void GamePlayer::onTick(float secs)
 void GamePlayer::onMouseMoved(QMouseEvent *, float deltaX, float deltaY)
 {
 //    std::cout << deltaX << std::endl;
-    if (m_usingLeap)
-    {
+//    if (m_usingLeap)
+//    {
 //        glm::vec3 oldLook = glm::vec3(m_camera->getLook());
-        glm::vec3 oldLook = glm::rotate(glm::vec3(0,0,-1), glm::pi<float>() * 2.f * deltaX, glm::vec3(0,1,0));
-        glm::vec3 look = glm::rotate(glm::vec3(oldLook.x, 0, oldLook.z), -glm::half_pi<float>() * deltaY,
-                                     glm::vec3(-oldLook.z, 0, oldLook.x));
-        m_camera->setLook(glm::vec4(look,0));
-    }
-    else
+//        glm::vec3 oldLook = glm::rotate(glm::vec3(0,0,-1), glm::pi<float>() * 2.f * deltaX, glm::vec3(0,1,0));
+//        glm::vec3 look = glm::rotate(glm::vec3(oldLook.x, 0, oldLook.z), -glm::half_pi<float>() * deltaY,
+//                                     glm::vec3(-oldLook.z, 0, oldLook.x));
+//        m_camera->setLook(glm::vec4(look,0));
+//    }
+//    else
         m_camera->yaw(deltaX / 10.f);
         m_camera->pitch(deltaY / 10.f);
 

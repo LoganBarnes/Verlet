@@ -21,7 +21,7 @@ GameScreen::GameScreen(Application *parent)
     cam->setCenter(playerPos);
 
     GamePlayer *player = new GamePlayer(cam, playerPos);
-//    player->m_usingLeap = true;
+//    player->m_usingLeap = m_parentApp->isUsingLeapMotion();
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
 

@@ -1,13 +1,16 @@
 #include "application.h"
-#include "Leap.h"
 
 Application::Application()
 {
+
+#ifdef LEAP
+    m_leapController = NULL;
+#endif
+
     m_currentScreen = NULL;
 
     // create graphics object
     m_g = new Graphics();
-    m_leapController = NULL;
 
     m_decoupleKey = std::numeric_limits<int>::min();
     m_decoupleMouse = false;
@@ -15,6 +18,7 @@ Application::Application()
     m_permanentDecouple = false;
 
     m_mousePos = glm::vec3(0);
+    m_prevPos = glm::vec3(0);
 }
 
 Application::~Application()
@@ -27,8 +31,11 @@ Application::~Application()
 
     delete m_g;
 
+#ifdef LEAP
     if (m_leapController)
         delete m_leapController;
+#endif
+
 }
 
 void Application::init(Screen *initScreen)
@@ -66,13 +73,19 @@ void Application::popScreens(int num)
 // leap motion stuff for personal mac
 bool Application::isUsingLeapMotion()
 {
+#ifdef LEAP
     return m_leapController != NULL;
+#else
+    return false;
+#endif
+
 }
 
 void Application::useLeapMotion(bool useLeap)
 {
     if (useLeap)
     {
+#ifdef LEAP
         // already using leap
         if (m_leapController)
             return;
@@ -88,13 +101,16 @@ void Application::useLeapMotion(bool useLeap)
             delete m_leapController;
             m_leapController = NULL;
         }
+#endif
     }
 }
 
 void Application::leapEnableKeyTapGesture()
 {
+#ifdef LEAP
     if (m_leapController)
         m_leapController->enableGesture(Leap::Gesture::TYPE_KEY_TAP);
+#endif
 
 }
 
@@ -102,8 +118,10 @@ void Application::onTick(float secs)
 {
     m_g->update();
 
+#ifdef LEAP
     if (isUsingLeapMotion())
         handleLeapMouseEvents();
+#endif
 
     if (m_currentScreen)
         m_currentScreen->onTick(secs);
@@ -111,6 +129,7 @@ void Application::onTick(float secs)
 
 }
 
+#ifdef LEAP
 void Application::handleLeapMouseEvents()
 {
     Leap::Frame frame = m_leapController->frame();
@@ -201,6 +220,7 @@ void Application::handleLeapMouseEvents()
 
     m_previousLeapFrame = frame;
 }
+#endif
 
 void Application::onRender()
 {
@@ -236,7 +256,7 @@ void Application::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY)
 {
     if (m_currentScreen)
     {
-        if (!m_leapController && (m_decoupleMouse || m_permanentDecouple))
+        if (!isUsingLeapMotion() && (m_decoupleMouse || m_permanentDecouple))
         {
             m_mousePos.x += deltaX;
             m_mousePos.y -= deltaY;

@@ -25,7 +25,6 @@ INCLUDEPATH +=  glm engine game shaders \
                 engine/world \
                 engine/collisions \
                 engine/objects \
-                engine/leap \
                 engine/verlet \
                 game/gamescreens \
                 game/world \
@@ -42,7 +41,6 @@ DEPENDPATH +=   glm engine game shaders \
                 engine/world \
                 engine/collisions \
                 engine/objects \
-                engine/leap \
                 engine/verlet \
                 game/gamescreens \
                 game/world \
@@ -169,9 +167,15 @@ DEPENDPATH+=/usr/local/Cellar/glew/1.11.0/include
 RESOURCES += \
     resources.qrc
 
+################################ LEAP #################################
 macx {
     LIBS += -L$$PWD/leap/ -lLeap
 
-    INCLUDEPATH += $$PWD/leap/include
-    DEPENDPATH += $$PWD/leap/include
+    INCLUDEPATH +=  $$PWD/leap/include \
+                    engine/leap
+
+    DEPENDPATH +=   $$PWD/leap/include \
+                    engine/leap
 }
+
+################################ CUDA #################################
