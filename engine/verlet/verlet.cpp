@@ -7,9 +7,9 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/norm.hpp>
 
-#include <iostream>
+//#include <iostream>
 
-#include "debugprinting.h"
+//#include "debugprinting.h"
 
 Verlet::Verlet()
 {
@@ -34,11 +34,10 @@ void Verlet::createPoint(const glm::vec3& pos){
 void Verlet::createPin(int index){
     Pin p = {index, _pos[index]};
     pins.push_back(p);
-    cout << glm::to_string(_pos[index]) << endl;
 }
 
 void Verlet::createLink(int a, int b){
-    float length = (_pos[b]-_pos[a]).length();
+    float length = glm::length(_pos[b]-_pos[a]);
     Link l = Link(a, b, length);
     links.push_back(l);
     link_map[a]+=l;

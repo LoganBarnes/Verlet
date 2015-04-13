@@ -12,7 +12,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-#include "debugPrinting.h"
+#include "debugprinting.h"
 
 #define MAX_NUM_LIGHTS 10
 

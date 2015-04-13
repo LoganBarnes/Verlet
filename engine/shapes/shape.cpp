@@ -9,7 +9,7 @@
 Shape::Shape(int complexity)
 {
 //    m_numVerts = 4;
-    int c = max(complexity, 3);
+    int c = glm::max(complexity, 3);
     m_p1 = c;
     m_p2 = c;
     m_vertexData = NULL;

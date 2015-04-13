@@ -19,26 +19,27 @@ VerletManager::VerletManager()
         n->createPin(i*5);
     addVerlet(n);
     */
+
     // test
-    Net* n = new Net(glm::vec2(3,3), glm::vec3(-1,3,-5),
+    Net* n = new Net(glm::vec2(5,5), glm::vec3(-2.5f,7,-5),
                      glm::vec3(1,0,0), glm::vec3(0,1,0));
-    for(int i=0;i<3;i++)
+    for(int i=0;i<5;i+=2)
         n->createPin(i);
     addVerlet(n);
 
-//    Net* n1 = new Net(glm::vec2(25,25), glm::vec3(2,20,2),
-//                     glm::vec3(0,0,.3), glm::vec3(0,-.3,0));
-//    for(int i=0;i<5;i++)
-//        n1->createPin(i*5);
-////    addVerlet(n1);
+    Net* n1 = new Net(glm::vec2(25,25), glm::vec3(2,20,2),
+                     glm::vec3(0,0,.3), glm::vec3(0,-.3,0));
+    for(int i=0;i<5;i++)
+        n1->createPin(i*5);
+//    addVerlet(n1);
 
 
-//    Net* n2 = new Net(glm::vec2(50,50), glm::vec3(0,21,0),
-//                     glm::vec3(0,0,.3), glm::vec3(.3,0,0));
-//    for(int i=0;i<10;i++)
-//        n2->createPin(i*5);
-//    for(int i=0;i<10;i++)
-//        n2->createPin((49*50)+i*5);
+    Net* n2 = new Net(glm::vec2(50,50), glm::vec3(0,21,0),
+                     glm::vec3(0,0,.3), glm::vec3(.3,0,0));
+    for(int i=0;i<10;i++)
+        n2->createPin(i*5);
+    for(int i=0;i<10;i++)
+        n2->createPin((49*50)+i*5);
 //    addVerlet(n2);
 
 
@@ -53,7 +54,7 @@ VerletManager::VerletManager()
     addVerlet(n2);
     */
 
-//    VerletCube* c2 = new VerletCube(glm::vec3(0,20,0), glm::vec3(1,21,1));
+    VerletCube* c2 = new VerletCube(glm::vec3(0,20,0), glm::vec3(1,21,1));
 //    addVerlet(c2);
 
 }
@@ -91,7 +92,7 @@ void VerletManager::verlet(float seconds){
 }
 
 void VerletManager::accumulateForces(){
-    glm::vec3 totalForce = gravity;// + wind;
+    glm::vec3 totalForce = gravity + wind;
     for(int i=0; i<verlets.size(); i++)
         verlets.at(i)->applyForce(totalForce);
 }
@@ -100,16 +101,15 @@ void VerletManager::constraints(){
     for(int i=0; i<verlets.size(); i++) {
         Verlet* v = verlets.at(i);
 //        v->boxConstraint(_boxMin, _boxMax);
-//        v->linkConstraint();
+        v->linkConstraint();
         v->pinConstraint();
     }
 }
 
 void VerletManager::manage(World *, float onTickSecs)
 {
-//    return;
     if(solve){
-//        accumulateForces();
+        accumulateForces();
         verlet(onTickSecs);
         for(int i=0; i<_numSolves; i++)
             constraints();

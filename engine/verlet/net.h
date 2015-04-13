@@ -3,6 +3,8 @@
 
 #include "verlet.h"
 
+class Mesh;
+
 class Net: public Verlet
 {
 public:
@@ -12,6 +14,11 @@ public:
     Net(glm::vec2 dimension, const glm::vec3& start,
         const glm::vec3& interval1, const glm::vec3& interval2);
     ~Net();
+
+//    virtual void onDraw(Graphics *g);
+
+private:
+    Mesh *m_mesh;
 };
 
 #endif // NET_H

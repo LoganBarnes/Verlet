@@ -34,7 +34,7 @@ public:
     void linkConstraint();
     void pinConstraint();
 
-    void onDraw(Graphics *g);
+    virtual void onDraw(Graphics *g);
     glm::vec3 collide(Entity* e);
 
     //Map from indices to links, for tearing

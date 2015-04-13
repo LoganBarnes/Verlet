@@ -1,4 +1,5 @@
 #include "net.h"
+#include "mesh.h"
 
 Net::Net(glm::vec2 dimension, const glm::vec3 &start,
          const glm::vec3 &interval1, const glm::vec3 &interval2): Verlet()
@@ -17,10 +18,21 @@ Net::Net(glm::vec2 dimension, const glm::vec3 &start,
             count++;
         }
     }
+
+    m_mesh = new Mesh();
 }
 
 Net::~Net()
 {
-
+    delete m_mesh;
 }
+
+
+//void Net::onDraw(Graphics *g)
+//{
+//    for(int i=0; i<links.size(); i++){
+//        Link l = links.at(i);
+//        g->drawLineSeg(_pos[l.pointA],_pos[l.pointB], .1f);
+//    }
+//}
 
