@@ -5,7 +5,12 @@
 
 #include <iostream>
 
-View::View(QGLFormat format, QWidget *parent) : QGLWidget(format, parent)
+View::View(QGLFormat format, QWidget *parent)
+    : QGLWidget(format, parent),
+      m_fpsInit(false),
+      freq(200),
+      counter(0),
+      totalfps(0.f)
 {
     // View needs all mouse move events, not just mouse drag events
     setMouseTracking(true);
@@ -21,13 +26,6 @@ View::View(QGLFormat format, QWidget *parent) : QGLWidget(format, parent)
 
     // create game application
     m_app = new Application();
-
-    m_fpsInit = false;
-    fps = 0;
-
-    freq = 200;
-    counter = 0;
-    totalfps = 0.f;
 }
 
 View::~View()

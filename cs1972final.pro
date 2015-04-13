@@ -151,6 +151,7 @@ DEPENDPATH+=/usr/local/Cellar/glew/1.11.0/include
 RESOURCES += \
     resources.qrc
 
+################################ LEAP #################################
 macx {
     LIBS += -L$$PWD/leap/ -lLeap
 
@@ -160,3 +161,5 @@ macx {
     DEPENDPATH +=   $$PWD/leap/include \
                     engine/leap
 }
+
+################################ CUDA #################################

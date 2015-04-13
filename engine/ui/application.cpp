@@ -18,6 +18,7 @@ Application::Application()
     m_permanentDecouple = false;
 
     m_mousePos = glm::vec3(0);
+    m_prevPos = glm::vec3(0);
 }
 
 Application::~Application()
