@@ -24,7 +24,9 @@ INCLUDEPATH +=  glm engine game shaders \
                 engine/shapes \
                 engine/world \
                 engine/collisions \
-                engine/objects engine/leap \
+                engine/objects \
+                engine/leap \
+                engine/verlet \
                 game/gamescreens \
                 game/world \
                 game/entities \
@@ -39,7 +41,9 @@ DEPENDPATH +=   glm engine game shaders \
                 engine/shapes \
                 engine/world \
                 engine/collisions \
-                engine/objects engine/leap \
+                engine/objects \
+                engine/leap \
+                engine/verlet \
                 game/gamescreens \
                 game/world \
                 game/entities \
@@ -83,13 +87,20 @@ SOURCES += \
     engine/collisions/collisionmanager.cpp \
     engine/collisions/triangle.cpp \
     engine/collisions/collisionsphere.cpp \
-    engine/particles/verletmanager.cpp \
+    engine/verlet/link.cpp \
+    engine/verlet/net.cpp \
+    engine/verlet/rope.cpp \
+    engine/verlet/verlet.cpp \
+    engine/verlet/verletcube.cpp \
+    engine/verlet/verletmanager.cpp \
 ### game
     game/gamescreens/gamescreen.cpp \
     game/entities/gameplayer.cpp \
     game/gamescreens/gamemenu.cpp \
     game/world/gameworld.cpp \
-    game/gamescreens/testlevelscreen.cpp
+    game/gamescreens/testlevelscreen.cpp \
+    engine/common/raytracer.cpp \
+    engine/shapes/mesh.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -127,14 +138,21 @@ HEADERS += \
     engine/collisions/ellipsoid.h \
     engine/collisions/collisionmanager.h \
     engine/collisions/collisionsphere.h \
-    engine/particles/verletmanager.h \
+    engine/verlet/link.h \
+    engine/verlet/net.h \
+    engine/verlet/rope.h \
+    engine/verlet/verlet.h \
+    engine/verlet/verletcube.h \
+    engine/verlet/verletmanager.h \
 ### game
     game/gamescreens/gamescreen.h \
     game/gamescreens/gamemenu.h \
     game/world/gameworld.h \
     game/entities/gameplayer.h \
     engine/common/debugprinting.h \
-    game/gamescreens/testlevelscreen.h
+    game/gamescreens/testlevelscreen.h \
+    engine/common/raytracer.h \
+    engine/shapes/mesh.h
 
 
 FORMS += engine/ui/mainwindow.ui

@@ -6,6 +6,7 @@
 #include "actioncamera.h"
 #include "gameplayer.h"
 #include "geometriccollisionmanager.h"
+#include "verletmanager.h"
 
 TestLevelScreen::TestLevelScreen(Application *parent)
     : Screen(parent)
@@ -26,12 +27,14 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     GamePlayer *player = new GamePlayer(cam, playerPos);
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
+    VerletManager *vm = new VerletManager();
 
     m_world = new GameWorld();
     m_world->addManager(gcm);
+    m_world->addManager(vm);
     m_world->setPlayer(player);
     m_world->addToMesh(tris);
-    m_world->setGravity(glm::vec3(0,-10,0));
+//    m_world->setGravity(glm::vec3(0,-10,0));
 
     setCamera(cam);
 
@@ -76,10 +79,14 @@ void TestLevelScreen::onRender(Graphics *g)
 
     g->setTexture("grass.png", 5.f, 5.f);
 
-    m_level->draw(glm::mat4());
+//    m_level->draw(glm::mat4());
     m_world->onDraw(g);
 
-    render2D(g);
+    g->setAllWhite(true);
+    g->drawLine(glm::vec3(0, 0, -5), glm::vec3(0, 15, -5));
+    g->setAllWhite(false);
+
+//    render2D(g);
 }
 
 void TestLevelScreen::render2D(Graphics *g)

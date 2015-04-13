@@ -102,6 +102,9 @@ public:
 
     static GLuint loadShaders(const char *vertex_file_path, const char *fragment_file_path);
 
+
+    void drawLine(const glm::vec3 &a, const glm::vec3 &b);
+
 private:
     void clearLights();
 
