@@ -56,5 +56,6 @@ ui_mainwindow.h
 qrc_resources.cpp
 Makefile
 *.app
+cs1972final
 
 
