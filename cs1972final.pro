@@ -24,7 +24,7 @@ INCLUDEPATH +=  glm engine game shaders \
                 engine/shapes \
                 engine/world \
                 engine/collisions \
-                engine/objects engine/leap \
+                engine/objects \
                 game/gamescreens \
                 game/world \
                 game/entities \
@@ -39,7 +39,7 @@ DEPENDPATH +=   glm engine game shaders \
                 engine/shapes \
                 engine/world \
                 engine/collisions \
-                engine/objects engine/leap \
+                engine/objects \
                 game/gamescreens \
                 game/world \
                 game/entities \
@@ -154,6 +154,9 @@ RESOURCES += \
 macx {
     LIBS += -L$$PWD/leap/ -lLeap
 
-    INCLUDEPATH += $$PWD/leap/include
-    DEPENDPATH += $$PWD/leap/include
+    INCLUDEPATH +=  $$PWD/leap/include \
+                    engine/leap
+
+    DEPENDPATH +=   $$PWD/leap/include \
+                    engine/leap
 }

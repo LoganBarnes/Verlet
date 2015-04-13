@@ -2,7 +2,10 @@
 #define APPLICATION_H
 
 #include "screen.h"
+#if defined(__APPLE__) || defined(__MACOSX)
+#define LEAP
 #include "Leap.h"
+#endif
 
 struct MouseEvent
 {
@@ -55,7 +58,13 @@ public:
     GLuint getShader(GraphicsMode gm);
 
 private:
+
+#ifdef LEAP
     void handleLeapMouseEvents();
+
+    Leap::Controller *m_leapController;
+    Leap::Frame m_previousLeapFrame;
+#endif
 
     QList<Screen *> m_screens;
     Screen *m_currentScreen;
@@ -72,8 +81,6 @@ private:
     Graphics *m_g;
 
     int m_width, m_height;
-    Leap::Controller *m_leapController;
-    Leap::Frame m_previousLeapFrame;
 
 };
 
