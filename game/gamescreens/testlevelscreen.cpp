@@ -27,7 +27,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     GamePlayer *player = new GamePlayer(cam, playerPos);
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
-    VerletManager *vm = new VerletManager();
+    VerletManager *vm = new VerletManager(m_parentApp->getShader(DEFAULT));
 
     m_world = new GameWorld();
     m_world->addManager(gcm);

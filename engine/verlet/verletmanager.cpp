@@ -8,7 +8,7 @@
 #include "net.h"
 #include "verletcube.h"
 
-VerletManager::VerletManager()
+VerletManager::VerletManager(GLuint shader)
     : Manager(DEFAULT)
 {
     //initial curtain
@@ -22,24 +22,24 @@ VerletManager::VerletManager()
 
     // test
     Net* n = new Net(glm::vec2(5,5), glm::vec3(-2.5f,7,-5),
-                     glm::vec3(1,0,0), glm::vec3(0,1,0));
+                     glm::vec3(1,0,0), glm::vec3(0,1,0), shader);
     for(int i=0;i<5;i+=2)
         n->createPin(i);
     addVerlet(n);
 
-    Net* n1 = new Net(glm::vec2(25,25), glm::vec3(2,20,2),
-                     glm::vec3(0,0,.3), glm::vec3(0,-.3,0));
-    for(int i=0;i<5;i++)
-        n1->createPin(i*5);
+//    Net* n1 = new Net(glm::vec2(25,25), glm::vec3(2,20,2),
+//                     glm::vec3(0,0,.3), glm::vec3(0,-.3,0));
+//    for(int i=0;i<5;i++)
+//        n1->createPin(i*5);
 //    addVerlet(n1);
 
 
-    Net* n2 = new Net(glm::vec2(50,50), glm::vec3(0,21,0),
-                     glm::vec3(0,0,.3), glm::vec3(.3,0,0));
-    for(int i=0;i<10;i++)
-        n2->createPin(i*5);
-    for(int i=0;i<10;i++)
-        n2->createPin((49*50)+i*5);
+//    Net* n2 = new Net(glm::vec2(50,50), glm::vec3(0,21,0),
+//                     glm::vec3(0,0,.3), glm::vec3(.3,0,0));
+//    for(int i=0;i<10;i++)
+//        n2->createPin(i*5);
+//    for(int i=0;i<10;i++)
+//        n2->createPin((49*50)+i*5);
 //    addVerlet(n2);
 
 
@@ -86,6 +86,11 @@ void VerletManager::addVerlet(Verlet* v){
     verlets.push_back(v);
 }
 
+void VerletManager::updateBuffer(){
+    for(int i=0; i<verlets.size(); i++)
+        verlets.at(i)->updateBuffer();
+}
+
 void VerletManager::verlet(float seconds){
     for(int i=0; i<verlets.size(); i++)
         verlets.at(i)->verlet(seconds);
@@ -113,6 +118,7 @@ void VerletManager::manage(World *, float onTickSecs)
         verlet(onTickSecs);
         for(int i=0; i<_numSolves; i++)
             constraints();
+        updateBuffer();
     }
 }
 

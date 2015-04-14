@@ -12,7 +12,7 @@ class Ellipsoid;
 class VerletManager: public Manager
 {
 public:
-    VerletManager();
+    VerletManager(GLuint shader);
     ~VerletManager();
 
     void addVerlet(Verlet* v);
@@ -31,7 +31,7 @@ private:
 
     //Settings
     glm::vec3 gravity = glm::vec3(0,-3,0);
-    glm::vec3 wind = glm::vec3(0,0,0);
+    glm::vec3 wind = glm::vec3(0,0,0.1);
     //for box constraint: keeps all points within here
     glm::vec3 _boxMin = glm::vec3(-15,15,-15);
     glm::vec3 _boxMax = glm::vec3(15,50,15);
@@ -48,6 +48,8 @@ private:
     //Adjusts positions to satisfy listed constraints
     //*note: box currently disabled
     void constraints();
+    // updates any vbos if necessary
+    void updateBuffer();
 };
 
 #endif // VERLETMANAGER_H

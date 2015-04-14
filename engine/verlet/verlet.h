@@ -35,6 +35,7 @@ public:
     void pinConstraint();
 
     virtual void onDraw(Graphics *g);
+    virtual void updateBuffer() {}
     glm::vec3 collide(Entity* e);
 
     //Map from indices to links, for tearing
@@ -42,12 +43,17 @@ public:
     void removeLink(Link l);
     void removeLink(int id);
 
+    glm::vec3 *getPosArray()
+    {
+        return _pos;
+    }
+
 protected:
     //Creates new point (at index numPoints) w/ given position
     void createPoint(const glm::vec3& pos);
     //Specify indices of two pre-existing points
     void createLink(int a, int b);
-    private:
+private:
     //Actual number of points
     int numPoints = 0;
     //Maximum points, for declaring arrays
