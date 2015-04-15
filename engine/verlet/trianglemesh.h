@@ -41,6 +41,10 @@ public:
     //@param wind: normalized vector representing wind direction
     void applyWind(Tri& t);
 
+    //**************testing normals
+    void averageNormals();
+    void resetNormals();
+
 private:
     Mesh *m_mesh;
     GLuint m_shader;
