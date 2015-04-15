@@ -1,8 +1,7 @@
 #include "world.h"
 #include "manager.h"
 
-//#include <iostream>
-//using namespace std;
+//#include "debugprinting.h"
 
 World::World()
 {
@@ -100,10 +99,10 @@ void World::onTick(float secs, float mouseX, float mouseY)
         e->onTick(secs);
     }
 
+//    cout << "/t STARTING TICK" << endl;
     foreach (Manager *m, m_managers)
     {
         m->manage(this, secs, mouseX, mouseY);
-        m_player->setCameraPos();
     }
 
     m_player->setCameraPos();

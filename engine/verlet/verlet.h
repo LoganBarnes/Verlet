@@ -8,7 +8,7 @@
 
 class VerletManager;
 class Graphics;
-class Entity;
+class MovableEntity;
 
 class Verlet
 {
@@ -43,7 +43,7 @@ public:
     virtual void onTick(float seconds);
     virtual void onDraw(Graphics *g);
     virtual void updateBuffer() {}
-    glm::vec3 collide(Entity* e);
+    glm::vec3 collide(MovableEntity *e);
 
     //Map from indices to links, for tearing
     QHash<int, QList<Link> > link_map;

@@ -1,6 +1,7 @@
 #include "verlet.h"
 #include "verletmanager.h"
 #include "graphics.h"
+#include "movableentity.h"
 //#include "engine/common/graphic.h"
 //#include "engine/common/entity.h"
 //#include "engine/common/ellipsoid.h"
@@ -128,7 +129,44 @@ void Verlet::onDraw(Graphics *g){
 
 void Verlet::onTick(float seconds){}
 
-glm::vec3 Verlet::collide(Entity *e){
+glm::vec3 Verlet::collide(MovableEntity *e)
+{
+    glm::vec3 center = e->getPosition();
+    float radius = 1.f;
+    bool solve = _manager->solve; //determines whether to move points themselves
+
+    float count = 0;  //how many points hit
+    glm::vec3 translation = glm::vec3(0,0,0); //accumulative mtv
+
+    for(int i=0; i<numPoints; i++) {
+        glm::vec3 dist =_pos[i]-center; //distance between entity + point
+        float radiusSquared = radius * radius;
+        if(radiusSquared>glm::length2(dist)){  //colliding
+            count++;
+
+            //mtv
+            glm::vec3 unit = glm::normalize(dist);
+            float factor = glm::length(dist)-radius;
+            glm::vec3 extra = unit*factor;
+
+            if(solve)
+                _pos[i]=_pos[i]-(extra*sphereInfluence);
+
+            translation+=extra;
+            //note: approximated original method
+            //toMove += (extra/12.0);
+            //e->setMove(toMove);
+        }
+    }
+
+    if(count>0){
+        //lower = jittery, higher = doesn't compensate for collisions
+        count *= .5;
+        translation /= count; //divide accumulative mtv by points hit
+    }
+
+    return translation;
+
     /*
     Ellipsoid* el = e->getEllipsoid();
     Vector3 toMove = e->getMove();

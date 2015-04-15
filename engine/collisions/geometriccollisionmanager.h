@@ -37,7 +37,7 @@ public:
             QList<MovableEntity *> mes, QList<Triangle *> tris);
 
     void handleEllipsoidCollisions(QList<Collision *> cols);
-    void handleTriangleCollisions(QList<TriCollision *> cols);
+    void handleTriangleCollisions(QList<TriCollision *> cols, int iteration);
 };
 
 #endif // GEOMETRICCOLLISIONMANAGER_H

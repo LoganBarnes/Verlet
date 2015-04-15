@@ -17,6 +17,7 @@ struct Collision
     CollisionShape *c2;
     glm::vec3 mtv;
     glm::vec3 impulse;
+    float t;
 };
 
 class Entity

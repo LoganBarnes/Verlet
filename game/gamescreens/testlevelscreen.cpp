@@ -24,7 +24,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
 
     ActionCamera *cam;
     cam = new ActionCamera();
-    glm::vec3 playerPos = glm::vec3(0, 3, 0);
+    glm::vec3 playerPos = glm::vec3(-7, 12, 18);
     cam->setCenter(playerPos);
 
     GamePlayer *player = new GamePlayer(cam, playerPos);

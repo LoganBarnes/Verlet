@@ -4,7 +4,7 @@
 #include <glm/gtx/constants.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-#include <iostream>
+#include "debugprinting.h"
 
 GamePlayer::GamePlayer(ActionCamera *camera, glm::vec3 pos)
     : Player(camera, pos)
@@ -14,7 +14,7 @@ GamePlayer::GamePlayer(ActionCamera *camera, glm::vec3 pos)
     m_camera->setOffset(m_offset);
     m_camera->setLook(glm::vec4(-5, -1, 0, 0));
 
-    Ellipsoid *e = new Ellipsoid(glm::vec3(0, 0, 0), glm::vec3(.49f, .98f, .49f), "player");
+    Ellipsoid *e = new Ellipsoid(glm::vec3(0, 0, 0), glm::vec3(.98f), "player");
     e->updatePos(pos);
     this->addCollisionShape(e);
 
@@ -24,7 +24,7 @@ GamePlayer::GamePlayer(ActionCamera *camera, glm::vec3 pos)
     rs->color = glm::vec3(1.f, .5f, 0);
     rs->shininess = 32.f;
     rs->transparency = 1.f;
-    rs->trans = glm::scale(glm::mat4(), glm::vec3(.99f, 1.98f, .99f));
+    rs->trans = glm::scale(glm::mat4(), glm::vec3(1.9f));
     rs->inv = glm::inverse(rs->trans);
     rs->texture = "";
     rs->repeatU = 1.f;
@@ -59,4 +59,15 @@ void GamePlayer::onMouseMoved(QMouseEvent *, float deltaX, float deltaY)
         m_camera->yaw(deltaX / 10.f);
         m_camera->pitch(deltaY / 10.f);
 
+}
+
+void GamePlayer::handleCollision(Collision *col)
+{
+    Player::handleCollision(col);
+    if (!m_tempSolid)
+    {
+        setPosition(getPosition() + col->mtv);
+//        setVelocity(getVelocity() + (col->mtv / col->t) /** .5f*/);
+        applyForce((col->mtv / (col->t * col->t)) * getMass());
+    }
 }

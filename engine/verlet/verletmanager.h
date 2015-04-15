@@ -1,7 +1,7 @@
 #ifndef VERLETMANAGER_H
 #define VERLETMANAGER_H
 
-#include "engine/world/manager.h"
+#include "manager.h"
 #include <glm/glm.hpp>
 #include "link.h"
 #include "verlet.h"
@@ -24,7 +24,7 @@ public:
 
     virtual void manage(World *world, float onTickSecs, float mouseX, float mouseY);
     void onDraw(Graphics *g);
-    glm::vec3 collideTerrain(Entity* e);
+    glm::vec3 collideTerrain(MovableEntity* e);
     bool rayTrace(float x, float y);
 
     //Settings

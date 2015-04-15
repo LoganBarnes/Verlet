@@ -1,17 +1,16 @@
 #include "verletmanager.h"
-#include <iostream>
-//#include "engine/common/graphic.h"
 #include "engine/common/raytracer.h"
-//#include "engine/common/entity.h"
-//#include "engine/common/ellipsoid.h"
 #include "rope.h"
 #include "trianglemesh.h"
 #include "net.h"
 #include "verletcube.h"
 #include "ray.h"
+#include "world.h"
 
 #define GLM_FORCE_RADIANS
 #include <gtc/matrix_transform.hpp>
+
+//#include "debugprinting.h"
 
 VerletManager::VerletManager(Camera *cam, GLuint shader)
     : Manager(DEFAULT)
@@ -34,7 +33,7 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
 //    addVerlet(n);
 
 
-    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,12), .3, glm::vec3(6,7,0), this, shader);
+    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,22), .3, glm::vec3(6,7,0), this, shader);
     tri2->createPin(0);
     tri2->createPin(11);
     addVerlet(tri2);
@@ -46,13 +45,13 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
 //    addVerlet(n1);
 
 
-//    Net* n2 = new Net(glm::vec2(50,50), glm::vec3(0,21,0),
-//                     glm::vec3(0,0,.3), glm::vec3(.3,0,0), shader);
-//    for(int i=0;i<10;i++)
-//        n2->createPin(i*5);
-//    for(int i=0;i<10;i++)
-//        n2->createPin((49*50)+i*5);
-//    addVerlet(n2);
+    Net* n2 = new Net(glm::vec2(50,50), glm::vec3(-10,10,10),
+                     glm::vec3(0,0,.3), glm::vec3(.3,0,0), this, shader);
+    for(int i=0;i<10;i++)
+        n2->createPin(i*5);
+    for(int i=0;i<10;i++)
+        n2->createPin((49*50)+i*5);
+    addVerlet(n2);
 
 
     //huge draping net
@@ -85,18 +84,8 @@ VerletManager::~VerletManager()
 }
 
 
-bool VerletManager::rayTrace(float x, float y){
-//    bool h = false;
-//    for(int i = 0; i<verlets.size(); i++){
-//        Verlet* v = verlets[i];
-//        HitTest temp;
-//        bool hit = ray->hitVerlet(v,temp);
-//        if(hit&&(temp.t<result.t)){
-//            h = true;
-//            result = temp;
-//        }
-//    }
-//    return h;
+bool VerletManager::rayTrace(float x, float y)
+{
     m_ray->setRay(x, y);
 
     float bestT = std::numeric_limits<float>::infinity();
@@ -161,8 +150,9 @@ void VerletManager::constraints(){
     }
 }
 
-void VerletManager::manage(World *, float onTickSecs, float mouseX, float mouseY)
+void VerletManager::manage(World *world, float onTickSecs, float mouseX, float mouseY)
 {
+//    cout << "verlet"  << endl;
 
     if(solve){
         accumulateForces();
@@ -176,6 +166,17 @@ void VerletManager::manage(World *, float onTickSecs, float mouseX, float mouseY
     }
     else
         resetForces();
+
+    QList<MovableEntity *> mes = world->getMovableEntities();
+    Collision *col = new Collision();
+    foreach (MovableEntity *me, mes)
+    {
+        col->mtv = collideTerrain(me);
+        col->t = onTickSecs;
+        me->handleCollision(col);
+    }
+    delete col;
+
 
     rayTrace(mouseX, mouseY);
 }
@@ -199,10 +200,13 @@ void VerletManager::onDraw(Graphics *g){
 
 }
 
-glm::vec3 VerletManager::collideTerrain(Entity* e){
-    /*
-    for(int i=0; i<verlets.size(); i++)
-        verlets.at(i)->collide(e);
-        */
+glm::vec3 VerletManager::collideTerrain(MovableEntity *e)
+{
+    glm::vec3 mtv = glm::vec3(0);
+
+    for(unsigned int i=0; i<verlets.size(); i++)
+        mtv += verlets.at(i)->collide(e);
+
+    return mtv;
 }
 
