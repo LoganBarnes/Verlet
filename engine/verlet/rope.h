@@ -9,7 +9,7 @@ public:
     //@param units: how many points in the rope
     //@param start: where first point of rope is created
     //@param interval: spacing from one point to the next
-    Rope(int units, const glm::vec3& start, const glm::vec3& interval);
+    Rope(int units, const glm::vec3& start, const glm::vec3& interval, VerletManager* vm);
     ~Rope();
 };
 

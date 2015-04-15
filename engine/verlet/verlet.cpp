@@ -1,4 +1,5 @@
 #include "verlet.h"
+#include "verletmanager.h"
 #include "graphics.h"
 //#include "engine/common/graphic.h"
 //#include "engine/common/entity.h"
@@ -11,9 +12,9 @@
 
 //#include "debugprinting.h"
 
-Verlet::Verlet()
+Verlet::Verlet(VerletManager* m)
 {
-
+    _manager = m;
 }
 
 Verlet::~Verlet()
@@ -78,7 +79,12 @@ void Verlet::verlet(float seconds){
 
 void Verlet::applyForce(const glm::vec3& force){
     for(int i=0; i<numPoints; i++)
-            _acc[i] = force;
+            _acc[i] += force;
+}
+
+void Verlet::resetForce(){
+    for(int i=0; i<numPoints; i++)
+            _acc[i] = glm::vec3(0,0,0);
 }
 
 void Verlet::boxConstraint(const glm::vec3& _boxMin,
@@ -120,29 +126,46 @@ void Verlet::onDraw(Graphics *g){
     }
 }
 
+void Verlet::onTick(float seconds){}
+
 glm::vec3 Verlet::collide(Entity *e){
-//    Ellipsoid* el = e->getEllipsoid();
-//    glm::vec3 toMove = e->getMove();
-//    glm::vec3 center = el->getPos()+toMove;
+    /*
+    Ellipsoid* el = e->getEllipsoid();
+    Vector3 toMove = e->getMove();
+    Vector3 center = el->getPos()+toMove;
+    float radius = e->getDim().x;
+    bool solve = _manager->solve; //determines whether to move points themselves
+
+    float count = 0;  //how many points hit
+    Vector3 translation = Vector3(0,0,0); //accumulative mtv
 
     for(int i=0; i<numPoints; i++) {
-        glm::vec3 dist =_pos[i];//-center; //distance between entity + point
+        Vector3 dist =_pos[i]-center; //distance between entity + point
+        float radiusSquared = radius * radius;
+        if(radiusSquared>dist.lengthSquared()){  //colliding
+            count++;
 
-        //Assumes entity is a sphere of radius 1
-        if(1>glm::length2(dist)){  //colliding
             //mtv
-            glm::vec3 unit = dist;
-            unit = glm::normalize(unit);
-            float factor = dist.length()-1;
-            glm::vec3 extra = unit*factor;
+            Vector3 unit = dist;
+            unit.normalize();
+            float factor = dist.length()-radius;
+            Vector3 extra = unit*factor;
 
-            _pos[i]=_pos[i]-(extra * 0.5f);
+            if(solve)
+                _pos[i]=_pos[i]-(extra*sphereInfluence);
 
-            //note: approximated.
-            //Need to have counter of points hit + divide by that
-            //And a glm::vec3 tracking sums, to add toMove after all collisions per verlet?
-//            toMove += (extra / 12.f);
-//            e->setMove(toMove);
+            translation+=extra;
+            //note: approximated original method
+            //toMove += (extra/12.0);
+            //e->setMove(toMove);
         }
      }
+    if(count>0){
+        //lower = jittery, higher = doesn't compensate for collisions
+        count *= .5;
+        translation/=count; //divide accumulative mtv by points hit
+    }
+    toMove+=translation;
+    e->setMove(toMove);
+    */
 }

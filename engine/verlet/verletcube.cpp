@@ -1,6 +1,6 @@
 #include "verletcube.h"
 
-VerletCube::VerletCube(const glm::vec3 &min, const glm::vec3 &max): Verlet()
+VerletCube::VerletCube(const glm::vec3 &min, const glm::vec3 &max, VerletManager* vm): Verlet(vm)
 {
     //0: top far left
     //1: top far right

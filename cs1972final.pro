@@ -98,7 +98,8 @@ SOURCES += \
     game/world/gameworld.cpp \
     game/gamescreens/testlevelscreen.cpp \
     engine/common/raytracer.cpp \
-    engine/shapes/mesh.cpp
+    engine/shapes/mesh.cpp \
+    engine/verlet/trianglemesh.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -150,7 +151,8 @@ HEADERS += \
     engine/common/debugprinting.h \
     game/gamescreens/testlevelscreen.h \
     engine/common/raytracer.h \
-    engine/shapes/mesh.h
+    engine/shapes/mesh.h \
+    engine/verlet/trianglemesh.h
 
 
 FORMS += engine/ui/mainwindow.ui

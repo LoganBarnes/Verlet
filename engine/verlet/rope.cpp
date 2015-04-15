@@ -1,7 +1,7 @@
 #include "rope.h"
 #include <iostream>
 
-Rope::Rope(int units, const glm::vec3 &start, const glm::vec3 &interval): Verlet()
+Rope::Rope(int units, const glm::vec3 &start, const glm::vec3 &interval, VerletManager* vm): Verlet(vm)
 {
     for(int i = 0; i<units; i++)
         createPoint(start+(float)i*interval);
