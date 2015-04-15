@@ -14,7 +14,11 @@ unix:!macx {
 macx {
     QMAKE_CFLAGS_X86_64 += -mmacosx-version-min=10.7
     QMAKE_CXXFLAGS_X86_64 = $$QMAKE_CFLAGS_X86_64
-    QMAKE_MAC_SDK = macosx10.9
+
+    MAC_SDK  = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/
+    if( exists( $$MAC_SDK) ) {
+        QMAKE_MAC_SDK = macosx10.9
+    }
 }
 
 INCLUDEPATH +=  glm engine game shaders \
