@@ -22,7 +22,7 @@ Mesh::~Mesh()
         glDeleteBuffers(1, &m_vbo);
 }
 
-void Mesh::init(GLuint shader, GLuint w, GLuint h, const glm::vec3 *verts)
+void Mesh::init(GLuint shader, GLuint w, GLuint h, const glm::vec3 *verts, const glm::vec3 *norms)
 {
     assert(w > 1 && h > 1);
 
@@ -31,7 +31,7 @@ void Mesh::init(GLuint shader, GLuint w, GLuint h, const glm::vec3 *verts)
     setMappings();
     GLuint memsize = m_mappingSize * 8 * sizeof(float);
     createBuffers(shader, memsize);
-    setVerts(verts);
+    setVerts(verts, norms);
 }
 
 void Mesh::setMappings()
@@ -88,7 +88,7 @@ void Mesh::setMappings()
     cout << i << " : " << m_mappingSize << endl;
 }
 
-void Mesh::setVerts(const glm::vec3 *verts)
+void Mesh::setVerts(const glm::vec3 *verts, const glm::vec3 *norms)
 {
     int size = m_mappingSize * 8;
     GLfloat *data = new GLfloat[size];
@@ -96,7 +96,7 @@ void Mesh::setVerts(const glm::vec3 *verts)
 
     for (GLuint i = 0; i < m_mappingSize; i++)
     {
-        addVertex(&index, verts[m_vertMappings[i]], data);
+        addVertex(&index, verts[m_vertMappings[i]], norms[m_vertMappings[i]], data);
     }
 
     fillBuffer(data, 0, m_mappingSize);
@@ -176,14 +176,14 @@ void Mesh::createBuffers(GLuint shader, GLuint size)
 }
 
 
-void Mesh::addVertex(int *i, glm::vec3 v, float* data)
+void Mesh::addVertex(int *i, glm::vec3 v, glm::vec3 norm, float* data)
 {
     data[(*i)++] = v.x;
     data[(*i)++] = v.y;
     data[(*i)++] = v.z;
-    data[(*i)++] = 0;
-    data[(*i)++] = 0;
-    data[(*i)++] = -1;
+    data[(*i)++] = norm.x;
+    data[(*i)++] = norm.y;
+    data[(*i)++] = norm.z;
     data[(*i)++] = 0;
     data[(*i)++] = 0;
 }

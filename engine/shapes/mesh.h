@@ -10,9 +10,9 @@ public:
     Mesh();
     virtual ~Mesh();
 
-    void init(GLuint shader, GLuint w, GLuint h, const glm::vec3 *verts);
+    void init(GLuint shader, GLuint w, GLuint h, const glm::vec3 *verts, const glm::vec3 *norms);
 
-    void setVerts(const glm::vec3 *verts);
+    void setVerts(const glm::vec3 *verts, const glm::vec3 *norms);
     void createBuffers(GLuint shader, GLuint size);
 
     void onDraw();
@@ -20,7 +20,7 @@ public:
 private:
     void setMappings();
     void fillBuffer(const float *data, int start, int count);
-    void addVertex(int *i, glm::vec3 v, float* data);
+    void addVertex(int *i, glm::vec3 v, glm::vec3 norm, float* data);
 
     GLuint m_w, m_h;
 

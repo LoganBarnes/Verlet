@@ -25,7 +25,7 @@ Net::Net(glm::vec2 dimension, const glm::vec3 &start,
     }
 
     m_mesh = new Mesh();
-    m_mesh->init(m_shader, width, height, getPosArray());
+    m_mesh->init(m_shader, width, height, getPosArray(), getNormArray());
 }
 
 Net::~Net()
@@ -36,7 +36,7 @@ Net::~Net()
 
 void Net::updateBuffer()
 {
-    m_mesh->setVerts(getPosArray());
+    m_mesh->setVerts(getPosArray(), getNormArray());
 }
 
 

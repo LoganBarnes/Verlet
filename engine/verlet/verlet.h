@@ -50,10 +50,8 @@ public:
     void removeLink(Link l);
     void removeLink(int id);
 
-    glm::vec3 *getPosArray()
-    {
-        return _pos;
-    }
+    glm::vec3 *getPosArray() { return _pos; }
+    glm::vec3 *getNormArray() { return _normal; }
 
 protected:
     //Creates new point (at index numPoints) w/ given position

@@ -79,7 +79,7 @@ TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
 
 
     m_mesh = new Mesh();
-    m_mesh->init(m_shader, c, r, getPosArray());
+    m_mesh->init(m_shader, c, r, getPosArray(), getNormArray());
 }
 
 TriangleMesh::~TriangleMesh()
@@ -153,7 +153,7 @@ void TriangleMesh::onTick(float seconds){
 
 void TriangleMesh::updateBuffer()
 {
-    m_mesh->setVerts(getPosArray());
+    m_mesh->setVerts(getPosArray(), getNormArray());
 }
 
 void TriangleMesh::onDraw(Graphics *g)
