@@ -8,6 +8,8 @@
 #include "geometriccollisionmanager.h"
 #include "verletmanager.h"
 
+#include "debugprinting.h"
+
 TestLevelScreen::TestLevelScreen(Application *parent)
     : Screen(parent)
 {
@@ -28,7 +30,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     GamePlayer *player = new GamePlayer(cam, playerPos);
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
-    VerletManager *vm = new VerletManager(m_parentApp->getShader(DEFAULT));
+    VerletManager *vm = new VerletManager(cam, m_parentApp->getShader(DEFAULT));
 
     m_world = new GameWorld();
     m_world->addManager(gcm);
@@ -56,7 +58,8 @@ TestLevelScreen::~TestLevelScreen()
 // update and render
 void TestLevelScreen::onTick(float secs)
 {
-    m_world->onTick(secs);
+    m_world->onTick(secs, m_cursor[3][0], m_cursor[3][1]);
+//    vm->rayTrace(m_cursor[3][0], m_cursor[3][1]);
 }
 
 
@@ -82,6 +85,7 @@ void TestLevelScreen::onRender(Graphics *g)
 
     m_level->draw(glm::mat4());
     m_world->onDraw(g);
+//      vm->onDraw(g);
 
     g->setAllWhite(true);
     g->drawLine(glm::vec3(0, 0, -5), glm::vec3(0, 15, -5));

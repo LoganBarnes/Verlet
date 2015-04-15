@@ -6,6 +6,7 @@
 class GameWorld;
 class ObjectHandler;
 class OBJ;
+class VerletManager;
 
 class TestLevelScreen : public Screen
 {
@@ -39,6 +40,8 @@ private:
     GameWorld *m_world;
     ObjectHandler *m_oh;
     OBJ *m_level;
+
+//    VerletManager *vm;
 
     glm::mat4 m_cursor;
     bool m_drawCursor;

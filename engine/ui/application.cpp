@@ -116,6 +116,8 @@ void Application::leapEnableKeyTapGesture()
 
 void Application::onTick(float secs)
 {
+    // prevent massive updates when the game is slow.
+    secs = glm::min(secs, .07f);
     m_g->update();
 
 #ifdef LEAP
@@ -265,8 +267,8 @@ void Application::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY)
             m_mousePos = glm::clamp(m_mousePos, -1.f, 1.f);
             m_mousePos.z = 1;
         }
-        else
-            m_mousePos = glm::vec3(0);
+//        else
+//            m_mousePos = glm::vec3(0);
 
         if (m_mouseDown)
             m_currentScreen->onMouseDragged(e, deltaX, deltaY, m_mousePos);

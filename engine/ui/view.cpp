@@ -72,6 +72,7 @@ void View::initializeGL()
     time.start();
     timer.start(1000 / 60);
 
+    this->setCursor(Qt::BlankCursor);
 
     // Center the mouse, which is explained more in mouseMoveEvent() below.
     // This needs to be done here because the mouse may be initially outside

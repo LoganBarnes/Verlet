@@ -21,7 +21,7 @@ GeometricCollisionManager::~GeometricCollisionManager()
 }
 
 
-void GeometricCollisionManager::manage(World *world, float)
+void GeometricCollisionManager::manage(World *world, float, float, float)
 {
     int iterations = 4;
 

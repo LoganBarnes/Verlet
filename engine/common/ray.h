@@ -9,15 +9,22 @@ class Ray
 {
 public:
     Ray(Camera *camera);
-    ~Ray();
+    virtual ~Ray();
+
+    glm::vec3 getSource() { return glm::vec3(m_p); }
+    glm::vec3 getDirection() { return glm::vec3(m_d); }
 
     void setRay(float x, float y);
-
-    glm::vec3 source;
-    glm::vec3 direction;
+    glm::vec4 intersectPoint(glm::vec3 point, float radius);
+//    glm::vec4 intersectSphere(glm::mat4 invTrans);
 
 private:
+    // assumes radius size .5f
+    glm::vec4 intersectSphereAtOrigin(glm::vec4 p, glm::vec4 d, float radius);
     int findT(float a, float b, float c, float *t1, float *t2);
+
+    glm::vec4 m_p;
+    glm::vec4 m_d;
 
     Camera *m_camera;
 };

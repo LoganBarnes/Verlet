@@ -27,7 +27,7 @@ public:
 
     void setToDeleteMovable(MovableEntity *me);
 
-    virtual void onTick(float secs);
+    virtual void onTick(float secs, float mouseX = 0.f, float mouseY = 0.f);
     virtual void onDraw(Graphics *g);
 
     void addManager(Manager *m);

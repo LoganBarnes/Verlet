@@ -64,7 +64,7 @@ GameScreen::~GameScreen()
 }
 
 // update and render
-void GameScreen::onTick(float secs  )
+void GameScreen::onTick(float secs)
 {
     m_world->onTick(secs);
 }

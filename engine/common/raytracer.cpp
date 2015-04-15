@@ -132,7 +132,7 @@ bool RayTracer::hitMesh(std::vector<Triangle *> triangles, HitTest &result){
 
 bool RayTracer::hitVerlet(Verlet* verlet, HitTest &result){
     bool h = false;
-    glm::vec3 dim = verlet->rayTraceSize;
+    glm::vec3 dim = glm::vec3(verlet->rayTraceSize);
     for(int i = 0; i<verlet->getSize(); i++){
         glm::vec3 pos = verlet->getPoint(i);
         HitTest temp;

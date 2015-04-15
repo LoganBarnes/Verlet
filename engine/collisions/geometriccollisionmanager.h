@@ -29,7 +29,7 @@ public:
     GeometricCollisionManager();
     virtual ~GeometricCollisionManager();
 
-    virtual void manage(World *world, float secs);
+    virtual void manage(World *world, float secs, float mouseX = 0.f, float mouseY = 0.f);
 
     QList<Collision *> detectEllipsoidCollisions(QList<MovableEntity *> mes);
 

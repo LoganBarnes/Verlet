@@ -6,13 +6,14 @@
 #include "link.h"
 #include "verlet.h"
 #include "rope.h"
-#include "engine/common/raytracer.h"
 
 class Ellipsoid;
+class Ray;
+
 class VerletManager: public Manager
 {
 public:
-    VerletManager(GLuint shader);
+    VerletManager(Camera *cam, GLuint shader);
     ~VerletManager();
 
     void addVerlet(Verlet* v);
@@ -21,10 +22,10 @@ public:
     void enableSolve(){solve = !solve;}
     void setWind(const glm::vec3& w){wind = w;}
 
-    void manage(World *world, float onTickSecs);
+    virtual void manage(World *world, float onTickSecs, float mouseX, float mouseY);
     void onDraw(Graphics *g);
     glm::vec3 collideTerrain(Entity* e);
-    bool rayTrace(RayTracer* ray, HitTest &result);
+    bool rayTrace(float x, float y);
 
     //Settings
     glm::vec3 gravity = glm::vec3(0,-3,0);
@@ -54,6 +55,10 @@ private:
     void constraints();
     // updates any vbos if necessary
     void updateBuffer();
+
+    Ray *m_ray;
+    int m_curV;
+    int m_curI;
 };
 
 #endif // VERLETMANAGER_H
