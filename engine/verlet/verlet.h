@@ -69,6 +69,7 @@ protected:
     glm::vec3 _pos[NUM];
     glm::vec3 _prevPos[NUM];
     glm::vec3 _acc[NUM];
+    glm::vec3 _normal[NUM];
 
     //Constraints
     typedef struct{
