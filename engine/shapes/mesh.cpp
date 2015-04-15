@@ -115,6 +115,7 @@ void Mesh::onDraw()
 {
     glDisable(GL_CULL_FACE);
     glBindVertexArray(m_vao);
+//    glDrawArrays(GL_LINE_STRIP, 0, m_mappingSize);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, m_mappingSize);
     glBindVertexArray(0);
     glEnable(GL_CULL_FACE);

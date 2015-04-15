@@ -1,13 +1,14 @@
 #include "raytracer.h"
 #include "ellipsoid.h"
-//#include "engine/geometric/triangle.h"
-#include "engine/verlet/verlet.h"
-#include <qgl.h>
-#if defined(__APPLE__) || defined(MACOSX)
-    #include <OpenGL/glu.h>
-#else
-    #include <GL/glu.h>
-#endif
+#include "triangle.h"
+#include "verlet.h"
+#include "GL/glew.h"
+//#include <qgl.h>
+//#if defined(__APPLE__) || defined(MACOSX)
+//    #include <OpenGL/glu.h>
+//#else
+//    #include <GL/glu.h>
+//#endif
 
 static glm::vec3 unProject(float winX, float winY, double *modelview, double *projection, int *viewport)
 {
@@ -185,7 +186,7 @@ bool RayTracer::hitEllipsoid(const glm::vec3 &pos, const glm::vec3 &dim, int id,
 
     //Unit sphere at origin: x^2+y^2+z^2 = 1
     float a = glm::dot(newDir, newDir);
-    float b = 2*glm::dot(newDir, newSource);
+    float b = 2.f*glm::dot(newDir, newSource);
     float c = glm::dot(newSource, newSource)-1;
 
     float t = solveQuadratic(a,b,c);

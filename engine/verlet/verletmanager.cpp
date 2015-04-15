@@ -30,7 +30,7 @@ VerletManager::VerletManager(GLuint shader)
     addVerlet(n);
 
 
-    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,15), .3, glm::vec3(6,7,0), this, shader);
+    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,12), .3, glm::vec3(6,7,0), this, shader);
     tri2->createPin(0);
     tri2->createPin(11);
     addVerlet(tri2);
