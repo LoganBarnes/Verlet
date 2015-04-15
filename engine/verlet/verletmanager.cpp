@@ -5,6 +5,7 @@
 //#include "engine/common/entity.h"
 //#include "engine/common/ellipsoid.h"
 #include "rope.h"
+#include "trianglemesh.h"
 #include "net.h"
 #include "verletcube.h"
 
@@ -21,11 +22,18 @@ VerletManager::VerletManager(GLuint shader)
     */
 
     // test
+
     Net* n = new Net(glm::vec2(5,5), glm::vec3(-2.5f,7,-5),
-                     glm::vec3(1,0,0), glm::vec3(0,1,0), shader);
+                     glm::vec3(1,0,0), glm::vec3(0,1,0), this, shader);
     for(int i=0;i<5;i+=2)
         n->createPin(i);
     addVerlet(n);
+
+
+    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,15), .3, glm::vec3(6,0,0), this, shader);
+    tri2->createPin(0);
+    tri2->createPin(11);
+    addVerlet(tri2);
 
 //    Net* n1 = new Net(glm::vec2(25,25), glm::vec3(2,20,2),
 //                     glm::vec3(0,0,.3), glm::vec3(0,-.3,0));
@@ -54,7 +62,7 @@ VerletManager::VerletManager(GLuint shader)
     addVerlet(n2);
     */
 
-    VerletCube* c2 = new VerletCube(glm::vec3(0,20,0), glm::vec3(1,21,1));
+    VerletCube* c2 = new VerletCube(glm::vec3(0,20,0), glm::vec3(1,21,1), this);
 //    addVerlet(c2);
 
 }
@@ -102,6 +110,11 @@ void VerletManager::accumulateForces(){
         verlets.at(i)->applyForce(totalForce);
 }
 
+void VerletManager::resetForces(){
+    for(int i=0; i<verlets.size(); i++)
+        verlets.at(i)->resetForce();
+}
+
 void VerletManager::constraints(){
     for(int i=0; i<verlets.size(); i++) {
         Verlet* v = verlets.at(i);
@@ -118,8 +131,13 @@ void VerletManager::manage(World *, float onTickSecs)
         verlet(onTickSecs);
         for(int i=0; i<_numSolves; i++)
             constraints();
+        resetForces();
+        for(int i=0; i<verlets.size(); i++)
+            verlets.at(i)->onTick(onTickSecs);
         updateBuffer();
     }
+    else
+        resetForces();
 }
 
 void VerletManager::onDraw(Graphics *g){
@@ -135,15 +153,9 @@ void VerletManager::onDraw(Graphics *g){
 }
 
 glm::vec3 VerletManager::collideTerrain(Entity* e){
-//    Ellipsoid* el = e->getEllipsoid();
-//    glm::vec3 toMove = e->getMove();
-    //std::cout<<"before"<<toMove<<std::endl;
+    /*
     for(int i=0; i<verlets.size(); i++)
-    {
-        //verlets.at(i)->collide(el, toMove);
-//        verlets.at(i)->collide(e);
-    }
-    //std::cout<<"after:"<<e->getMove()<<std::endl;
-
+        verlets.at(i)->collide(e);
+        */
 }
 

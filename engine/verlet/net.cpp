@@ -4,8 +4,9 @@
 #include <gtc/type_ptr.hpp>
 
 Net::Net(glm::vec2 dimension, const glm::vec3 &start,
-         const glm::vec3 &interval1, const glm::vec3 &interval2, GLuint shader)
-    : Verlet(),
+         const glm::vec3 &interval1, const glm::vec3 &interval2,
+         VerletManager* vm, GLuint shader)
+    : Verlet(vm),
       m_shader(shader)
 {
     int width = dimension.x;

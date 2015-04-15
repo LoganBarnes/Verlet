@@ -6,14 +6,19 @@
 #include "link.h"
 #include <QHash>
 
-class Ellipsoid;
+class VerletManager;
 class Graphics;
 class Entity;
+
 class Verlet
 {
 public:
-    Verlet();
+    Verlet(VerletManager* m);
     ~Verlet();
+
+    VerletManager* _manager;
+    //between 0 and 1: how much cloth is influenced by collisions
+    float sphereInfluence = 1;
     glm::vec3 rayTraceSize = glm::vec3(.4,.4,.4);
 
     int getSize(){return numPoints;}
@@ -27,6 +32,7 @@ public:
     //Per update, called in VerletManager's onTick:
     //Set acceleration of points
     void applyForce(const glm::vec3& force);
+    void resetForce();
     //Update pos + prevPos
     void verlet(float seconds);
     //Solve individual constraints
@@ -34,6 +40,7 @@ public:
     void linkConstraint();
     void pinConstraint();
 
+    virtual void onTick(float seconds);
     virtual void onDraw(Graphics *g);
     virtual void updateBuffer() {}
     glm::vec3 collide(Entity* e);
@@ -53,7 +60,7 @@ protected:
     void createPoint(const glm::vec3& pos);
     //Specify indices of two pre-existing points
     void createLink(int a, int b);
-private:
+
     //Actual number of points
     int numPoints = 0;
     //Maximum points, for declaring arrays

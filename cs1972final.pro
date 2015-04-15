@@ -14,7 +14,7 @@ unix:!macx {
 macx {
     QMAKE_CFLAGS_X86_64 += -mmacosx-version-min=10.7
     QMAKE_CXXFLAGS_X86_64 = $$QMAKE_CFLAGS_X86_64
-    QMAKE_MAC_SDK = macosx10.9
+    ##QMAKE_MAC_SDK = macosx10.9
 }
 
 INCLUDEPATH +=  glm engine game shaders \
@@ -98,7 +98,8 @@ SOURCES += \
     game/world/gameworld.cpp \
     game/gamescreens/testlevelscreen.cpp \
     engine/common/raytracer.cpp \
-    engine/shapes/mesh.cpp
+    engine/shapes/mesh.cpp \
+    engine/verlet/trianglemesh.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -150,7 +151,8 @@ HEADERS += \
     engine/common/debugprinting.h \
     game/gamescreens/testlevelscreen.h \
     engine/common/raytracer.h \
-    engine/shapes/mesh.h
+    engine/shapes/mesh.h \
+    engine/verlet/trianglemesh.h
 
 
 FORMS += engine/ui/mainwindow.ui
