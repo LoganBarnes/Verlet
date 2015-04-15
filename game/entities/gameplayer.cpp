@@ -9,8 +9,10 @@
 GamePlayer::GamePlayer(ActionCamera *camera, glm::vec3 pos)
     : Player(camera, pos)
 {
-    m_offset = 0.f;
+    m_offset = 25.f;
+    setMaxOffset(m_offset);
     m_camera->setOffset(m_offset);
+    m_camera->setLook(glm::vec4(-5, -1, 0, 0));
 
     Ellipsoid *e = new Ellipsoid(glm::vec3(0, 0, 0), glm::vec3(.49f, .98f, .49f), "player");
     e->updatePos(pos);

@@ -4,16 +4,16 @@
 #include <glm/gtx/norm.hpp>
 
 Player::Player(ActionCamera *cam, glm::vec3 pos)
-    : MovableEntity(pos)
+    : MovableEntity(pos),
+      m_camera(cam),
+      m_offset(0.f),
+      m_maxOffset(15.f),
+      m_wsad(0),
+      m_jump(false),
+      m_canJump(false),
+      m_eyeHeight(.75f)
 {
-    m_camera = cam;
-    m_offset = 0.f;
-    m_camera->setOffset(0.f);
-    m_wsad = 0;
-    m_jump = false;
-    m_canJump = false;
-
-    m_eyeHeight = .75f;
+    m_camera->setOffset(m_offset);
 
     setMass(1.f);
 }
@@ -101,8 +101,8 @@ void Player::onKeyPressed(QKeyEvent *e)
     case Qt::Key_Minus:
     case Qt::Key_Underscore:
         m_offset += 1.f;
-        if (m_offset > 15.f)
-            m_offset = 15.f;
+        if (m_offset > m_maxOffset)
+            m_offset = m_maxOffset;
         m_camera->setOffset(m_offset);
         break;
     case Qt::Key_Plus:
@@ -119,7 +119,7 @@ void Player::onKeyPressed(QKeyEvent *e)
         break;
     case Qt::Key_ParenLeft:
     case Qt::Key_9:
-        m_offset = 15.f;
+        m_offset = m_maxOffset;
         m_camera->setOffset(m_offset);
         break;
 

@@ -11,7 +11,8 @@
 TestLevelScreen::TestLevelScreen(Application *parent)
     : Screen(parent)
 {
-    m_parentApp->setMouseDecoupleKey(Qt::Key_Shift);
+    m_parentApp->setMouseDecoupled(true);
+//    m_parentApp->setMouseDecoupleKey(Qt::Key_Shift);
 
     GLuint shader = m_parentApp->getShader(DEFAULT);
     QList<Triangle *> tris;
@@ -34,7 +35,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_world->addManager(vm);
     m_world->setPlayer(player);
     m_world->addToMesh(tris);
-//    m_world->setGravity(glm::vec3(0,-10,0));
+    m_world->setGravity(glm::vec3(0,-10,0));
 
     setCamera(cam);
 
@@ -79,14 +80,14 @@ void TestLevelScreen::onRender(Graphics *g)
 
     g->setTexture("grass.png", 5.f, 5.f);
 
-//    m_level->draw(glm::mat4());
+    m_level->draw(glm::mat4());
     m_world->onDraw(g);
 
     g->setAllWhite(true);
     g->drawLine(glm::vec3(0, 0, -5), glm::vec3(0, 15, -5));
     g->setAllWhite(false);
 
-//    render2D(g);
+    render2D(g);
 }
 
 void TestLevelScreen::render2D(Graphics *g)
@@ -159,8 +160,17 @@ void TestLevelScreen::onResize(int w, int h)
     m_cursor[3] = pos;
 }
 
+void TestLevelScreen::onMousePressed(QMouseEvent *e)
+{
+    if (e->button() == Qt::RightButton)
+        m_parentApp->setMouseDecoupled(false);
+}
+
+void TestLevelScreen::onMouseReleased(QMouseEvent *e)
+{
+    if (e->button() == Qt::RightButton)
+        m_parentApp->setMouseDecoupled(true);
+}
 
 // unused in game
-void TestLevelScreen::onMousePressed(QMouseEvent *) {}
-void TestLevelScreen::onMouseReleased(QMouseEvent *) {}
 void TestLevelScreen::onMouseWheel(QWheelEvent *) {}
