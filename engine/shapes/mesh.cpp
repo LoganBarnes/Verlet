@@ -1,4 +1,5 @@
 #include "mesh.h"
+#include "trianglemesh.h"
 
 #include "debugprinting.h"
 
@@ -22,7 +23,7 @@ Mesh::~Mesh()
         glDeleteBuffers(1, &m_vbo);
 }
 
-void Mesh::init(GLuint shader, GLuint w, GLuint h, const glm::vec3 *verts, const glm::vec3 *norms)
+void Mesh::initStrip(GLuint shader, GLuint w, GLuint h, const glm::vec3 *verts, const glm::vec3 *norms)
 {
     assert(w > 1 && h > 1);
 
@@ -32,6 +33,14 @@ void Mesh::init(GLuint shader, GLuint w, GLuint h, const glm::vec3 *verts, const
     GLuint memsize = m_mappingSize * 8 * sizeof(float);
     createBuffers(shader, memsize);
     setVerts(verts, norms);
+}
+
+void Mesh::initTriangles(GLuint shader, std::vector<Tri> tris, const glm::vec3 *verts)
+{
+    m_mappingSize = tris.size() * 3;
+    GLuint memsize = m_mappingSize * 8 * sizeof(float);
+    createBuffers(shader, memsize);
+    setTriangles(tris, verts);
 }
 
 void Mesh::setMappings()
@@ -104,6 +113,23 @@ void Mesh::setVerts(const glm::vec3 *verts, const glm::vec3 *norms)
     delete [] data;
 }
 
+void Mesh::setTriangles(std::vector<Tri> tris, const glm::vec3 *verts)
+{
+    int size = m_mappingSize * 8;
+    GLfloat *data = new GLfloat[size];
+    int index = 0;
+
+    foreach (Tri tri, tris) {
+        addVertex(&index, verts[tri.a], tri.normal, data);
+        addVertex(&index, verts[tri.b], tri.normal, data);
+        addVertex(&index, verts[tri.c], tri.normal, data);
+    }
+
+    fillBuffer(data, 0, m_mappingSize);
+
+    delete [] data;
+}
+
 void Mesh::fillBuffer(const float *data, int start, int count)
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -111,12 +137,11 @@ void Mesh::fillBuffer(const float *data, int start, int count)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Mesh::onDraw()
+void Mesh::onDraw(GLenum mode)
 {
     glDisable(GL_CULL_FACE);
     glBindVertexArray(m_vao);
-//    glDrawArrays(GL_LINE_STRIP, 0, m_mappingSize);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, m_mappingSize);
+    glDrawArrays(mode, 0, m_mappingSize);
     glBindVertexArray(0);
     glEnable(GL_CULL_FACE);
 }

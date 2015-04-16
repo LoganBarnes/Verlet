@@ -72,8 +72,6 @@ void View::initializeGL()
     time.start();
     timer.start(1000 / 60);
 
-    this->setCursor(Qt::BlankCursor);
-
     // Center the mouse, which is explained more in mouseMoveEvent() below.
     // This needs to be done here because the mouse may be initially outside
     // the fullscreen window and will not automatically receive mouse move
@@ -151,7 +149,6 @@ void View::mouseMoveEvent(QMouseEvent *event)
     if (!deltaXI && !deltaYI) return;
 
     QCursor::setPos(mapToGlobal(QPoint(halfWidthI, halfHightI)));
-    this->cursor().setShape(Qt::BlankCursor);
 
     // sets mouse deltas between -1 and 1
     float halfWidth = width() * .5f;
@@ -198,6 +195,9 @@ void View::tick()
 
     // TODO: Implement the game update here
     m_app->onTick(seconds);
+
+    // don't show cursor
+    QApplication::setOverrideCursor(Qt::BlankCursor);
 
     // Flag this view for repainting (Qt will call paintGL() soon after)
     update();

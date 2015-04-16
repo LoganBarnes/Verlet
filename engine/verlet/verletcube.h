@@ -8,7 +8,7 @@ class VerletCube: public Verlet
 public:
     //@param: opposite corners of the cube
     VerletCube(const glm::vec3& min, const glm::vec3& max, VerletManager* vm);
-    ~VerletCube();
+    virtual ~VerletCube();
 };
 
 #endif // VERLETCUBE_H

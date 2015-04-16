@@ -14,7 +14,7 @@ class Verlet
 {
 public:
     Verlet(VerletManager* m);
-    ~Verlet();
+    virtual ~Verlet();
 
     VerletManager* _manager;
     //between 0 and 1: how much cloth is influenced by collisions

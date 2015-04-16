@@ -11,7 +11,7 @@ public:
     CollisionManager();
     virtual ~CollisionManager();
 
-    virtual void manage(World *world, float onTickSecs);
+    virtual void manage(World *world, float onTickSecs, float mouseX, float mouseY);
 
     virtual QList<Collision *> detectCollisions(World *world, float secs) = 0;
     virtual void handleCollisions(QList<Collision* > cols) = 0;

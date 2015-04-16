@@ -1,6 +1,8 @@
 #include "net.h"
 #include "mesh.h"
 #include "graphics.h"
+
+#define GLM_FORCE_RADIANS
 #include <gtc/type_ptr.hpp>
 
 Net::Net(glm::vec2 dimension, const glm::vec3 &start,
@@ -25,7 +27,7 @@ Net::Net(glm::vec2 dimension, const glm::vec3 &start,
     }
 
     m_mesh = new Mesh();
-    m_mesh->init(m_shader, width, height, getPosArray(), getNormArray());
+    m_mesh->initStrip(m_shader, width, height, getPosArray(), getNormArray());
 }
 
 Net::~Net()
@@ -42,15 +44,9 @@ void Net::updateBuffer()
 
 void Net::onDraw(Graphics *g)
 {
-//    for(int i=0; i<links.size(); i++){
-//        Link l = links.at(i);
-//        g->drawLineSeg(_pos[l.pointA],_pos[l.pointB], .1f);
-//    }
-//    g->setAllWhite(true);
-//    g->drawCone(glm::mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,-5,1));
+    g->setColor(.5,.5,1.f,1,64);
     glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"),
                        1, GL_FALSE, glm::value_ptr(glm::mat4()));
-    m_mesh->onDraw();
-//    g->setAllWhite(false);
+    m_mesh->onDraw(GL_TRIANGLE_STRIP);
 }
 

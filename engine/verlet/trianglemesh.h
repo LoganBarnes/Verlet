@@ -29,7 +29,7 @@ class TriangleMesh: public Verlet
 public:
     TriangleMesh(const glm::vec2& dimension, float width,
                  const glm::vec3& start, VerletManager* vm, GLuint shader);
-    ~TriangleMesh();
+    virtual ~TriangleMesh();
 
     void onTick(float seconds);
     virtual void onDraw(Graphics *g);

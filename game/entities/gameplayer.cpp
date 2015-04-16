@@ -63,11 +63,16 @@ void GamePlayer::onMouseMoved(QMouseEvent *, float deltaX, float deltaY)
 
 void GamePlayer::handleCollision(Collision *col)
 {
+    if (glm::length(col->mtv) > 0.0001f)
+        col->impulse = glm::normalize(col->mtv);
     Player::handleCollision(col);
     if (!m_tempSolid)
     {
-        setPosition(getPosition() + col->mtv);
+        if (col->t > 0.0001f)
+        {
+            setPosition(getPosition() + col->mtv);
 //        setVelocity(getVelocity() + (col->mtv / col->t) /** .5f*/);
-        applyForce((col->mtv / (col->t * col->t)) * getMass());
+            applyForce((col->mtv / (col->t * col->t)) * getMass());
+        }
     }
 }

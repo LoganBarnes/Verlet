@@ -1,5 +1,4 @@
 #include "verletmanager.h"
-#include "engine/common/raytracer.h"
 #include "rope.h"
 #include "trianglemesh.h"
 #include "net.h"
@@ -35,7 +34,7 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
 
     TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,22), .3, glm::vec3(6,7,0), this, shader);
     tri2->createPin(0);
-    tri2->createPin(31);
+    tri2->createPin(11);
     addVerlet(tri2);
 
 //    Net* n1 = new Net(glm::vec2(25,25), glm::vec3(2,20,2),
@@ -65,7 +64,7 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
     addVerlet(n2);
     */
 
-    VerletCube* c2 = new VerletCube(glm::vec3(0,20,0), glm::vec3(1,21,1), this);
+//    VerletCube* c2 = new VerletCube(glm::vec3(0,20,0), glm::vec3(1,21,1), this);
 //    addVerlet(c2);
 
     m_ray = new Ray(cam);
@@ -84,7 +83,7 @@ VerletManager::~VerletManager()
 }
 
 
-bool VerletManager::rayTrace(float x, float y)
+void VerletManager::rayTrace(float x, float y)
 {
     m_ray->setRay(x, y);
 
@@ -121,28 +120,28 @@ void VerletManager::addVerlet(Verlet* v){
 }
 
 void VerletManager::updateBuffer(){
-    for(int i=0; i<verlets.size(); i++)
+    for(unsigned int i=0; i<verlets.size(); i++)
         verlets.at(i)->updateBuffer();
 }
 
 void VerletManager::verlet(float seconds){
-    for(int i=0; i<verlets.size(); i++)
+    for(unsigned int i=0; i<verlets.size(); i++)
         verlets.at(i)->verlet(seconds);
 }
 
 void VerletManager::accumulateForces(){
     glm::vec3 totalForce = gravity + wind;
-    for(int i=0; i<verlets.size(); i++)
+    for(unsigned int i=0; i<verlets.size(); i++)
         verlets.at(i)->applyForce(totalForce);
 }
 
 void VerletManager::resetForces(){
-    for(int i=0; i<verlets.size(); i++)
+    for(unsigned int i=0; i<verlets.size(); i++)
         verlets.at(i)->resetForce();
 }
 
 void VerletManager::constraints(){
-    for(int i=0; i<verlets.size(); i++) {
+    for(unsigned int i=0; i<verlets.size(); i++) {
         Verlet* v = verlets.at(i);
 //        v->boxConstraint(_boxMin, _boxMax);
         v->linkConstraint();
@@ -158,7 +157,7 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
         verlet(onTickSecs);
         for(int i=0; i<_numSolves; i++)
             constraints();
-        for(int i=0; i<verlets.size(); i++)
+        for(unsigned int i=0; i<verlets.size(); i++)
             verlets.at(i)->onTick(onTickSecs);
         updateBuffer();
     }
@@ -180,19 +179,19 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
 void VerletManager::onDraw(Graphics *g){
 
     g->setTexture("");
-    for(int i=0; i<verlets.size(); i++)
+    for(unsigned int i=0; i<verlets.size(); i++)
         verlets.at(i)->onDraw(g);
 //    g->setColor(glm::vec3(1,1,1));
 //    g->drawLineSeg(_boxMin,glm::vec3(_boxMin.x,_boxMin.y,_boxMax.z), .3f);
 //    g->drawLineSeg(_boxMin,glm::vec3(_boxMin.x,_boxMax.y,_boxMin.z), .3f);
 //    g->drawLineSeg(_boxMin,glm::vec3(_boxMax.x,_boxMin.y,_boxMin.z), .3f);
-    if (m_curV > -1)
-    {
-        g->setColor(1, 0, 0, 1, 0);
-        glm::mat4 trans = glm::translate(glm::mat4(), verlets[m_curV]->getPoint(m_curI));
-        trans *= glm::scale(glm::mat4(), glm::vec3(verlets[m_curV]->rayTraceSize));
-        g->drawSphere(trans);
-    }
+//    if (m_curV > -1)
+//    {
+//        g->setColor(1, 0, 0, 1, 0);
+//        glm::mat4 trans = glm::translate(glm::mat4(), verlets[m_curV]->getPoint(m_curI));
+//        trans *= glm::scale(glm::mat4(), glm::vec3(verlets[m_curV]->rayTraceSize));
+//        g->drawSphere(trans);
+//    }
 
 }
 

@@ -2,6 +2,8 @@
 #include "verletmanager.h"
 #include "mesh.h"
 #include "graphics.h"
+
+#define GLM_FORCE_RADIANS
 #include <gtc/type_ptr.hpp>
 
 TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
@@ -83,7 +85,8 @@ TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
 
 
     m_mesh = new Mesh();
-    m_mesh->init(m_shader, c, r, getPosArray(), getNormArray());
+//    m_mesh->initStrip(m_shader, c, r, getPosArray(), getNormArray());
+    m_mesh->initTriangles(m_shader, _triangles, getPosArray());
 }
 
 TriangleMesh::~TriangleMesh()
@@ -134,8 +137,8 @@ void TriangleMesh::applyWind(Tri& t){
     _acc[t.c] += windForce;
 }
 
-void TriangleMesh::onTick(float seconds){
-    for(int i = 0; i<_triangles.size(); i++){
+void TriangleMesh::onTick(float ){
+    for(unsigned int i = 0; i<_triangles.size(); i++){
         calculate(_triangles.at(i));
         applyWind(_triangles.at(i));
     }
@@ -143,20 +146,15 @@ void TriangleMesh::onTick(float seconds){
 
 void TriangleMesh::updateBuffer()
 {
-    m_mesh->setVerts(getPosArray(), getNormArray());
+//    m_mesh->setVerts(getPosArray(), getNormArray());
+    m_mesh->setTriangles(_triangles, getPosArray());
 }
 
 void TriangleMesh::onDraw(Graphics *g)
 {
-//    for(int i=0; i<links.size(); i++){
-//        Link l = links.at(i);
-//        g->drawLineSeg(_pos[l.pointA],_pos[l.pointB], .1f);
-//    }
-//    g->setAllWhite(true);
-//    g->drawCone(glm::mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,-5,1));
+    g->setColor(.5f,.5f,1.f,1.f,0.f);
     glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"),
                        1, GL_FALSE, glm::value_ptr(glm::mat4()));
-    m_mesh->onDraw();
-//    g->setAllWhite(false);
+    m_mesh->onDraw(GL_TRIANGLES);
 }
 

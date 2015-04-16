@@ -9,8 +9,8 @@ Player::Player(ActionCamera *cam, glm::vec3 pos)
       m_offset(0.f),
       m_maxOffset(15.f),
       m_wsad(0),
-      m_jump(false),
       m_canJump(false),
+      m_jump(false),
       m_eyeHeight(.75f)
 {
     m_camera->setOffset(m_offset);

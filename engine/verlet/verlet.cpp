@@ -103,7 +103,7 @@ void Verlet::boxConstraint(const glm::vec3& _boxMin,
 }
 
 void Verlet::pinConstraint(){
-    for(int i=0; i<pins.size(); i++) {
+    for(unsigned int i=0; i<pins.size(); i++) {
         Pin p = pins.at(i);
         _pos[p.index] = p.pinPos;
     }
@@ -111,7 +111,7 @@ void Verlet::pinConstraint(){
 
 //Uses squareroot approximation
 void Verlet::linkConstraint(){
-    for(int i=0; i<links.size(); i++) {
+    for(unsigned int i=0; i<links.size(); i++) {
         Link l = links.at(i);
         glm::vec3& posA = _pos[l.pointA];
         glm::vec3& posB = _pos[l.pointB];
@@ -126,13 +126,13 @@ void Verlet::linkConstraint(){
 
 void Verlet::onDraw(Graphics *g){
 //    g->setLineWidth(1);
-    for(int i=0; i<links.size(); i++){
+    for(unsigned int i=0; i<links.size(); i++){
         Link l = links.at(i);
         g->drawLineSeg(_pos[l.pointA],_pos[l.pointB], .1f);
     }
 }
 
-void Verlet::onTick(float seconds){}
+void Verlet::onTick(float ){}
 
 glm::vec3 Verlet::collide(MovableEntity *e)
 {

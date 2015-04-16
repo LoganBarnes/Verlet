@@ -25,7 +25,7 @@ public:
     virtual void manage(World *world, float onTickSecs, float mouseX, float mouseY);
     void onDraw(Graphics *g);
     glm::vec3 collideTerrain(MovableEntity* e);
-    bool rayTrace(float x, float y);
+    void rayTrace(float x, float y);
 
     //Settings
     glm::vec3 gravity = glm::vec3(0,-3,0);

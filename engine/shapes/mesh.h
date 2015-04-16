@@ -3,6 +3,9 @@
 
 #include "GL/glew.h"
 #include <glm.hpp>
+#include <vector>
+
+struct Tri;
 
 class Mesh
 {
@@ -10,12 +13,14 @@ public:
     Mesh();
     virtual ~Mesh();
 
-    void init(GLuint shader, GLuint w, GLuint h, const glm::vec3 *verts, const glm::vec3 *norms);
+    void initStrip(GLuint shader, GLuint w, GLuint h, const glm::vec3 *verts, const glm::vec3 *norms);
+    void initTriangles(GLuint shader, std::vector<Tri> tris, const glm::vec3 *verts);
 
     void setVerts(const glm::vec3 *verts, const glm::vec3 *norms);
+    void setTriangles(std::vector<Tri> tris, const glm::vec3 *verts);
     void createBuffers(GLuint shader, GLuint size);
 
-    void onDraw();
+    void onDraw(GLenum mode);
 
 private:
     void setMappings();

@@ -169,9 +169,7 @@ void GeometricCollisionManager::handleTriangleCollisions(QList<TriCollision *> c
             me->setVelocity(vel);
         }
         else
-        {
             para = glm::vec3();
-        }
 
         // the entity collided with something
         if (iteration == 0 && col->tMinus > eps)
@@ -181,6 +179,7 @@ void GeometricCollisionManager::handleTriangleCollisions(QList<TriCollision *> c
         me->setPosition(hit);
 
         Collision c;
+        c.mtv = glm::vec3(0);
         c.impulse = n;
         me->handleCollision(&c);
     }

@@ -12,14 +12,16 @@ unix:!macx {
     QMAKE_CXXFLAGS += -std=c++11
 }
 macx {
-    QMAKE_CFLAGS_X86_64 += -mmacosx-version-min=10.7
-    QMAKE_CXXFLAGS_X86_64 = $$QMAKE_CFLAGS_X86_64
+    QMAKE_CFLAGS += -mmacosx-version-min=10.7
+    QMAKE_CXXFLAGS = $$QMAKE_CFLAGS_X86_64
 
     MAC_SDK  = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/
     if( exists( $$MAC_SDK) ) {
         QMAKE_MAC_SDK = macosx10.9
     }
 }
+
+QMAKE_CXXFLAGS += -Wno-c++11-extensions
 
 INCLUDEPATH +=  glm engine game shaders \
                 engine/common \
@@ -101,7 +103,6 @@ SOURCES += \
     game/gamescreens/gamemenu.cpp \
     game/world/gameworld.cpp \
     game/gamescreens/testlevelscreen.cpp \
-    engine/common/raytracer.cpp \
     engine/shapes/mesh.cpp \
     engine/verlet/trianglemesh.cpp \
     engine/common/ray.cpp
@@ -155,7 +156,6 @@ HEADERS += \
     game/entities/gameplayer.h \
     engine/common/debugprinting.h \
     game/gamescreens/testlevelscreen.h \
-    engine/common/raytracer.h \
     engine/shapes/mesh.h \
     engine/verlet/trianglemesh.h \
     engine/common/ray.h
