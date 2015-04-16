@@ -29,7 +29,7 @@ public:
 
     //Settings
     glm::vec3 gravity = glm::vec3(0,-3,0);
-    glm::vec3 wind = glm::vec3(0,0,0.1);
+    glm::vec3 wind = glm::vec3(0,0,0.5);
     float windPow = 3;
 
     //Whether constraints are solved

@@ -34,9 +34,9 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
 //    addVerlet(n);
 
 
-    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,12), .3, glm::vec3(6,7,0), this, shader);
+    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(32,32), .5, glm::vec3(0,15,0), this, shader);
     tri2->createPin(0);
-    tri2->createPin(11);
+    tri2->createPin(31);
     addVerlet(tri2);
 
 //    Net* n1 = new Net(glm::vec2(25,25), glm::vec3(2,20,2),

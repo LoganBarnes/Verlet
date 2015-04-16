@@ -151,6 +151,7 @@ void View::mouseMoveEvent(QMouseEvent *event)
     if (!deltaXI && !deltaYI) return;
 
     QCursor::setPos(mapToGlobal(QPoint(halfWidthI, halfHightI)));
+    this->cursor().setShape(Qt::BlankCursor);
 
     // sets mouse deltas between -1 and 1
     float halfWidth = width() * .5f;
