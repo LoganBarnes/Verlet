@@ -72,9 +72,14 @@ void Verlet::verlet(float seconds){
         glm::vec3& pos = _pos[i];
         glm::vec3 temp = pos;
         glm::vec3& prevPos = _prevPos[i];
-        glm::vec3& acc = _acc[i];
+        //apply gravity
+        glm::vec3& acc = _acc[i]+=_manager->gravity;
+         //update positions
         pos += (pos-prevPos)+acc*seconds*seconds;
         prevPos = temp;
+        //reset
+        _acc[i]=glm::vec3(0,0,0);
+        _normal[i]=glm::vec3(0,0,0);
     }
 }
 

@@ -155,17 +155,13 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
 //    cout << "verlet"  << endl;
 
     if(solve){
-        accumulateForces();
         verlet(onTickSecs);
         for(int i=0; i<_numSolves; i++)
             constraints();
-        resetForces();
         for(int i=0; i<verlets.size(); i++)
             verlets.at(i)->onTick(onTickSecs);
         updateBuffer();
     }
-    else
-        resetForces();
 
     QList<MovableEntity *> mes = world->getMovableEntities();
     Collision *col = new Collision();
