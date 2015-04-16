@@ -61,6 +61,10 @@ TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
         }
     }
 
+    //set scalar
+    for(int i=0; i<numPoints; i++)
+        _scalar[i]=1/(float)numTri[i];
+
     //shear and bend constraints
         for(int i = 0; i<r; i++){
             for(int j = 0; j<c; j++){
@@ -108,22 +112,10 @@ void TriangleMesh::calculate(Tri& t){
 
     t.normal =  glm::cross((t.vertices[1] - t.vertices[0]), (t.vertices[2] - t.vertices[0]));
     t.normal = glm::normalize(t.normal);
-    //_normal[t.a]=t.normal;
-    //_normal[t.b]=t.normal;
-    //_normal[t.c]=t.normal;
-    _normal[t.a]+=t.normal;
-    _normal[t.b]+=t.normal;
-    _normal[t.c]+=t.normal;
-}
 
-void TriangleMesh::averageNormals(){
-    for(int i=0; i<numPoints; i++)
-        _normal[i]/=(float)numTri[i];
-}
-
-void TriangleMesh::resetNormals(){
-    for(int i=0; i<numPoints; i++)
-        _normal[i]=glm::vec3(0,0,0);
+    _normal[t.a]+=t.normal*_scalar[t.a];
+    _normal[t.b]+=t.normal*_scalar[t.b];
+    _normal[t.c]+=t.normal*_scalar[t.c];
 }
 
 void TriangleMesh::applyWind(Tri& t){
@@ -143,12 +135,10 @@ void TriangleMesh::applyWind(Tri& t){
 }
 
 void TriangleMesh::onTick(float seconds){
-    resetNormals();
     for(int i = 0; i<_triangles.size(); i++){
         calculate(_triangles.at(i));
         applyWind(_triangles.at(i));
     }
-    averageNormals();
 }
 
 void TriangleMesh::updateBuffer()

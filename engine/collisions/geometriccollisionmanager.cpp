@@ -7,9 +7,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtx/norm.hpp>
 
-//#include <iostream>
-//using namespace std;
-//#include <glm/ext.hpp>
+#include "debugprinting.h"
 
 GeometricCollisionManager::GeometricCollisionManager()
 {
@@ -39,7 +37,7 @@ void GeometricCollisionManager::manage(World *world, float, float, float)
         handleEllipsoidCollisions(cols);
 
         QList<TriCollision *> colsT = detectTriangleCollisions(mes, triangles);
-        handleTriangleCollisions(colsT);
+        handleTriangleCollisions(colsT, i);
 
         // delete collisions
         foreach(Collision *c, cols)
@@ -126,7 +124,7 @@ QList<TriCollision* > GeometricCollisionManager::detectTriangleCollisions(
 }
 
 
-void GeometricCollisionManager::handleTriangleCollisions(QList<TriCollision *> cols)
+void GeometricCollisionManager::handleTriangleCollisions(QList<TriCollision *> cols, int iteration)
 {
     float eps = 0.00001f;
     glm::vec3 up = glm::vec3(0, 1, 0);
@@ -141,6 +139,7 @@ void GeometricCollisionManager::handleTriangleCollisions(QList<TriCollision *> c
 
         glm::vec3 rem = col->dir * col->tMinus;
         glm::vec3 para;
+
 
         if (glm::length2(col->colNorm) > eps)
         {
@@ -170,7 +169,13 @@ void GeometricCollisionManager::handleTriangleCollisions(QList<TriCollision *> c
             me->setVelocity(vel);
         }
         else
+        {
             para = glm::vec3();
+        }
+
+        // the entity collided with something
+        if (iteration == 0 && col->tMinus > eps)
+            me->setTempSolid();
 
         me->setDestination(hit + para);
         me->setPosition(hit);

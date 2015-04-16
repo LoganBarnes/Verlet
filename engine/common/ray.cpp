@@ -37,6 +37,13 @@ glm::vec4 Ray::intersectPoint(glm::vec3 point, float radius)
     return intersectSphereAtOrigin(p_shape, d_shape, radius);
 }
 
+float Ray::hitPlane(const glm::vec3& point, const glm::vec3& normal){
+    float denom = glm::dot(normal, glm::vec3(m_d));
+    float t = glm::dot((point-glm::vec3(m_p)), normal) / denom;
+    return t;
+}
+
+
 
 //glm::vec4 Ray::intersectSphere(glm::mat4 invTrans)
 //{

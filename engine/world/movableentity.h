@@ -26,10 +26,14 @@ public:
     glm::vec3 getDestination();
     void setDestination(glm::vec3 destination);
 
+    void setTempSolid() { m_tempSolid = true; }
+
 protected:
     float m_mass;
     glm::vec3 m_vel, m_force, m_impulse;
     glm::vec3 m_destination;
+
+    bool m_tempSolid; // temporarily set to true if the object is colliding with a geometric object
 };
 
 #endif // MOVABLEENTITY_H

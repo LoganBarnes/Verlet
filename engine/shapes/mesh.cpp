@@ -36,12 +36,12 @@ void Mesh::init(GLuint shader, GLuint w, GLuint h, const glm::vec3 *verts, const
 
 void Mesh::setMappings()
 {
-    m_mappingSize = 2 * (m_w * (m_w - 1) + (m_h - 2)) + (m_h - 2);
+    m_mappingSize = (m_h - 1) * 2 * m_w + 3  * (m_h - 2);
     m_vertMappings = new GLuint[m_mappingSize];
 
     GLuint i = 0;
     GLuint row;
-    for (GLuint r = 1; r < m_w; r++)
+    for (GLuint r = 1; r < m_h; r++)
     {
         if (r % 2 == 0)
         {
@@ -50,14 +50,14 @@ void Mesh::setMappings()
             if (r > 1)
                 m_vertMappings[i++] = row;
 
-            for (GLuint c = 0; c < m_h; c++)
+            for (GLuint c = 0; c < m_w; c++)
             {
                 m_vertMappings[i++] = row;
                 m_vertMappings[i++] = row + m_w;
                 row++;
             }
 
-            if (r < m_w - 1)
+            if (r < m_h - 1)
             {
                 m_vertMappings[i++] = (row - 1) + m_w;
                 m_vertMappings[i++] = (row - 1) + m_w;
@@ -71,14 +71,14 @@ void Mesh::setMappings()
             if (r > 1)
                 m_vertMappings[i++] = row;
 
-            for (GLuint c = 0; c < m_h; c++)
+            for (GLuint c = 0; c < m_w; c++)
             {
                 m_vertMappings[i++] = row;
                 m_vertMappings[i++] = row - m_w;
                 row++;
             }
 
-            if (r < m_w - 1)
+            if (r < m_h - 1)
             {
                 m_vertMappings[i++] = (row - 1) - m_w;
                 m_vertMappings[i++] = (row - 1) - m_w;
