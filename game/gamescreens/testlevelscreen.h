@@ -7,6 +7,7 @@ class GameWorld;
 class ObjectHandler;
 class OBJ;
 class VerletManager;
+class Verlet;
 
 class TestLevelScreen : public Screen
 {
@@ -41,11 +42,25 @@ private:
     ObjectHandler *m_oh;
     OBJ *m_level;
 
-//    VerletManager *vm;
+    VerletManager *vm;
 
     glm::mat4 m_cursor;
     bool m_drawCursor;
     glm::vec2 m_deltas;
+
+    //testing dragging
+    bool dragMode = false; //true if player selects point + holds LMB
+    //Selected attributes- don't change once dragMode is enabled
+    int draggedPoint = 0;
+    Verlet* draggedVerlet = NULL;
+    //For moving the selected point
+    //World-space pt: where cursor's ray intersects w/ draggedPoint's plane
+    glm::vec3 draggedMouse;
+    //from draggedPoint to draggedMouse
+    glm::vec3 interpolate;
+
+    //testing wind
+    glm::vec3 windDirection;
 
 };
 

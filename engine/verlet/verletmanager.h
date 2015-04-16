@@ -34,6 +34,10 @@ public:
 
     //Whether constraints are solved
     bool solve = true;
+
+    int m_curV;
+    int m_curI;
+    Ray *m_ray;
 private:
     //Verlet objects manager maintains
     std::vector<Verlet*> verlets;
@@ -42,7 +46,7 @@ private:
     glm::vec3 _boxMin = glm::vec3(-15,15,-15);
     glm::vec3 _boxMax = glm::vec3(15,50,15);
     //How many times constraints are solved
-    int _numSolves = 2;
+    int _numSolves = 3;
 
     //Helpers for onTick, to cycle through each step
     //Store acceleration for all points
@@ -55,10 +59,6 @@ private:
     void constraints();
     // updates any vbos if necessary
     void updateBuffer();
-
-    Ray *m_ray;
-    int m_curV;
-    int m_curI;
 };
 
 #endif // VERLETMANAGER_H
