@@ -46,18 +46,20 @@ public:
     glm::vec3 collide(MovableEntity *e);
 
     //Map from indices to links, for tearing
-    QHash<int, QList<Link> > link_map;
-    void removeLink(Link l);
+    QHash<int, QList<Link*> > link_map;
+    void removeLink(Link* l);
     void removeLink(int id);
+    Link* findLink(int a, int b);
+    virtual Link* closestLink(int id, const glm::vec3& point);
+    virtual void tearLink(Link* l);
 
     glm::vec3 *getPosArray() { return _pos; }
     glm::vec3 *getNormArray() { return _normal; }
-
 protected:
     //Creates new point (at index numPoints) w/ given position
     void createPoint(const glm::vec3& pos);
     //Specify indices of two pre-existing points
-    void createLink(int a, int b);
+    Link* createLink(int a, int b);
 
     //Actual number of points
     int numPoints = 0;
@@ -75,7 +77,15 @@ protected:
         glm::vec3 pinPos;
     }Pin;
     std::vector<Pin> pins;
-    std::vector<Link> links;
+    std::vector<Link*> links;
+
+    //Helpers for manipulating values in hash
+    void replaceLink(Link* key, Link* oldLink, Link* newLink,
+                     QHash<Link*, QList<Link*> >& hash);
+    //void replaceLink(int key, Link* oldLink, Link* newLink,
+    //                 QHash<int, QList<Link*> >& hash);
+    void removeFromHash(int key, Link* toRemove, QHash<int, QList<Link*> >& hash);
+    void removeFromHash(Link* key, Link* toRemove, QHash<Link*, QList<Link*> >& hash);
 };
 
 #endif // VERLET_H

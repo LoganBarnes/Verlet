@@ -212,3 +212,29 @@ void Mesh::addVertex(int *i, glm::vec3 v, glm::vec3 norm, float* data)
     data[(*i)++] = 0;
     data[(*i)++] = 0;
 }
+
+
+void Mesh::initTriangles(GLuint shader, std::vector<Tri*> tris, const glm::vec3 *verts)
+{
+    m_mappingSize = tris.size() * 3;
+    GLuint memsize = m_mappingSize * 8 * sizeof(float);
+    createBuffers(shader, memsize);
+    setTriangles(tris, verts);
+}
+
+void Mesh::setTriangles(std::vector<Tri*> tris, const glm::vec3 *verts)
+{
+    int size = m_mappingSize * 8;
+    GLfloat *data = new GLfloat[size];
+    int index = 0;
+
+    foreach (Tri* tri, tris) {
+        addVertex(&index, verts[tri->a], tri->normal, data);
+        addVertex(&index, verts[tri->b], tri->normal, data);
+        addVertex(&index, verts[tri->c], tri->normal, data);
+    }
+
+    fillBuffer(data, 0, m_mappingSize);
+
+    delete [] data;
+}

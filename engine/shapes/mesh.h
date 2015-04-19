@@ -13,6 +13,10 @@ public:
     Mesh();
     virtual ~Mesh();
 
+    //for testing rendering w/ pointers
+    void initTriangles(GLuint shader, std::vector<Tri*> tris, const glm::vec3 *verts);
+    void setTriangles(std::vector<Tri*> tris, const glm::vec3 *verts);
+
     void initStrip(GLuint shader, GLuint w, GLuint h, const glm::vec3 *verts, const glm::vec3 *norms);
     void initTriangles(GLuint shader, std::vector<Tri> tris, const glm::vec3 *verts);
 
