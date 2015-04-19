@@ -123,7 +123,7 @@ Link* Verlet::closestLink(int id, const glm::vec3& point){
     //Find which of these points is closest to 'point'
     float nearest = 10000;
     int closest = id;
-    for(int i = 0; i<indices.size(); i++){
+    for(unsigned int i = 0; i<indices.size(); i++){
         int index = indices.at(i);
         float distance = glm::length2(_pos[index]-point);
         if(distance<nearest){
@@ -135,7 +135,7 @@ Link* Verlet::closestLink(int id, const glm::vec3& point){
     return findLink(id,closest);
 }
 
-void Verlet::tearLink(Link* l){}
+void Verlet::tearLink(Link* ){}
 
 //***************************for update*****************************//
 //Updates positions of all particles w/ velocity + acc
