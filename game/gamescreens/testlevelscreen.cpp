@@ -10,13 +10,10 @@
 #include "audio.h"
 #include "soundtester.h"
 
-//#include "debugprinting.h"
-
 TestLevelScreen::TestLevelScreen(Application *parent)
     : Screen(parent)
 {
     m_parentApp->setMouseDecoupled(true);
-//    m_parentApp->setMouseDecoupleKey(Qt::Key_Shift);
 
     GLuint shader = m_parentApp->getShader(DEFAULT);
     QList<Triangle *> tris;
@@ -33,9 +30,10 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     GamePlayer *player = new GamePlayer(cam, playerPos);
     player->useSound(m_parentApp->getAudioObject());
 
-    SoundTester *st = new SoundTester(glm::vec3());
-    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
-    st->playSound();
+    // uncomment to play sound at the origin
+//    SoundTester *st = new SoundTester(glm::vec3());
+//    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
+//    st->playSound();
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
     VerletManager *vm = new VerletManager(cam, m_parentApp->getShader(DEFAULT));
