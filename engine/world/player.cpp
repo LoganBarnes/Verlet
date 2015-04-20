@@ -12,7 +12,9 @@ Player::Player(ActionCamera *cam, glm::vec3 pos)
       m_wsad(0),
       m_canJump(false),
       m_jump(false),
-      m_eyeHeight(.75f)
+      m_eyeHeight(.75f),
+      m_yaw(0.f),
+      m_pitch(0.f)
 {
     m_camera->setOffset(m_offset);
     setUpdatePositionOnTick(false);
@@ -65,6 +67,11 @@ void Player::onTick(float secs)
 
 void Player::setCameraPos()
 {
+
+    m_camera->yaw(m_yaw);
+    m_camera->pitch(m_pitch);
+    m_yaw = 0.f;
+    m_pitch = 0.f;
     m_camera->setCenter(getPosition() + glm::vec3(0, m_eyeHeight, 0));
 
     if (m_audio)
@@ -80,8 +87,10 @@ glm::vec3 Player::getEyePos()
 // mouse event
 void Player::onMouseMoved(QMouseEvent *, float deltaX, float deltaY)
 {
-    m_camera->yaw(deltaX / 10.f);
-    m_camera->pitch(deltaY / 10.f);
+    m_yaw += deltaX / 10.f;
+    m_pitch += deltaY / 10.f;
+//    m_camera->yaw(deltaX / 10.f);
+//    m_camera->pitch(deltaY / 10.f);
 }
 
 // key events

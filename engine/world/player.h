@@ -53,6 +53,8 @@ protected:
 private:
     float m_eyeHeight;
 
+    float m_yaw, m_pitch;
+
 };
 
 #endif // PLAYER_H

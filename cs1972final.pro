@@ -8,7 +8,7 @@ DESTDIR     = $$system(pwd)
 OBJECTS_DIR = $$DESTDIR/bin
 
 unix:!macx {
-    LIBS += -lGLU -lOpenAL
+    LIBS += -lGLU -lalut
     QMAKE_CXXFLAGS += -std=c++11
 }
 macx {
@@ -21,9 +21,9 @@ macx {
     if( exists( $$MAC_SDK) ) {
         QMAKE_MAC_SDK = macosx10.9
     }
-}
 
-QMAKE_CXXFLAGS += -Wno-c++11-extensions
+    QMAKE_CXXFLAGS += -Wno-c++11-extensions
+}
 
 INCLUDEPATH +=  lib/glm engine game shaders \
                 engine/common \
