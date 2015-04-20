@@ -1,7 +1,7 @@
 #ifndef VERLET_H
 #define VERLET_H
 
-#include <glm/glm.hpp>
+#include <glm.hpp>
 #include <vector>
 #include "link.h"
 #include <QHash>

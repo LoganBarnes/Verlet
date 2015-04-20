@@ -4,10 +4,11 @@
 #include "graphics.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtx/transform.hpp>
+#include <gtx/transform.hpp>
 
 class Entity;
 class CollisionShape;
+class Audio;
 
 struct Collision
 {
@@ -48,8 +49,12 @@ public:
 
     void bump(glm::vec3 amount);
 
+    void setSound(Audio *audio, QString filename, bool loop);
+    void playSound();
+
 protected:
     glm::mat4 m_rotation;
+    Audio* m_audio;
 
 private:
     glm::vec3 m_pos;
@@ -57,6 +62,10 @@ private:
     QList<RenderShape *> m_renderShapes;
     QList<RenderShape *> m_transparentShapes;
     QList<CollisionShape *> m_collisionShapes;
+
+    int m_soundID;
+    QString m_soundFile;
+    bool m_loopAudio;
 
 };
 

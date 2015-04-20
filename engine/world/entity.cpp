@@ -1,10 +1,14 @@
 #include "entity.h"
 #include "collisionshape.h"
+#include "audio.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtx/transform.hpp>
+#include <gtx/transform.hpp>
 
 Entity::Entity(glm::vec3 pos)
+    : m_audio(NULL),
+      m_soundID(-1),
+      m_loopAudio(false)
 {
     m_pos = pos;
     m_rotation = glm::mat4();
@@ -72,6 +76,8 @@ void Entity::addCollisionShape(CollisionShape *cs)
 
 void Entity::onTick(float)
 {
+    if (m_audio && m_soundID > -1)
+        m_audio->setSource(m_soundID, m_soundFile, getPosition(), getVelocity(), m_loopAudio);
 }
 
 glm::mat4 Entity::getRotation()
@@ -165,5 +171,21 @@ QList<Collision *> Entity::collides(Entity *e, float)
     }
 
     return cols;
+}
+
+
+void Entity::setSound(Audio *audio, QString filename, bool loop)
+{
+    m_audio = audio;
+    m_soundFile = filename;
+    m_loopAudio = loop;
+    if (m_soundID == -1)
+        m_soundID = m_audio->getSourceID();
+    m_audio->setSource(m_soundID, m_soundFile, getPosition(), getVelocity(), m_loopAudio);
+}
+
+void Entity::playSound()
+{
+    m_audio->playSource(m_soundID);
 }
 

@@ -2,6 +2,7 @@
 #define TESTLEVELSCREEN_H
 
 #include "screen.h"
+#include "audio.h"
 
 class GameWorld;
 class ObjectHandler;

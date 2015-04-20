@@ -23,4 +23,8 @@
         <file alias="test.obj">res/objects/test.obj</file>
         <file alias="testsmall.obj">res/objects/testsmall.obj</file>
     </qresource>
+    <qresource prefix="/audio">
+        <file alias="kickDrumMod.wav">res/audio/kickDrumMod.wav</file>
+        <file alias="dreams_of_home.wav">res/audio/dreams_of_home.wav</file>
+    </qresource>
 </RCC>

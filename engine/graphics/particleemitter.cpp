@@ -4,8 +4,8 @@
 
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
+#include <gtc/type_ptr.hpp>
+#include <gtx/transform.hpp>
 
 
 ParticleEmitter::ParticleEmitter(glm::vec3 color, glm::vec3 velocity,

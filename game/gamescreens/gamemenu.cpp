@@ -4,7 +4,7 @@
 #include "testlevelscreen.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtx/transform.hpp>
+#include <gtx/transform.hpp>
 
 GameMenu::GameMenu(Application *parent)
     : Screen(parent)

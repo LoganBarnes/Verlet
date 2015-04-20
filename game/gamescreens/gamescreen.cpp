@@ -5,9 +5,7 @@
 #include "geometriccollisionmanager.h"
 #include "triangle.h"
 
-#include <glm/gtc/constants.hpp>
-
-//#include <debugprinting.h>
+#include <gtc/constants.hpp>
 
 GameScreen::GameScreen(Application *parent)
     : Screen(parent)

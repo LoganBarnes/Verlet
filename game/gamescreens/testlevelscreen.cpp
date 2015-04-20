@@ -7,11 +7,10 @@
 #include "gameplayer.h"
 #include "geometriccollisionmanager.h"
 #include "verletmanager.h"
-#include "ray.h"
-#include "link.h"
+#include "audio.h"
+#include "soundtester.h"
 
-
-#include "debugprinting.h"
+//#include "debugprinting.h"
 
 TestLevelScreen::TestLevelScreen(Application *parent)
     : Screen(parent)
@@ -32,6 +31,11 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     cam->setCenter(playerPos);
 
     GamePlayer *player = new GamePlayer(cam, playerPos);
+    player->useSound(m_parentApp->getAudioObject());
+
+    SoundTester *st = new SoundTester(NULL, glm::vec3());
+    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
+    st->playSound();
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
     VerletManager *vm = new VerletManager(cam, m_parentApp->getShader(DEFAULT));
@@ -42,6 +46,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_world->setPlayer(player);
     m_world->addToMesh(tris);
     m_world->setGravity(glm::vec3(0,-10,0));
+    m_world->addMovableEntity(st);
 
     setCamera(cam);
 

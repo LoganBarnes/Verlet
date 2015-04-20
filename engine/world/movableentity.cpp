@@ -7,6 +7,7 @@
 
 MovableEntity::MovableEntity(glm::vec3 pos)
     : Entity(pos),
+      m_updatePosOnTick(true),
       m_tempSolid(false)
 {
     m_mass = 0.001f;
@@ -51,11 +52,16 @@ void MovableEntity::onTick(float secs)
     m_tempSolid = false;
 
     m_vel += (m_force * secs / m_mass) + m_impulse * 1.f / m_mass;
-//    setPosition(getPosition() + m_vel * secs);
+    if (m_updatePosOnTick)
+        setPosition(getPosition() + m_vel * secs);
     m_destination = getPosition() + m_vel * secs;
 
     m_force = glm::vec3(0.f);
     m_impulse = glm::vec3(0.f);
+
+    Entity::onTick(secs);
+//    if (m_audio && m_soundID > -1)
+//        m_audio->setSource(m_soundID, m_soundFile, getPosition(), getVelocity(), m_loopAudio);
 }
 
 void MovableEntity::handleCollision(Collision *col)

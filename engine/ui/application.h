@@ -7,11 +7,9 @@
 #include "Leap.h"
 #endif
 
-struct MouseEvent
-{
-    QMouseEvent qme;
-    glm::vec3 pos;
-};
+#include "graphics.h"
+
+class Audio;
 
 class Application
 {
@@ -57,6 +55,8 @@ public:
     void setUseCubeMap(bool use);
     GLuint getShader(GraphicsMode gm);
 
+    Audio *getAudioObject();
+
 private:
 
 #ifdef LEAP
@@ -79,6 +79,7 @@ private:
     glm::vec3 m_prevPos;
 
     Graphics *m_g;
+    Audio *m_a;
 
     int m_width, m_height;
 

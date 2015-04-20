@@ -1,10 +1,7 @@
 #include "shape.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtc/type_ptr.hpp>
-
-//#include <iostream>
-//using namespace std;
+#include <gtc/type_ptr.hpp>
 
 Shape::Shape(int complexity)
 {

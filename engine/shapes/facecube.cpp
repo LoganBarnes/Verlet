@@ -1,7 +1,7 @@
 #include "facecube.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtc/type_ptr.hpp>
+#include <gtc/type_ptr.hpp>
 
 FaceCube::FaceCube()
     : Shape(1)

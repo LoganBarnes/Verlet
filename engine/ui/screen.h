@@ -2,8 +2,9 @@
 #define SCREEN_H
 
 #include <QKeyEvent>
-#include "graphics.h"
+//#include "graphics.h"
 #include "camera.h"
+class Graphics;
 
 class Application;
 
