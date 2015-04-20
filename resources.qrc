@@ -6,6 +6,14 @@
         <file alias="cubemap.frag">res/shaders/cubemap.frag</file>
         <file alias="sparse.vert">res/shaders/sparse.vert</file>
         <file alias="sparse.frag">res/shaders/sparse.frag</file>
+        <file alias="geomPass.frag">res/shaders/geomPass.frag</file>
+        <file alias="geomPass.vert">res/shaders/geomPass.vert</file>
+        <file alias="lightPass.frag">res/shaders/lightPass.frag</file>
+        <file alias="lightPass.vert">res/shaders/lightPass.vert</file>
+        <file alias="fog.frag">res/shaders/fog.frag</file>
+        <file alias="fog.vert">res/shaders/fog.vert</file>
+        <file alias="finalPass.frag">res/shaders/finalPass.frag</file>
+        <file alias="finalPass.vert">res/shaders/finalPass.vert</file>
     </qresource>
     <qresource prefix="/images">
         <file alias="play.png">res/images/play.png</file>
@@ -18,6 +26,5 @@
         <file alias="posz.jpg">res/cubemap/posz.jpg</file>
         <file alias="negz.jpg">res/cubemap/negz.jpg</file>
     </qresource>
-    <qresource prefix="/objects">
-    </qresource>
+    <qresource prefix="/objects"/>
 </RCC>

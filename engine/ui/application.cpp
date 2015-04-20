@@ -6,6 +6,7 @@ Application::Application()
 
     // create graphics object
     m_g = new Graphics();
+
 //    m_leapController = NULL;
 }
 
@@ -27,6 +28,11 @@ void Application::init(Screen *initScreen)
 {
     m_currentScreen = initScreen;
     m_g->init();
+}
+
+// Have the graphics object initialize fbos for lighting
+void Application::resetFBOs(int width, int height){
+    m_g->loadDeferredLightFBOs(width, height);
 }
 
 void Application::addScreen(Screen *s)
@@ -104,6 +110,8 @@ void Application::onRender()
             m_g->drawCubeMap(m_currentScreen->getCamera());
 
         m_g->setGraphicsMode(DEFAULT);
+//        m_g->setGraphicsMode(GEOMETRY);
+
         m_g->setColor(0.f, 0.f, 0.f, 1.f, 0.f);
 
         m_g->setCamera(m_currentScreen->getCamera(), m_width, m_height);

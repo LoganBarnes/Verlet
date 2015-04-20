@@ -73,4 +73,5 @@ void main(){
         }
     }
     color = clamp(color + allWhite, 0.0, 1.0) * allBlack;
+
 }

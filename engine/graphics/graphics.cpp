@@ -25,6 +25,7 @@ Graphics::Graphics()
     m_cube = new Cube(10);
     m_cyl = new Cylinder(50);
     m_sphere = new Sphere(50);
+    m_fullscreen_quad = new Shape(-1);
 
     m_cubeMap = new CubeMap();
     m_useCubeMap = false;
@@ -32,11 +33,20 @@ Graphics::Graphics()
 
     m_defaultLocs.clear();
     m_cubeLocs.clear();
+    m_geomLocs.clear();
+    m_lightLocs.clear();
+    m_compositeLocs.clear();
 
     m_currProj = glm::mat4();
     m_currView = glm::mat4();
     m_currScale = glm::mat4();
     m_frustum = glm::mat4();
+
+    m_fbos.clear();
+    m_textures.clear();
+    m_shaders.clear();
+
+    m_usingFog = false;
 
     m_pe = new ParticleEmitter();
 
@@ -61,74 +71,212 @@ Graphics::~Graphics()
 
 void Graphics::init()
 {
-    m_defaultShader = Graphics::loadShaders(
+
+    GLuint defaultShader, sparseShader, cubeShader, geomShader, lightShader, compositeShader, fogShader;
+
+    defaultShader = Graphics::loadShaders(
                 ":/shaders/default.vert",
                 ":/shaders/default.frag");
 
-    m_defaultLocs["projection"] = glGetUniformLocation(m_defaultShader, "projection");
-    m_defaultLocs["view"] = glGetUniformLocation(m_defaultShader, "view");
-    m_defaultLocs["model"] = glGetUniformLocation(m_defaultShader, "model");
+    m_defaultLocs["projection"] = glGetUniformLocation(defaultShader, "projection");
+    m_defaultLocs["view"] = glGetUniformLocation(defaultShader, "view");
+    m_defaultLocs["model"] = glGetUniformLocation(defaultShader, "model");
 
-    m_defaultLocs["diffuse_color"] = glGetUniformLocation(m_defaultShader, "diffuse_color");
-    m_defaultLocs["world_color"] = glGetUniformLocation(m_defaultShader, "world_color");
+    m_defaultLocs["diffuse_color"] = glGetUniformLocation(defaultShader, "diffuse_color");
+    m_defaultLocs["world_color"] = glGetUniformLocation(defaultShader, "world_color");
 
-    m_defaultLocs["transparency"] = glGetUniformLocation(m_defaultShader, "transparency");
-    m_defaultLocs["shininess"] = glGetUniformLocation(m_defaultShader, "shininess");
-    m_defaultLocs["useTexture"] = glGetUniformLocation(m_defaultShader, "useTexture");
-    m_defaultLocs["tex"] = glGetUniformLocation(m_defaultShader, "tex");
+    m_defaultLocs["transparency"] = glGetUniformLocation(defaultShader, "transparency");
+    m_defaultLocs["shininess"] = glGetUniformLocation(defaultShader, "shininess");
+    m_defaultLocs["useTexture"] = glGetUniformLocation(defaultShader, "useTexture");
+    m_defaultLocs["tex"] = glGetUniformLocation(defaultShader, "tex");
 
-    m_defaultLocs["subImages"] = glGetUniformLocation(m_defaultShader, "subImages");
-    m_defaultLocs["subPos"] = glGetUniformLocation(m_defaultShader, "subPos");
-    m_defaultLocs["repeatUV"] = glGetUniformLocation(m_defaultShader, "repeatUV");
+    m_defaultLocs["subImages"] = glGetUniformLocation(defaultShader, "subImages");
+    m_defaultLocs["subPos"] = glGetUniformLocation(defaultShader, "subPos");
+    m_defaultLocs["repeatUV"] = glGetUniformLocation(defaultShader, "repeatUV");
 
-    m_defaultLocs["allBlack"] = glGetUniformLocation(m_defaultShader, "allBlack");
-    m_defaultLocs["allWhite"] = glGetUniformLocation(m_defaultShader, "allWhite");
+    m_defaultLocs["allBlack"] = glGetUniformLocation(defaultShader, "allBlack");
+    m_defaultLocs["allWhite"] = glGetUniformLocation(defaultShader, "allWhite");
+
+    m_shaders.insert("defaultShader",defaultShader);
 
 
-    m_sparseShader = Graphics::loadShaders(
+    sparseShader = Graphics::loadShaders(
                 ":/shaders/sparse.vert",
                 ":/shaders/sparse.frag");
 
-    m_sparseLocs["projection"] = glGetUniformLocation(m_sparseShader, "projection");
-    m_sparseLocs["view"] = glGetUniformLocation(m_sparseShader, "view");
-    m_sparseLocs["envMap"] = glGetUniformLocation(m_sparseShader, "envMap");
+    m_sparseLocs["projection"] = glGetUniformLocation(sparseShader, "projection");
+    m_sparseLocs["view"] = glGetUniformLocation(sparseShader, "view");
+    m_sparseLocs["envMap"] = glGetUniformLocation(sparseShader, "envMap");
 
-    m_sparseLocs["tint"] = glGetUniformLocation(m_sparseShader, "tint");
-    m_sparseLocs["player"] = glGetUniformLocation(m_sparseShader, "player");
-    m_sparseLocs["playerMode"] = glGetUniformLocation(m_sparseShader, "playerMode");
+    m_sparseLocs["tint"] = glGetUniformLocation(sparseShader, "tint");
+    m_sparseLocs["player"] = glGetUniformLocation(sparseShader, "player");
+    m_sparseLocs["playerMode"] = glGetUniformLocation(sparseShader, "playerMode");
 
-    m_sparseLocs["tex"] = glGetUniformLocation(m_sparseShader, "tex");
-    m_sparseLocs["useTexture"] = glGetUniformLocation(m_sparseShader, "useTexture");
-    m_sparseLocs["transparency"] = glGetUniformLocation(m_sparseShader, "transparency");
+    m_sparseLocs["tex"] = glGetUniformLocation(sparseShader, "tex");
+    m_sparseLocs["useTexture"] = glGetUniformLocation(sparseShader, "useTexture");
+    m_sparseLocs["transparency"] = glGetUniformLocation(sparseShader, "transparency");
 
-    m_sparseLocs["subImages"] = glGetUniformLocation(m_sparseShader, "subImages");
-    m_sparseLocs["subPos"] = glGetUniformLocation(m_sparseShader, "subPos");
-    m_sparseLocs["repeatUV"] = glGetUniformLocation(m_sparseShader, "repeatUV");
+    m_sparseLocs["subImages"] = glGetUniformLocation(sparseShader, "subImages");
+    m_sparseLocs["subPos"] = glGetUniformLocation(sparseShader, "subPos");
+    m_sparseLocs["repeatUV"] = glGetUniformLocation(sparseShader, "repeatUV");
+
+    m_shaders.insert("sparseShader", sparseShader);
 
 
-    m_cubeShader = Graphics::loadShaders(
+    cubeShader = Graphics::loadShaders(
                 ":/shaders/cubemap.vert",
                 ":/shaders/cubemap.frag");
 
-    m_cubeLocs["projection"] = glGetUniformLocation(m_cubeShader, "projection");
-    m_cubeLocs["view"] = glGetUniformLocation(m_cubeShader, "view");
-    m_cubeLocs["envMap"] = glGetUniformLocation(m_cubeShader, "envMap");
+    m_cubeLocs["projection"] = glGetUniformLocation(cubeShader, "projection");
+    m_cubeLocs["view"] = glGetUniformLocation(cubeShader, "view");
+    m_cubeLocs["envMap"] = glGetUniformLocation(cubeShader, "envMap");
 
     m_cubeMap->init();
 
-    m_quad->init(m_defaultShader);
-    m_cone->init(m_defaultShader);
-    m_cube->init(m_defaultShader);
-    m_cyl->init(m_defaultShader);
-    m_sphere->init(m_defaultShader);
+    m_shaders.insert("cubeShader", cubeShader);
+
+
+    // load the geometry shader and set default locations
+    geomShader = Graphics::loadShaders(
+                ":/shaders/geomPass.vert",
+                ":/shaders/geomPass.frag");
+    m_geomLocs["projection"] = glGetUniformLocation(geomShader, "projection");
+    m_geomLocs["view"] = glGetUniformLocation(geomShader, "view");
+    m_geomLocs["model"] = glGetUniformLocation(geomShader, "model");
+    m_geomLocs["shininess"] = glGetUniformLocation(geomShader, "shininess");
+
+    m_shaders.insert("geomShader", geomShader);
+
+
+    // load the light pass shader
+    lightShader = Graphics::loadShaders(
+                ":/shaders/lightPass.vert",
+                ":/shaders/lightPass.frag");
+    m_lightLocs["positions"] = glGetUniformLocation(lightShader, "positions");
+    m_lightLocs["normals"] = glGetUniformLocation(lightShader, "normals");
+
+    m_shaders.insert("lightShader", lightShader);
+
+    // load the final pass shader
+    compositeShader = Graphics::loadShaders(
+                ":/shaders/finalPass.vert",
+                ":/shaders/finalPass.frag");
+    m_compositeLocs["projection"] = glGetUniformLocation(compositeShader, "projection");
+    m_compositeLocs["view"] = glGetUniformLocation(compositeShader, "view");
+    m_compositeLocs["diffuseLights"] = glGetUniformLocation(compositeShader, "diffuseLights");
+    m_compositeLocs["specularLights"] = glGetUniformLocation(compositeShader, "specularLights");
+
+    m_shaders.insert("compositeShader", compositeShader);
+
+    // load fog shader
+    fogShader = Graphics::loadShaders(
+                ":/shaders/fog.vert",
+                ":/shaders/fog.frag");
+
+    m_shaders.insert("fogShader", fogShader);
+
+    m_currentShader = defaultShader;
+
+    m_quad->init(m_currentShader);
+    m_cone->init(m_currentShader);
+    m_cube->init(m_currentShader);
+    m_cyl->init(m_currentShader);
+    m_sphere->init(m_currentShader);
+    m_fullscreen_quad->init(lightShader);
 //    m_rayQuad->init(m_rayShader);
 
     loadTexturesFromDirectory();
 
-    m_currentShader = m_defaultShader;
-    m_pe->initGL(glGetAttribLocation(m_sparseShader, "position"));
+    m_pe->initGL(glGetAttribLocation(m_shaders["sparseShader"], "position"));
 
     m_timer.start();
+}
+
+//Initialize three FBOs and their texture attachments for deferred lighting
+void Graphics::loadDeferredLightFBOs(int width, int height){
+
+    m_fbos.clear();
+
+    //create and load the first pass framebuffer with position and normal texture attachments
+    GLuint geomPass, lightPass, finalPass;
+    GLuint positionAttachment, normalAttachment, depthAttachment, diffuseAttachment, specularAttachment, fullLightAttachment;
+
+    // Bind first pass framebuffer with position and normal textures to write to
+    // OpenGL garbage:
+    glGenFramebuffers( 1, &geomPass );
+    glBindFramebuffer( GL_FRAMEBUFFER, geomPass );
+
+    glActiveTexture( GL_TEXTURE0 );
+    glGenTextures( 1, &positionAttachment );
+    glBindTexture( GL_TEXTURE_2D, positionAttachment );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
+    glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, positionAttachment, 0);
+
+    glActiveTexture( GL_TEXTURE1 );
+    glGenTextures( 1, &normalAttachment );
+    glBindTexture( GL_TEXTURE_2D, normalAttachment );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
+    glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normalAttachment, 0);
+
+    // depth buffer
+    glGenRenderbuffers( 1, &depthAttachment);
+    glBindRenderbuffer( GL_RENDERBUFFER, depthAttachment);
+    glRenderbufferStorage( GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, width, height);
+    glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthAttachment);
+
+    m_fbos.insert("geomPass", geomPass);
+    m_textures.insert("posAttachment", positionAttachment);
+    m_textures.insert("normalAttachment", normalAttachment);
+    m_textures.insert("depthAttachment", depthAttachment);
+
+    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+    // Bind second pass framebuffer with diffuse and specular light textures to write to
+    glGenFramebuffers( 1, &lightPass);
+    glBindFramebuffer( GL_FRAMEBUFFER, lightPass);
+
+    glActiveTexture( GL_TEXTURE0 );
+    glGenTextures( 1, &diffuseAttachment);
+    glBindTexture( GL_TEXTURE_2D, diffuseAttachment);
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
+    glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, diffuseAttachment, 0);
+
+    glActiveTexture( GL_TEXTURE1 );
+    glGenTextures( 1, &specularAttachment);
+    glBindTexture( GL_TEXTURE_2D, specularAttachment);
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
+    glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, specularAttachment, 0);
+
+    m_fbos.insert("lightPass", lightPass);
+    m_textures.insert("diffuseAttachment", diffuseAttachment);
+    m_textures.insert("specularAttachment", specularAttachment);
+
+    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+    // bind final pass framebuffer
+    glGenFramebuffers( 1, &finalPass);
+    glBindFramebuffer( GL_FRAMEBUFFER, finalPass);
+
+    glActiveTexture( GL_TEXTURE0 );
+    glGenTextures( 1, &fullLightAttachment);
+    glBindTexture( GL_TEXTURE_2D, fullLightAttachment);
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
+    glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fullLightAttachment, 0);
+
+    m_fbos.insert("finalPass", finalPass);
+    m_textures.insert("fullLightAttachment", fullLightAttachment);
+
+    glBindFramebuffer( GL_FRAMEBUFFER, 0);
 }
 
 
@@ -149,7 +297,7 @@ void Graphics::setCamera(Camera *camera, int w, int h)
 
     m_w = w; m_h = h;
 
-    if (m_currentShader == m_defaultShader)
+    if (m_currentShader == m_shaders["defaultShader"])
         clearLights();
 }
 
@@ -159,8 +307,9 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
     switch(gm)
     {
     case DEFAULT:
-        m_currentShader = m_defaultShader;
-        glUseProgram(m_defaultShader);
+    {
+        m_currentShader = m_shaders["defaultShader"];
+        glUseProgram(m_shaders["defaultShader"]);
 
         // Set scene uniforms.
         glUniformMatrix4fv(m_defaultLocs["projection"], 1, GL_FALSE,
@@ -168,9 +317,11 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
         glUniformMatrix4fv(m_defaultLocs["view"], 1, GL_FALSE,
                 glm::value_ptr(m_currView));
         break;
+    }
     case SPARSE:
-        m_currentShader = m_sparseShader;
-        glUseProgram(m_sparseShader);
+    {
+        m_currentShader = m_shaders["sparseShaders"];
+        glUseProgram(m_currentShader);
 
         // Set scene uniforms.
         glUniformMatrix4fv(m_sparseLocs["projection"], 1, GL_FALSE,
@@ -178,11 +329,15 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
         glUniformMatrix4fv(m_sparseLocs["view"], 1, GL_FALSE,
                 glm::value_ptr(m_currView));
         break;
+    }
     case CUBEMAP:
+    {
         break;
+    }
     case DRAW2D:
-        m_currentShader = m_defaultShader;
-        glUseProgram(m_defaultShader);
+    {
+        m_currentShader = m_shaders["defaultShader"];
+        glUseProgram(m_shaders["defaultShader"]);
         glm::mat4 trans = glm::mat4();
 
         // Set scene uniforms.
@@ -191,6 +346,79 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
         glUniformMatrix4fv(m_defaultLocs["view"], 1, GL_FALSE,
                 glm::value_ptr(trans));
         break;
+    }
+    case GEOMETRY:
+    {
+        m_currentShader = m_shaders["geomShader"];
+        glUseProgram(m_currentShader);
+
+        // Set scene uniforms.
+        glUniformMatrix4fv(m_geomLocs["projection"], 1, GL_FALSE,
+                glm::value_ptr(m_currProj));
+        glUniformMatrix4fv(m_geomLocs["view"], 1, GL_FALSE,
+                glm::value_ptr(m_currView));
+        break;
+    }
+    case LIGHT:
+    {
+        m_currentShader = m_shaders["lightShader"];
+//        m_fullscreen_quad->init(m_currentShader);
+        glUseProgram(m_currentShader);
+
+        // Send attachments from the geometry fbo as textures to lightPass
+        glUniform1i( m_lightLocs["positions"], 0 );
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_textures["posAttachment"]);
+
+        glUniform1i( m_lightLocs["normals"], 1 );
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, m_textures["normalAttachment"]);
+
+        glUniform2f(glGetUniformLocation(m_shaders["lightShader"], "viewport") , m_w, m_h);
+        break;
+    }
+    case COMPOSITE:
+    {
+        m_currentShader = m_shaders["compositeShader"];
+        glUseProgram(m_currentShader);
+
+        glUniformMatrix4fv(m_compositeLocs["projection"], 1, GL_FALSE,
+                glm::value_ptr(m_currProj));
+        glUniformMatrix4fv(m_compositeLocs["view"], 1, GL_FALSE,
+                glm::value_ptr(m_currView));
+
+        // Send attachments from the geometry fbo as textures to lightPass
+        glUniform1i( glGetUniformLocation(m_currentShader, "diffuseLights"), 0 );
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_textures["diffuseAttachment"]);
+
+        glUniform1i( glGetUniformLocation(m_currentShader, "specularLights"), 1 );
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, m_textures["specularAttachment"]);
+
+        glUniform2f(glGetUniformLocation(m_currentShader, "viewport") , m_w, m_h);
+        glUniform1i(glGetUniformLocation(m_currentShader, "usingFog"), m_usingFog);
+
+        break;
+    }
+    case FOG:
+    {
+        // attach lit image and viewport. eyepos set gameside if using
+        // may attach depth buffer
+        m_currentShader = m_shaders["fogShader"];
+        glUseProgram(m_currentShader);
+
+        glUniform1i( glGetUniformLocation(m_currentShader, "litImage"), 0 );
+        glActiveTexture( GL_TEXTURE0 );
+        glBindTexture( GL_TEXTURE_2D, m_textures["fullLightAttachment"]);
+
+        glUniform1i( glGetUniformLocation(m_currentShader, "positions"), 1 );
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, m_textures["posAttachment"]);
+
+        glUniform2f( glGetUniformLocation(m_currentShader, "viewport"), m_w, m_h );
+        break;
+    }
     }
     return m_currentShader;
 }
@@ -202,7 +430,7 @@ void Graphics::clearLights()
         std::ostringstream os;
         os << i;
         std::string indexString = "[" + os.str() + "]"; // e.g. [0], [1], etc.
-        glUniform3f(glGetUniformLocation(m_defaultShader, ("lightColors" + indexString).c_str()), 0, 0, 0);
+        glUniform3f(glGetUniformLocation(m_shaders["defaultShader"], ("lightColors" + indexString).c_str()), 0, 0, 0);
     }
 }
 
@@ -317,7 +545,7 @@ bool Graphics::cubeMapIsActive()
 
 void Graphics::drawCubeMap(Camera *camera)
 {
-    glUseProgram(m_cubeShader);
+    glUseProgram(m_shaders["sparseShader"]);
     glDepthMask(GL_FALSE);
 
     glUniformMatrix4fv(m_cubeLocs["projection"], 1, GL_FALSE,
@@ -366,13 +594,22 @@ void Graphics::addLight(const Light &light)
     os << light.id;
     std::string indexString = "[" + os.str() + "]"; // e.g. [0], [1], etc.
 
-    glUniform1i(glGetUniformLocation(m_defaultShader, ("lightTypes" + indexString).c_str()), light.type);
-    glUniform3fv(glGetUniformLocation(m_defaultShader, ("lightPositions" + indexString).c_str()), 1,
+//    glUniform1i(glGetUniformLocation(m_shaders["defaultShader"], ("lightTypes" + indexString).c_str()), light.type);
+//    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightPositions" + indexString).c_str()), 1,
+//            glm::value_ptr(light.posDir));
+//    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightColors" + indexString).c_str()), 1,
+//                glm::value_ptr(light.color));
+//    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightAttenuations" + indexString).c_str()), 1,
+//            glm::value_ptr(light.function));
+
+    glUniform1i(glGetUniformLocation(m_shaders["lightShader"], ("lightTypes" + indexString).c_str()), light.type);
+    glUniform3fv(glGetUniformLocation(m_shaders["lightShader"], ("lightPositions" + indexString).c_str()), 1,
             glm::value_ptr(light.posDir));
-    glUniform3fv(glGetUniformLocation(m_defaultShader, ("lightColors" + indexString).c_str()), 1,
+    glUniform3fv(glGetUniformLocation(m_shaders["lightShader"], ("lightColors" + indexString).c_str()), 1,
                 glm::value_ptr(light.color));
-    glUniform3fv(glGetUniformLocation(m_defaultShader, ("lightAttenuations" + indexString).c_str()), 1,
+    glUniform3fv(glGetUniformLocation(m_shaders["lightShader"], ("lightAttenuations" + indexString).c_str()), 1,
             glm::value_ptr(light.function));
+
 }
 
 
@@ -402,6 +639,11 @@ void Graphics::drawLineSeg(glm::vec3 p1, glm::vec3 p2, float width, GLenum mode)
 void Graphics::drawQuad(glm::mat4 trans, GLenum mode)
 {
     m_quad->transformAndRender(m_currentShader, trans, mode);
+}
+
+void Graphics::drawFullScreenQuad(glm::mat4 trans, GLenum mode)
+{
+    m_fullscreen_quad->transformAndRender(m_currentShader, trans, mode);
 }
 
 
@@ -435,6 +677,61 @@ void Graphics::drawParticles(glm::vec3 source, float fuzziness)
     m_pe->drawParticlesVAO(m_currentShader, source);
 }
 
+
+//Below two methods can be combined into one
+
+// Set up the first frame buffer for rendering into and bind geom shader
+GLuint Graphics::setupFirstPass(){
+
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+
+    // bind appropriate framebuffer and shader
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["geomPass"]);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
+
+    // Necessary to enable multiple drawing targets
+    GLenum buffersToDraw[] = { GL_COLOR_ATTACHMENT0 , GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers( 2, buffersToDraw );
+
+    return setGraphicsMode(GEOMETRY);
+}
+
+GLuint Graphics::setupSecondPass(){
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["lightPass"]);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
+
+    // Necessary to enable multiple drawing targets
+    GLenum buffersToDraw[] = { GL_COLOR_ATTACHMENT0 , GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers( 2, buffersToDraw );
+
+    return setGraphicsMode(LIGHT);
+}
+
+GLuint Graphics::setupFinalPass(){
+    // composite the final image from lighting
+    //if using fog bind final pass framebuffer to write to
+
+    if(m_usingFog)
+        glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["finalPass"]);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
+
+    // Necessary to enable multiple drawing targets
+    GLenum buffersToDraw[] = { GL_COLOR_ATTACHMENT0 };
+    glDrawBuffers( 1, buffersToDraw );
+
+    return setGraphicsMode(COMPOSITE);
+}
+
+GLuint Graphics::setupFogPass(){
+    // composite final image with fog
+    return setGraphicsMode(FOG);
+}
 
 
 

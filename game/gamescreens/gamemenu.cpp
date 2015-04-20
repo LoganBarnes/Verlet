@@ -98,7 +98,7 @@ void GameMenu::onMouseMoved(QMouseEvent *, float deltaX, float deltaY)
 
 void GameMenu::onMousePressed(QMouseEvent *e)
 {
-    if (e->button() == Qt::LeftButton && m_startButton->contains(m_cursor[3][0], m_cursor[3][1]))
+//    if (e->button() == Qt::LeftButton && m_startButton->contains(m_cursor[3][0], m_cursor[3][1]))
         m_parentApp->addScreen(new GameScreen(m_parentApp));
 }
 

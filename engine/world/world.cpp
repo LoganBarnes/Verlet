@@ -1,8 +1,8 @@
 #include "world.h"
 #include "manager.h"
 
-//#include <iostream>
-//using namespace std;
+#include <iostream>
+using namespace std;
 
 World::World()
 {
@@ -14,6 +14,7 @@ World::World()
 
     m_player = NULL;
     m_gravity = glm::vec3();
+    useDeferredLighting = true;
 }
 
 World::~World()
@@ -190,6 +191,14 @@ void World::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY)
 void World::onKeyPressed(QKeyEvent *e)
 {
     m_player->onKeyPressed(e);
+
+    // toggle deferred lighting
+    if(e->key()==76){
+        if(useDeferredLighting)
+            useDeferredLighting = false;
+        else
+            useDeferredLighting = true;
+    }
 }
 
 void World::onKeyReleased(QKeyEvent *e)

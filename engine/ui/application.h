@@ -43,6 +43,9 @@ public:
     void setUseCubeMap(bool use);
     GLuint getShader(GraphicsMode gm);
 
+    // prepare graphics object for lighting
+    void resetFBOs(int width, int height);
+
 private:
     QList<Screen *> m_screens;
     Screen *m_currentScreen;

@@ -84,7 +84,8 @@ SOURCES += \
     game/gamescreens/gamescreen.cpp \
     game/entities/gameplayer.cpp \
     game/gamescreens/gamemenu.cpp \
-    game/world/gameworld.cpp
+    game/world/gameworld.cpp \
+    engine/shapes/quad.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -128,7 +129,8 @@ HEADERS += \
     game/gamescreens/gamemenu.h \
     game/world/gameworld.h \
     game/entities/gameplayer.h \
-    engine/common/debugprinting.h
+    engine/common/debugprinting.h \
+    engine/shapes/quad.h
 
 
 FORMS += engine/ui/mainwindow.ui

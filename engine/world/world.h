@@ -56,6 +56,7 @@ protected:
 
     QList<Manager *> m_managers;
     glm::vec3 m_gravity;
+    bool useDeferredLighting;
 
 };
 

@@ -4,6 +4,7 @@
 #include "gamemenu.h"
 
 #include <iostream>
+using namespace std;
 
 View::View(QGLFormat format, QWidget *parent) : QGLWidget(format, parent)
 {
@@ -129,6 +130,11 @@ void View::resizeGL(int w, int h)
     glViewport(0, 0, w, h);
     m_app->onResize(w, h);
     QCursor::setPos(mapToGlobal(QPoint(width() / 2, height() / 2)));
+
+//    cout<<"view dimensions: "<<width()<<" "<<height()<<endl;
+
+    // Update the fbos
+    m_app->resetFBOs(w,h);
 }
 
 void View::mousePressEvent(QMouseEvent *event)

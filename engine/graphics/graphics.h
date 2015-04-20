@@ -17,7 +17,7 @@
 
 enum GraphicsMode
 {
-    DEFAULT, SPARSE, CUBEMAP, DRAW2D
+    DEFAULT, SPARSE, CUBEMAP, DRAW2D, GEOMETRY, LIGHT, COMPOSITE, FOG
 };
 
 enum ShapeType
@@ -96,11 +96,18 @@ public:
     void drawCylinder(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawSphere(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawParticles(glm::vec3 source, float fuzziness);
+    void drawFullScreenQuad(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
 
     void particlesReset();
     void particlesSetForce(glm::vec3 force);
 
     static GLuint loadShaders(const char *vertex_file_path, const char *fragment_file_path);
+
+    void loadDeferredLightFBOs(int width, int height);
+    GLuint setupFirstPass();
+    GLuint setupSecondPass();
+    GLuint setupFinalPass();
+    GLuint setupFogPass();
 
 private:
     void clearLights();
@@ -113,14 +120,15 @@ private:
     QHash<QString, GLint> m_defaultLocs;
     QHash<QString, GLint> m_sparseLocs;
     QHash<QString, GLint> m_cubeLocs;
+    QHash<QString, GLint> m_geomLocs;
+    QHash<QString, GLint> m_lightLocs;
+    QHash<QString, GLint> m_compositeLocs;
 
-    QHash<QString, GLint> m_textures;
+    QHash<QString, GLuint> m_textures;
+    QHash<QString, GLuint> m_shaders;
+    QHash<QString, GLint> m_fbos;
 
     GLuint m_currentShader;
-    GLuint m_defaultShader;
-    GLuint m_sparseShader;
-    GLuint m_cubeShader;
-
     CubeMap *m_cubeMap;
 
     glm::mat4 m_currProj;
@@ -132,9 +140,11 @@ private:
     Shape *m_cube;
     Shape *m_cyl;
     Shape *m_sphere;
+    Shape* m_fullscreen_quad;
 
     bool m_useCubeMap;
     bool m_usingAtlas;
+    bool m_usingFog;
 
     int m_w, m_h;
 

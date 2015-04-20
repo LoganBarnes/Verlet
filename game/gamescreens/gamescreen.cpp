@@ -36,21 +36,21 @@ GameScreen::GameScreen(Application *parent)
 
 
     /////////////// how lights are created (10 is the maximum in the shader for now)///////////////////
-    // light struct
-    Light *light;
+//    // light struct
+//    Light *light;
 
-    for (int i = 0; i < 10; i++)
-    {
-        float angle = i*.2f*glm::pi<float>();
+//    for (int i = 0; i < 10; i++)
+//    {
+//        float angle = i*.2f*glm::pi<float>();
 
-        light = new Light();
-        light->id = i;                  // index into array in shader
-        light->type = POINT;            // can be POINT or DIRECTIONAL for now
-        light->color = glm::vec3(.2f);  // rgb color
-        light->posDir = glm::vec3(cos(angle) * 10, 10, sin(angle) * 10 - 15);// position or direction depending on light type
+//        light = new Light();
+//        light->id = i;                  // index into array in shader
+//        light->type = POINT;            // can be POINT or DIRECTIONAL for now
+//        light->color = glm::vec3(.2f);  // rgb color
+//        light->posDir = glm::vec3(cos(angle) * 10, 10, sin(angle) * 10 - 15);// position or direction depending on light type
 
-        m_tempLights.append(light);
-    }
+//        m_tempLights.append(light);
+//    }
 }
 
 GameScreen::~GameScreen()
@@ -58,8 +58,8 @@ GameScreen::~GameScreen()
     delete m_oh;
     delete m_world;
 
-    foreach (Light *l, m_tempLights)
-        delete l;
+//    foreach (Light *l, m_tempLights)
+//        delete l;
 }
 
 // update and render
@@ -83,45 +83,56 @@ void GameScreen::onRender(Graphics *g)
      * Adding and drawing lights.
      * (lights don't need to be drawn but it can help to see them in the scene)
      */
-    g->setAllWhite(true);// this sets all objects to be completely white
-    foreach(Light *light, m_tempLights)
-    {
-        g->addLight(*light); // add a light struct to the scene
-        g->drawSphere(glm::translate(glm::mat4(), light->posDir) * trans); // draw a sphere for the light
-    }
-    g->setAllWhite(false); // back to normal rendering
+//    g->setAllWhite(true);// this sets all objects to be completely white
+//    foreach(Light *light, m_tempLights)
+//    {
+//        g->addLight(*light); // add a light struct to the scene
+////        g->drawSphere(glm::translate(glm::mat4(), light->posDir) * trans); // draw a sphere for the light
+//    }
+//    g->setAllWhite(false); // back to normal rendering
 
 
-    /*
-     * Drawing shapes.
-     * Set the color of the shape (including transparency and shininess)
-     * then call the appropriate draw<shape>() method.
-     */
 
-    // sphere
-    trans = glm::translate(glm::mat4(), glm::vec3(-5, 0, -15));
-    g->setColor(1, 0, 0, 1, 0);
-    g->drawSphere(trans);
 
-    // cone
-    trans = glm::translate(glm::mat4(), glm::vec3(-2.5, 0, -15));
-    g->setColor(1, .5, 0, 1, 0);
-    g->drawCone(trans);
+    //add light types to the gpu
+    //add lights method
 
-    // cube
-    trans = glm::translate(glm::mat4(), glm::vec3(0, 0, -15));
-    g->setColor(.5, 1, 0, 1, 0);
-    g->drawCube(trans);
 
-    // cylinder
-    trans = glm::translate(glm::mat4(), glm::vec3(2.5, 0, -15));
-    g->setColor(0, 1, .3, 1, 0);
-    g->drawCylinder(trans);
 
-    // quad
-    trans = glm::translate(glm::mat4(), glm::vec3(5, 0, -15));
-    g->setColor(0, 0, 1, 1, 0);
-    g->drawQuad(trans);
+
+
+
+
+//    /*
+//     * Drawing shapes.
+//     * Set the color of the shape (including transparency and shininess)
+//     * then call the appropriate draw<shape>() method.
+//     */
+
+//    // sphere
+//    trans = glm::translate(glm::mat4(), glm::vec3(-5, 0, -15));
+//    g->setColor(1, 0, 0, 1, 0);
+//    g->drawSphere(trans);
+
+//    // cone
+//    trans = glm::translate(glm::mat4(), glm::vec3(-2.5, 0, -15));
+//    g->setColor(1, .5, 0, 1, 0);
+//    g->drawCone(trans);
+
+//    // cube
+//    trans = glm::translate(glm::mat4(), glm::vec3(0, 0, -15));
+//    g->setColor(.5, 1, 0, 1, 0);
+//    g->drawCube(trans);
+
+//    // cylinder
+//    trans = glm::translate(glm::mat4(), glm::vec3(2.5, 0, -15));
+//    g->setColor(0, 1, .3, 1, 0);
+//    g->drawCylinder(trans);
+
+//    // quad
+//    trans = glm::translate(glm::mat4(), glm::vec3(5, 0, -15));
+//    g->setColor(0, 0, 1, 1, 0);
+//    g->drawQuad(trans);
 
     /////////////////////////////////////////////////////////
 

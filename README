@@ -2,3 +2,12 @@
 
 COMPILED USING QT 5.2.0!!!
 
+Engine Requirements: 
+
+Lighting positions and normals implemented. 
+
+Engine has loadDeferredLightFBO() method that sets up all fbos needed. Several shaders have been written. Output of the geometry shader is saved in frame buffer and output in the lightPass shader where it is read from texture. 
+geomPass shader outputs pos/normals. lightPass shader reads and renders them. 
+
+Press 1 for normal diffuse light. 2 for position visualization, 3 for normal visualization. 
+
