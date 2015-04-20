@@ -8,6 +8,7 @@
 #include "geometriccollisionmanager.h"
 #include "verletmanager.h"
 #include "ray.h"
+#include "link.h"ttt
 
 
 #include "debugprinting.h"
@@ -76,6 +77,20 @@ void TestLevelScreen::onTick(float secs)
 
         interpolate = draggedMouse;
         //interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(0.01, seconds));
+    }
+    if(tearMode&&vm->m_curV>-1){
+        Verlet* hitV = vm->getVerlet(vm->m_curV);
+        glm::vec3 point = hitV->getPoint(vm->m_curI);
+        glm::vec4 n = this->getCamera()->getLook();
+        n*=-1;
+
+        float t = vm->m_ray->hitPlane(point,glm::vec3(n));
+        tearMouse = vm->m_ray->getPoint(t);
+        tearLink = hitV->closestLink(vm->m_curI, tearMouse);
+
+        //Comment these out to visualize edge selection
+        hitV->tearLink(tearLink);
+        tearLink = NULL;
     }
 }
 
@@ -174,6 +189,8 @@ void TestLevelScreen::onKeyPressed(QKeyEvent *e)
         return;
     }
     m_world->onKeyPressed(e);
+    if(e->key() == Qt::Key_T)
+        tearMode=true;
 }
 
 void TestLevelScreen::onKeyReleased(QKeyEvent *e )
@@ -187,6 +204,9 @@ void TestLevelScreen::onKeyReleased(QKeyEvent *e )
     if(e->key() == Qt::Key_Up) windDirection = glm::vec3(0,0,-1);
     if(e->key() == Qt::Key_Left) windDirection = glm::vec3(-1,0,0);
     if(e->key() == Qt::Key_Right) windDirection = glm::vec3(1,0,0);
+
+    if(e->key() == Qt::Key_T)
+        tearMode=false;
 
     m_world->onKeyReleased(e);
 
@@ -212,7 +232,6 @@ void TestLevelScreen::onMousePressed(QMouseEvent *e)
         draggedVerlet = vm->getVerlet(vm->m_curV);
         interpolate = draggedVerlet->getPoint(draggedPoint);
     }
-
     if (e->button() == Qt::RightButton)
         m_parentApp->setMouseDecoupled(false);
 }

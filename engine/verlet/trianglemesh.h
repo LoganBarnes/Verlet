@@ -31,6 +31,26 @@ struct Tri
         if(edges[2]==orig)
             edges[2]=l;
     }
+    void replaceIndex(int index, int index2){
+        if(a==index)
+            a=index2;
+        else if(b==index)
+            b=index2;
+        else
+            c=index2;
+    }
+};
+
+struct Duplicate
+{
+    Link* shear1;
+    Link* shear2;
+    Link* seg1; Link* seg2; Link* seg3; Link* seg4;
+
+    Duplicate(Link* s1, Link* s2, Link* l1, Link* l2, Link* l3, Link* l4){
+        shear1 = s1; shear2 = s2;
+        seg1 = l1; seg2= l2; seg3 = l3; seg4 = l4;
+    }
 };
 
 class TriangleMesh: public Verlet
@@ -60,8 +80,24 @@ private:
     QHash<int, int> numTri; //how many triangles each index is part of
 
     //Shear
-    Link* createShearLink(int a, int b, int c, Link* seg1 = NULL, Link* seg2 = NULL);
+    Link* createShear(int a, int b, int c, Link* seg1 = NULL, Link* seg2 = NULL);
     void removeShear(Link* l);
+
+    //Tear
+    //Call this to tear a link- duplicates it, then checks surrounding points
+    //for tears to merge
+    void tearLink(Link* l);
+    //Helper: checks whether index is connected to any (other) broken links
+    bool checkTorn(int index);
+    //Called from tearLink if there are tears to merge- inserts a point so they
+    //can be separated
+    void insertPoint(int index, Tri* t1, Link* l1,
+                     Tri* t2, Link* l2, std::vector<Duplicate> duplicate);
+    //Helper: copies all data from index into a new point at returned index
+    int duplicatePoint(int index);
+    //Helper: finds all links + triangles adjoining l1 and attached to index
+    void findConnecting(int index, Tri*& t1, Link*& l1,
+                        QList<Tri*>& triangles, QList<Link*>& links);
 
     //For tearing
     //which shear constraints end at index: reassign if point is duplicated
