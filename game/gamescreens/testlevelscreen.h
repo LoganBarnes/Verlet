@@ -8,6 +8,7 @@ class ObjectHandler;
 class OBJ;
 class VerletManager;
 class Verlet;
+class Link;
 
 class TestLevelScreen : public Screen
 {
@@ -61,6 +62,12 @@ private:
 
     //testing wind
     glm::vec3 windDirection;
+
+    //testing tearing
+    bool tearMode = false;
+    //World-space pt: where cursor's ray intersects w/ tear's plane
+    glm::vec3 tearMouse;
+    Link* tearLink = NULL;
 
 };
 
