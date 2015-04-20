@@ -6,7 +6,7 @@
 class SoundTester : public MovableEntity
 {
 public:
-    SoundTester(Audio *audio, glm::vec3 pos);
+    SoundTester(glm::vec3 pos);
     virtual ~SoundTester();
 
     virtual void onTick(float secs);

@@ -33,7 +33,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     GamePlayer *player = new GamePlayer(cam, playerPos);
     player->useSound(m_parentApp->getAudioObject());
 
-    SoundTester *st = new SoundTester(NULL, glm::vec3());
+    SoundTester *st = new SoundTester(glm::vec3());
     st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
     st->playSound();
 
