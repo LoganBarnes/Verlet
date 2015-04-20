@@ -3,13 +3,9 @@
 #include "obj.h"
 #include <QSet>
 
-//#include <iostream>
-//using namespace std;
-//#include <glm/ext.hpp>
-
 #define GLM_FORCE_RADIANS
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/vector_angle.hpp>
+#include <gtc/type_ptr.hpp>
+#include <gtx/vector_angle.hpp>
 
 NavMeshHandler::NavMeshHandler()
 {

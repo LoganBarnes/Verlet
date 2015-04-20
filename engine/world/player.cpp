@@ -1,19 +1,21 @@
 #include "player.h"
+#include "audio.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtx/norm.hpp>
+#include <gtx/norm.hpp>
 
 Player::Player(ActionCamera *cam, glm::vec3 pos)
-    : MovableEntity(pos)
+    : MovableEntity(pos),
+      m_camera(cam),
+      m_offset(0.f),
+      m_maxOffset(15.f),
+      m_wsad(0),
+      m_canJump(false),
+      m_jump(false),
+      m_eyeHeight(.75f)
 {
-    m_camera = cam;
-    m_offset = 0.f;
-    m_camera->setOffset(0.f);
-    m_wsad = 0;
-    m_jump = false;
-    m_canJump = false;
-
-    m_eyeHeight = .75f;
+    m_camera->setOffset(m_offset);
+    setUpdatePositionOnTick(false);
 
     setMass(1.f);
 }
@@ -64,6 +66,9 @@ void Player::onTick(float secs)
 void Player::setCameraPos()
 {
     m_camera->setCenter(getPosition() + glm::vec3(0, m_eyeHeight, 0));
+
+    if (m_audio)
+        m_audio->setListener(m_camera->getEye(), getVelocity(), m_camera->getLook(), m_camera->getUp());
 }
 
 
@@ -101,8 +106,8 @@ void Player::onKeyPressed(QKeyEvent *e)
     case Qt::Key_Minus:
     case Qt::Key_Underscore:
         m_offset += 1.f;
-        if (m_offset > 15.f)
-            m_offset = 15.f;
+        if (m_offset > m_maxOffset)
+            m_offset = m_maxOffset;
         m_camera->setOffset(m_offset);
         break;
     case Qt::Key_Plus:
@@ -119,7 +124,7 @@ void Player::onKeyPressed(QKeyEvent *e)
         break;
     case Qt::Key_ParenLeft:
     case Qt::Key_9:
-        m_offset = 15.f;
+        m_offset = m_maxOffset;
         m_camera->setOffset(m_offset);
         break;
 
@@ -158,6 +163,13 @@ void Player::handleCollision(Collision *col)
     if (glm::dot(col->impulse, glm::vec3(0, 1, 0)) > .5)
         m_canJump = true;
 
+}
+
+
+void Player::useSound(Audio *audio)
+{
+    m_audio = audio;
+    m_audio->setListener(m_camera->getEye(), getVelocity(), m_camera->getLook(), m_camera->getUp());
 }
 
 

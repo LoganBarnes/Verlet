@@ -16,7 +16,7 @@ public:
     bool isDrawable() { return m_drawable; }
     GraphicsMode getGraphicsMode() { return m_gm; }
 
-    virtual void manage(World *world, float onTickSecs) = 0;
+    virtual void manage(World *world, float onTickSecs, float mouseX, float mouseY) = 0;
     virtual void onDraw(Graphics *) {}
 
 private:

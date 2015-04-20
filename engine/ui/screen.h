@@ -2,12 +2,9 @@
 #define SCREEN_H
 
 #include <QKeyEvent>
-#include "graphics.h"
+//#include "graphics.h"
 #include "camera.h"
-
-#include <iostream>
-
-using namespace std;
+class Graphics;
 
 class Application;
 
@@ -32,15 +29,17 @@ public:
 
     // mouse events
     virtual void onMousePressed(QMouseEvent *e) = 0;
-    virtual void onMouseMoved(QMouseEvent *e, float deltaX, float deltaY) = 0;
+    virtual void onMouseMoved(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos) = 0;
     virtual void onMouseReleased(QMouseEvent *e) = 0;
 
-    virtual void onMouseDragged(QMouseEvent *e, float deltaX, float deltaY) = 0;
+    virtual void onMouseDragged(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos) = 0;
     virtual void onMouseWheel(QWheelEvent *e) = 0;
 
     // key events
     virtual void onKeyPressed(QKeyEvent *e) = 0;
     virtual void onKeyReleased(QKeyEvent *e) = 0;
+
+    virtual void onLeapKeyTap(glm::vec3) {}
 
     // return screen camera
     Camera *getCamera() const

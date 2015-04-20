@@ -6,7 +6,12 @@
 #include <iostream>
 using namespace std;
 
-View::View(QGLFormat format, QWidget *parent) : QGLWidget(format, parent)
+View::View(QGLFormat format, QWidget *parent)
+    : QGLWidget(format, parent),
+      m_fpsInit(false),
+      freq(200),
+      counter(0),
+      totalfps(0.f)
 {
     // View needs all mouse move events, not just mouse drag events
     setMouseTracking(true);
@@ -22,15 +27,6 @@ View::View(QGLFormat format, QWidget *parent) : QGLWidget(format, parent)
 
     // create game application
     m_app = new Application();
-
-    m_mouseDown = false;
-
-    m_fpsInit = false;
-    fps = 0;
-
-    freq = 200;
-    counter = 0;
-    totalfps = 0.f;
 }
 
 View::~View()
@@ -76,7 +72,6 @@ void View::initializeGL()
     // frame rate depends on the operating system and other running programs)
     time.start();
     timer.start(1000 / 60);
-
 
     // Center the mouse, which is explained more in mouseMoveEvent() below.
     // This needs to be done here because the mouse may be initially outside
@@ -139,7 +134,6 @@ void View::resizeGL(int w, int h)
 
 void View::mousePressEvent(QMouseEvent *event)
 {
-    m_mouseDown = true;
     m_app->onMousePressed(event);
 }
 
@@ -152,21 +146,28 @@ void View::mouseMoveEvent(QMouseEvent *event)
     // in that direction. Note that it is important to check that deltaX and
     // deltaY are not zero before recentering the mouse, otherwise there will
     // be an infinite loop of mouse move events.
-    int deltaX = event->x() - width() / 2;
-    int deltaY = event->y() - height() / 2;
-    if (!deltaX && !deltaY) return;
-    QCursor::setPos(mapToGlobal(QPoint(width() / 2, height() / 2)));
 
-    // TODO: Handle mouse movements here
-    if (m_mouseDown)
-        m_app->onMouseDragged(event, deltaX, deltaY);
-    else
-        m_app->onMouseMoved(event, deltaX, deltaY);
+    int halfWidthI = width() / 2;
+    int halfHightI = height() / 2;
+
+    int deltaXI = event->x() - halfWidthI;
+    int deltaYI = event->y() - halfHightI;
+    if (!deltaXI && !deltaYI) return;
+
+    QCursor::setPos(mapToGlobal(QPoint(halfWidthI, halfHightI)));
+
+    // sets mouse deltas between -1 and 1
+    float halfWidth = width() * .5f;
+    float halfHeight = height() * .5f;
+
+    float deltaX = (event->x() - halfWidth) / halfWidth;
+    float deltaY = (event->y() - halfHeight) / halfHeight;
+
+    m_app->onMouseMoved(event, deltaX, deltaY);
 }
 
 void View::mouseReleaseEvent(QMouseEvent *event)
 {
-    m_mouseDown = false;
     m_app->onMouseReleased(event);
 }
 
@@ -179,12 +180,16 @@ void View::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) QApplication::quit();
 
-    // TODO: Handle keyboard presses here
     m_app->onKeyPressed(event);
 }
 
 void View::keyReleaseEvent(QKeyEvent *event)
 {
+    if (event->key() == m_app->getMouseDecoupleKey())
+    {
+        QCursor::setPos(mapToGlobal(QPoint(width() / 2, height() / 2)));
+    }
+
     m_app->onKeyReleased(event);
 }
 
@@ -196,6 +201,9 @@ void View::tick()
 
     // TODO: Implement the game update here
     m_app->onTick(seconds);
+
+    // don't show cursor
+    QApplication::setOverrideCursor(Qt::BlankCursor);
 
     // Flag this view for repainting (Qt will call paintGL() soon after)
     update();

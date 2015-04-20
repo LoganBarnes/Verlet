@@ -5,9 +5,7 @@
 #include "geometriccollisionmanager.h"
 #include "triangle.h"
 
-#include <glm/gtc/constants.hpp>
-
-//#include <debugprinting.h>
+#include <gtc/constants.hpp>
 
 GameScreen::GameScreen(Application *parent)
     : Screen(parent)
@@ -21,6 +19,7 @@ GameScreen::GameScreen(Application *parent)
     cam->setCenter(playerPos);
 
     GamePlayer *player = new GamePlayer(cam, playerPos);
+//    player->m_usingLeap = m_parentApp->isUsingLeapMotion();
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
 
@@ -63,7 +62,7 @@ GameScreen::~GameScreen()
 }
 
 // update and render
-void GameScreen::onTick(float secs  )
+void GameScreen::onTick(float secs)
 {
     m_world->onTick(secs);
 }
@@ -146,14 +145,14 @@ void GameScreen::render2D(Graphics *)
 }
 
 
-void GameScreen::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY)
+void GameScreen::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY, glm::vec3)
 {
-    m_world->onMouseMoved(e, deltaX*.5f, deltaY*.5);
+    m_world->onMouseMoved(e, deltaX * 1000.f, deltaY * 1000.f);
 }
 
-void GameScreen::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY)
+void GameScreen::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY, glm::vec3)
 {
-    m_world->onMouseMoved(e, deltaX, deltaY);
+    m_world->onMouseMoved(e, deltaX * 1000.f, deltaY * 1000.f);
 }
 
 void GameScreen::onKeyPressed(QKeyEvent *e)

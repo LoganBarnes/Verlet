@@ -6,7 +6,7 @@
 #include "triangle.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtc/type_ptr.hpp>
+#include <gtc/type_ptr.hpp>
 
 OBJ::OBJ(GLuint shader)
 {

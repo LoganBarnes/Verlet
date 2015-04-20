@@ -17,6 +17,7 @@
     </qresource>
     <qresource prefix="/images">
         <file alias="play.png">res/images/play.png</file>
+        <file alias="grass.png">res/images/grass.png</file>
     </qresource>
     <qresource prefix="/cubemap">
         <file alias="posx.jpg">res/cubemap/posx.jpg</file>
@@ -26,5 +27,16 @@
         <file alias="posz.jpg">res/cubemap/posz.jpg</file>
         <file alias="negz.jpg">res/cubemap/negz.jpg</file>
     </qresource>
+<<<<<<< HEAD
     <qresource prefix="/objects"/>
+=======
+    <qresource prefix="/objects">
+        <file alias="test.obj">res/objects/test.obj</file>
+        <file alias="testsmall.obj">res/objects/testsmall.obj</file>
+    </qresource>
+    <qresource prefix="/audio">
+        <file alias="kickDrumMod.wav">res/audio/kickDrumMod.wav</file>
+        <file alias="dreams_of_home.wav">res/audio/dreams_of_home.wav</file>
+    </qresource>
+>>>>>>> 9d07dd576c71f555aef09335aa1fa64eea25d1da
 </RCC>

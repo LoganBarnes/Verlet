@@ -1,15 +1,12 @@
 #include "shape.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtc/type_ptr.hpp>
-
-#include <iostream>
-using namespace std;
+#include <gtc/type_ptr.hpp>
 
 Shape::Shape(int complexity)
 {
 //    m_numVerts = 4;
-    int c = max(complexity, 3);
+    int c = glm::max(complexity, 3);
     m_p1 = c;
     m_p2 = c;
     m_vertexData = NULL;

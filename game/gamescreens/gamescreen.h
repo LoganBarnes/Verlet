@@ -20,10 +20,10 @@ public:
 
     // mouse events
     virtual void onMousePressed(QMouseEvent *e);
-    virtual void onMouseMoved(QMouseEvent *e, float deltaX, float deltaY);
+    virtual void onMouseMoved(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos);
     virtual void onMouseReleased(QMouseEvent *);
 
-    virtual void onMouseDragged(QMouseEvent *e, float deltaX, float deltaY);
+    virtual void onMouseDragged(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos);
     virtual void onMouseWheel(QWheelEvent *e);
 
     // key events

@@ -2,7 +2,14 @@
 #define APPLICATION_H
 
 #include "screen.h"
-//#include "Leap.h"
+#if defined(__APPLE__) || defined(__MACOSX)
+#define LEAP
+#include "Leap.h"
+#endif
+
+#include "graphics.h"
+
+class Audio;
 
 class Application
 {
@@ -17,9 +24,9 @@ public:
     void popScreens(int num);
 
     // leap motion stuff for personal mac
-//    void useLeapMotion(bool useLeap);
-//    bool isUsingLeapMotion();
-//    Leap::Frame getLeapFrame();
+    void useLeapMotion(bool useLeap);
+    bool isUsingLeapMotion();
+    void leapEnableKeyTapGesture();
 
     // update and render
     void onTick(float secs);
@@ -30,7 +37,7 @@ public:
     void onMouseMoved(QMouseEvent *e, float deltaX, float deltaY);
     void onMouseReleased(QMouseEvent *e);
 
-    void onMouseDragged(QMouseEvent *e, float deltaX, float deltaY);
+    void onMouseDragged(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos);
     void onMouseWheel(QWheelEvent *e);
 
     // key events
@@ -40,20 +47,45 @@ public:
     // resize
     void onResize(int w, int h);
 
+    void setMouseDecoupleKey(int key);
+    int getMouseDecoupleKey();
+    void setMouseDecoupled(bool decouple);
+    bool isMouseDecoupled();
+
     void setUseCubeMap(bool use);
     GLuint getShader(GraphicsMode gm);
 
     // prepare graphics object for lighting
     void resetFBOs(int width, int height);
 
+    Audio *getAudioObject();
+
+
 private:
+
+#ifdef LEAP
+    void handleLeapMouseEvents();
+
+    Leap::Controller *m_leapController;
+    Leap::Frame m_previousLeapFrame;
+#endif
+
     QList<Screen *> m_screens;
     Screen *m_currentScreen;
 
+    int m_decoupleKey;
+    bool m_decoupleMouse;
+    bool m_permanentDecouple;
+
+    bool m_mouseDown;
+
+    glm::vec3 m_mousePos; // z is 1 if decoupled, 0 otherwise
+    glm::vec3 m_prevPos;
+
     Graphics *m_g;
+    Audio *m_a;
 
     int m_width, m_height;
-//    Leap::Controller *m_leapController;
 
 };
 

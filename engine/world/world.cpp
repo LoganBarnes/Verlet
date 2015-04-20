@@ -1,8 +1,9 @@
 #include "world.h"
 #include "manager.h"
-
 #include <iostream>
 using namespace std;
+//#include "debugprinting.h"
+
 
 World::World()
 {
@@ -82,7 +83,7 @@ QList<Triangle *> World::getMesh()
     return m_mesh;
 }
 
-void World::onTick(float secs)
+void World::onTick(float secs, float mouseX, float mouseY)
 {
     foreach(MovableEntity *me, m_me2Delete)
     {
@@ -93,7 +94,6 @@ void World::onTick(float secs)
     foreach(MovableEntity *me, m_movableEntities)
     {
         me->applyForce(m_gravity * me->getMass());
-//        cout << me << endl;
     }
 
     // update (tick) movableEntities
@@ -102,8 +102,10 @@ void World::onTick(float secs)
         e->onTick(secs);
     }
 
-    foreach (Manager *m, m_managers) {
-        m->manage(this, secs);
+//    cout << "/t STARTING TICK" << endl;
+    foreach (Manager *m, m_managers)
+    {
+        m->manage(this, secs, mouseX, mouseY);
     }
 
     m_player->setCameraPos();

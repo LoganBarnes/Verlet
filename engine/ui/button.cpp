@@ -1,7 +1,7 @@
 #include "button.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtx/transform.hpp>
+#include <gtx/transform.hpp>
 
 
 Button::Button()

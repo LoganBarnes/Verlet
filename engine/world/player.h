@@ -22,9 +22,10 @@ public:
 //    int getHealth();
 
     void setEyeHeight(float height);
+    void setMaxOffset(float maxOffset) { m_maxOffset = maxOffset; }
 
     // mouse events
-    virtual void onMouseMoved(QMouseEvent *e, float deltaX, float deltaY);
+    virtual void onMouseMoved(QMouseEvent *, float deltaX, float deltaY);
 
     // key events
     virtual void onKeyPressed(QKeyEvent *e);
@@ -32,9 +33,12 @@ public:
 
     virtual void handleCollision(Collision *col);
 
+    void useSound(Audio *audio);
+
 protected:
     ActionCamera *m_camera;
     float m_offset;
+    float m_maxOffset;
 
     int m_wsad;
     bool m_canJump, m_jump;

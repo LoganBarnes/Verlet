@@ -3,24 +3,38 @@ QT += core gui opengl
 TARGET = cs1972final
 TEMPLATE = app
 
+# project build directories
+DESTDIR     = $$system(pwd)
+OBJECTS_DIR = $$DESTDIR/bin
+
 unix:!macx {
-    LIBS += -lGLU
+    LIBS += -lGLU -lalut
     QMAKE_CXXFLAGS += -std=c++11
 }
 macx {
-    QMAKE_CFLAGS_X86_64 += -mmacosx-version-min=10.7
-    QMAKE_CXXFLAGS_X86_64 = $$QMAKE_CFLAGS_X86_64
-    QMAKE_MAC_SDK = macosx10.9
+    LIBS += -framework OpenAL
+
+    QMAKE_CFLAGS += -mmacosx-version-min=10.7
+    QMAKE_CXXFLAGS = $$QMAKE_CFLAGS_X86_64
+
+    MAC_SDK  = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/
+    if( exists( $$MAC_SDK) ) {
+        QMAKE_MAC_SDK = macosx10.9
+    }
 }
 
-INCLUDEPATH +=  glm engine game shaders \
+QMAKE_CXXFLAGS += -Wno-c++11-extensions
+
+INCLUDEPATH +=  lib/glm engine game shaders \
                 engine/common \
                 engine/ui \
                 engine/graphics \
                 engine/shapes \
                 engine/world \
                 engine/collisions \
-                engine/objects engine/leap \
+                engine/objects \
+                engine/verlet \
+                engine/sound \
                 game/gamescreens \
                 game/world \
                 game/entities \
@@ -28,14 +42,16 @@ INCLUDEPATH +=  glm engine game shaders \
                 res/images/cubemap \
                 res/levels
 
-DEPENDPATH +=   glm engine game shaders \
+DEPENDPATH +=   lib/glm engine game shaders \
                 engine/common \
                 engine/ui \
                 engine/graphics \
                 engine/shapes \
                 engine/world \
                 engine/collisions \
-                engine/objects engine/leap \
+                engine/objects \
+                engine/verlet \
+                engine/sound \
                 game/gamescreens \
                 game/world \
                 game/entities \
@@ -79,13 +95,24 @@ SOURCES += \
     engine/collisions/collisionmanager.cpp \
     engine/collisions/triangle.cpp \
     engine/collisions/collisionsphere.cpp \
-    engine/particles/verletmanager.cpp \
+    engine/verlet/link.cpp \
+    engine/verlet/net.cpp \
+    engine/verlet/rope.cpp \
+    engine/verlet/verlet.cpp \
+    engine/verlet/verletcube.cpp \
+    engine/verlet/verletmanager.cpp \
 ### game
     game/gamescreens/gamescreen.cpp \
     game/entities/gameplayer.cpp \
     game/gamescreens/gamemenu.cpp \
     game/world/gameworld.cpp \
-    engine/shapes/quad.cpp
+    game/gamescreens/testlevelscreen.cpp \
+    engine/shapes/mesh.cpp \
+    engine/verlet/trianglemesh.cpp \
+    engine/common/ray.cpp \
+    engine/sound/audio.cpp \
+    engine/common/wavreader.cpp \
+    game/entities/soundtester.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -123,14 +150,25 @@ HEADERS += \
     engine/collisions/ellipsoid.h \
     engine/collisions/collisionmanager.h \
     engine/collisions/collisionsphere.h \
-    engine/particles/verletmanager.h \
+    engine/verlet/link.h \
+    engine/verlet/net.h \
+    engine/verlet/rope.h \
+    engine/verlet/verlet.h \
+    engine/verlet/verletcube.h \
+    engine/verlet/verletmanager.h \
 ### game
     game/gamescreens/gamescreen.h \
     game/gamescreens/gamemenu.h \
     game/world/gameworld.h \
     game/entities/gameplayer.h \
     engine/common/debugprinting.h \
-    engine/shapes/quad.h
+    game/gamescreens/testlevelscreen.h \
+    engine/shapes/mesh.h \
+    engine/verlet/trianglemesh.h \
+    engine/common/ray.h \
+    engine/sound/audio.h \
+    engine/common/wavreader.h \
+    game/entities/soundtester.h
 
 
 FORMS += engine/ui/mainwindow.ui
@@ -147,7 +185,17 @@ DEPENDPATH+=/usr/local/Cellar/glew/1.11.0/include
 RESOURCES += \
     resources.qrc
 
-#macx: LIBS += -L$$PWD/leap/ -lLeap
+################################ LEAP #################################
+macx {
+    LEAP_DIR = $$PWD/lib/leap
+    LIBS += -L$$LEAP_DIR/ -lLeap
 
-#INCLUDEPATH += $$PWD/leap/include
-#DEPENDPATH += $$PWD/leap/include
+    INCLUDEPATH +=  $$LEAP_DIR/include \
+                    engine/leap
+
+    DEPENDPATH +=   $$LEAP_DIR/include \
+                    engine/leap
+}
+
+################################ CUDA #################################
+

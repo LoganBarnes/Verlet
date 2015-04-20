@@ -1,8 +1,8 @@
 #include "camera.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtx/rotate_vector.hpp>
-#include <glm/gtx/vector_angle.hpp>
+#include <gtx/rotate_vector.hpp>
+#include <gtx/vector_angle.hpp>
 
 Camera::Camera()
 {
@@ -12,7 +12,7 @@ Camera::Camera()
     orientLook(eye, look, up);
 
     // Projection Defaults
-    m_heightDegrees = 60.f;
+    m_heightDegrees = 90.f;
     m_aspectRatio = 1.0f;
     m_near = 0.1f;
     m_far = 1000.0f;
@@ -49,6 +49,11 @@ glm::mat4 Camera::getFrustumMatrix()
 glm::vec4 Camera::getLook()
 {
     return m_look;
+}
+
+glm::vec4 Camera::getUp()
+{
+    return m_up;
 }
 
 glm::vec4 Camera::getEye()

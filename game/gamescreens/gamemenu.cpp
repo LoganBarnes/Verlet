@@ -1,17 +1,14 @@
 #include "gamemenu.h"
 #include "application.h"
-#include "gamescreen.h"
+//#include "gamescreen.h"
+#include "testlevelscreen.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtx/transform.hpp>
-
-#include "debugprinting.h"
+#include <gtx/transform.hpp>
 
 GameMenu::GameMenu(Application *parent)
     : Screen(parent)
 {
-//    m_parentApp->useLeapMotion(true);
-
     float aspect = m_camera->getAspectRatio();
 
     m_startButton = new Button();
@@ -31,41 +28,7 @@ GameMenu::~GameMenu()
 // update and render
 void GameMenu::onTick(float)
 {
-    ///////////////commented leap motion stuff//////////////////////
-
-//    if (!m_parentApp->isUsingLeapMotion())
-//        return;
-
-//    Leap::Frame frame = m_parentApp->getLeapFrame();
-//    Leap::Vector pos = frame.hands().rightmost().palmPosition();
-
-//    float newX = pos.x / 200.f;
-//    if (newX < -1.f)
-//        newX = -1.f;
-//    else if (newX > 1.f)
-//        newX = 1.f;
-//    m_cursor[3][0] = newX;
-
-//    float newY = pos.y / 200.f - 1.f;
-//    if (newY < -1.f)
-//        newY = -1.f;
-//    else if (newY > 1.f)
-//        newY = 1.f;
-//    m_cursor[3][1] = newY;
-
-//    float c = .5f;
-//    m_startButton->setColor(c, c, c);
-//    if (m_startButton->contains(newX, newY))
-//    {
-//        m_level = 1;
-//        m_startButton->setColor(1, 1, 1);
-//    }
-
-//    if (frame.hands().count() > 0 && frame.fingers().count() == 0)
-//        cout << "CLIIIIIIIIIIIIIIIIIIIIIICKEEEEEEEEEEEEEEEED" << endl;
-
-//    if (frame.hands().count() > 0)
-//        cout << frame.fingers().extended().count() << endl;
+    m_parentApp->setMouseDecoupled(true);
 }
 
 void GameMenu::onRender(Graphics *g)
@@ -83,23 +46,24 @@ void GameMenu::onRender(Graphics *g)
 
 }
 
-void GameMenu::onMouseMoved(QMouseEvent *, float deltaX, float deltaY)
+void GameMenu::onMouseMoved(QMouseEvent *, float, float, glm::vec3 pos)
 {
-    float newX = m_cursor[3][0] + deltaX * 0.005f;
-    float newY = m_cursor[3][1] - deltaY * 0.005f;
-    m_cursor[3][0] = glm::clamp(newX, -1.f, 1.f);
-    m_cursor[3][1] = glm::clamp(newY, -1.f, 1.f);
+    m_cursor[3][0] = pos.x;
+    m_cursor[3][1] = pos.y;
 
     float c = .5f;
     m_startButton->setColor(c, c, c);
-    if (m_startButton->contains(newX, newY))
+    if (m_startButton->contains(pos.x, pos.y))
         m_startButton->setColor(1, 1, 1);
 }
 
 void GameMenu::onMousePressed(QMouseEvent *e)
 {
-//    if (e->button() == Qt::LeftButton && m_startButton->contains(m_cursor[3][0], m_cursor[3][1]))
-        m_parentApp->addScreen(new GameScreen(m_parentApp));
+    if (e->button() == Qt::LeftButton && m_startButton->contains(m_cursor[3][0], m_cursor[3][1]))
+    {
+        m_parentApp->setMouseDecoupled(false);
+        m_parentApp->addScreen(new TestLevelScreen(m_parentApp));
+    }
 }
 
 
@@ -116,10 +80,27 @@ void GameMenu::onResize(int w, int h)
     m_cursor[3] = pos;
 }
 
+void GameMenu::onKeyReleased(QKeyEvent *e)
+{
+    if (e->key() == Qt::Key_L)
+    {
+        m_parentApp->useLeapMotion(!m_parentApp->isUsingLeapMotion());
+        m_parentApp->leapEnableKeyTapGesture();
+    }
+}
+
+void GameMenu::onLeapKeyTap(glm::vec3)
+{
+    if (m_startButton->contains(m_cursor[3][0], m_cursor[3][1]))
+    {
+        m_parentApp->setMouseDecoupled(false);
+        m_parentApp->addScreen(new TestLevelScreen(m_parentApp));
+//        m_parentApp->addScreen(new GameScreen(m_parentApp));
+    }
+}
 
 // unused in menu
 void GameMenu::onMouseReleased(QMouseEvent *) {}
-void GameMenu::onMouseDragged(QMouseEvent *, float, float) {}
+void GameMenu::onMouseDragged(QMouseEvent *, float, float, glm::vec3) {}
 void GameMenu::onMouseWheel(QWheelEvent *) {}
 void GameMenu::onKeyPressed(QKeyEvent *) {}
-void GameMenu::onKeyReleased(QKeyEvent *) {}

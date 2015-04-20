@@ -6,7 +6,7 @@
 #include <qgl.h>
 #include <QTime>
 #include <QTimer>
-#include <glm/glm.hpp>
+#include <glm.hpp>
 #include "application.h"
 
 class View : public QGLWidget
@@ -40,8 +40,6 @@ private slots:
 
 private:
     Application *m_app;
-
-    bool m_mouseDown;
 
     bool m_fpsInit;
     int freq;

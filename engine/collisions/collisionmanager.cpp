@@ -10,7 +10,7 @@ CollisionManager::~CollisionManager()
 }
 
 
-void CollisionManager::manage(World *world, float onTickSecs)
+void CollisionManager::manage(World *world, float onTickSecs, float, float)
 {
     // collisions
     QList<Collision *> cols = detectCollisions(world, onTickSecs);

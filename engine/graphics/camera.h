@@ -1,7 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <glm/glm.hpp>
+#include <glm.hpp>
 
 class Camera
 {
@@ -14,6 +14,7 @@ public:
     glm::mat4 getScaleMatrix();
     glm::mat4 getFrustumMatrix();
     glm::vec4 getLook();
+    glm::vec4 getUp();
     glm::vec4 getEye();
     float getAspectRatio();
 

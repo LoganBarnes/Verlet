@@ -1,7 +1,7 @@
 #include "collisioncylinder.h"
 #include "geometriccollisionmanager.h"
 #include "triangle.h"
-#include <glm/common.hpp>
+#include <common.hpp>
 
 CollisionCylinder::CollisionCylinder(glm::vec3 pos, glm::vec3 dim, QString id)
     : CollisionShape(pos, dim, id)
