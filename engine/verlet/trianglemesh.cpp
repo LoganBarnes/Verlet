@@ -351,7 +351,7 @@ void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2, 
     link_map[index]=remainingLinks;
 
     //5.Resolve duplicates: insure that edges each overlaps is consistent w/ its indices
-    for(int i = 0; i<duplicate.size(); i++){
+    for(unsigned int i = 0; i < duplicate.size(); i++){
         Duplicate d = duplicate[i];
         QPair<Link*,Link*> pair1;
         QPair<Link*,Link*> pair2;

@@ -181,19 +181,53 @@ void World::setGravity(glm::vec3 gravity)
 }
 
 // mouse events
+void World::onMousePressed(QMouseEvent *e)
+{
+    foreach (Manager *manager, m_managers)
+        manager->onMousePressed(e);
+    m_player->onMousePressed(e);
+}
+
 void World::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY)
 {
+    foreach (Manager *manager, m_managers)
+        manager->onMouseMoved(e, deltaX, deltaY);
     m_player->onMouseMoved(e, deltaX, deltaY);
+}
+
+void World::onMouseReleased(QMouseEvent *e)
+{
+    foreach (Manager *manager, m_managers)
+        manager->onMouseReleased(e);
+    m_player->onMouseReleased(e);
+}
+
+void World::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY)
+{
+    foreach (Manager *manager, m_managers)
+        manager->onMouseDragged(e, deltaX, deltaY);
+    m_player->onMouseDragged(e, deltaX, deltaY);
+}
+
+void World::onMouseWheel(QWheelEvent *e)
+{
+    foreach (Manager *manager, m_managers)
+        manager->onMouseWheel(e);
+    m_player->onMouseWheel(e);
 }
 
 // key events
 void World::onKeyPressed(QKeyEvent *e)
 {
+    foreach (Manager *manager, m_managers)
+        manager->onKeyPressed(e);
     m_player->onKeyPressed(e);
 }
 
 void World::onKeyReleased(QKeyEvent *e)
 {
+    foreach (Manager *manager, m_managers)
+        manager->onKeyReleased(e);
     m_player->onKeyReleased(e);
 }
 

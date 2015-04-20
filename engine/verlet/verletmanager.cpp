@@ -12,7 +12,13 @@
 //#include "debugprinting.h"
 
 VerletManager::VerletManager(Camera *cam, GLuint shader)
-    : Manager(DEFAULT)
+    : Manager(DEFAULT),
+      m_dragMode(false),
+      m_draggedPoint(0),
+      m_draggedVerlet(NULL),
+      m_tearMode(false),
+      m_tearLink(NULL)
+
 {
     //initial curtain
     /*
@@ -151,7 +157,7 @@ void VerletManager::constraints(){
 
 void VerletManager::manage(World *world, float onTickSecs, float mouseX, float mouseY)
 {
-//    cout << "verlet"  << endl;
+    setWind(m_windDirection);
 
     if(solve){
         verlet(onTickSecs);
@@ -172,8 +178,35 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     }
     delete col;
 
-
     rayTrace(mouseX, mouseY);
+
+    if(m_dragMode){
+        glm::vec3 point = m_draggedVerlet->getPoint(m_draggedPoint);
+        glm::vec4 n = world->getPlayer()->getCamera()->getLook();
+        n*=-1;
+
+        float t = m_ray->hitPlane(point,glm::vec3(n));
+        m_draggedMouse = m_ray->getPoint(t);
+
+        m_interpolate = m_draggedMouse;
+        //interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(0.01, seconds));
+    }
+
+
+    if(m_tearMode && m_curV > -1){
+        Verlet* hitV = getVerlet(m_curV);
+        glm::vec3 point = hitV->getPoint(m_curI);
+        glm::vec4 n = world->getPlayer()->getCamera()->getLook();
+        n*=-1;
+
+        float t = m_ray->hitPlane(point, glm::vec3(n));
+        m_tearMouse = m_ray->getPoint(t);
+        m_tearLink = hitV->closestLink(m_curI, m_tearMouse);
+
+        //Comment these out to visualize edge selection
+        hitV->tearLink(m_tearLink);
+        m_tearLink = NULL;
+    }
 }
 
 void VerletManager::onDraw(Graphics *g){
@@ -181,17 +214,14 @@ void VerletManager::onDraw(Graphics *g){
     g->setTexture("");
     for(unsigned int i=0; i<verlets.size(); i++)
         verlets.at(i)->onDraw(g);
-//    g->setColor(glm::vec3(1,1,1));
-//    g->drawLineSeg(_boxMin,glm::vec3(_boxMin.x,_boxMin.y,_boxMax.z), .3f);
-//    g->drawLineSeg(_boxMin,glm::vec3(_boxMin.x,_boxMax.y,_boxMin.z), .3f);
-//    g->drawLineSeg(_boxMin,glm::vec3(_boxMax.x,_boxMin.y,_boxMin.z), .3f);
-//    if (m_curV > -1)
-//    {
-//        g->setColor(1, 0, 0, 1, 0);
-//        glm::mat4 trans = glm::translate(glm::mat4(), verlets[m_curV]->getPoint(m_curI));
-//        trans *= glm::scale(glm::mat4(), glm::vec3(verlets[m_curV]->rayTraceSize));
-//        g->drawSphere(trans);
-//    }
+
+    //for dragging
+    if(m_dragMode){
+        g->setColor(1, 1, 1, 1, 0);
+        glm::mat4 trans = glm::translate(glm::mat4(), m_draggedVerlet->getPoint(m_draggedPoint));
+        trans *= glm::scale(glm::mat4(), glm::vec3(.2,.2,.2));
+        g->drawSphere(trans);
+    }
 
 }
 
@@ -204,4 +234,67 @@ glm::vec3 VerletManager::collideTerrain(MovableEntity *e)
 
     return mtv;
 }
+
+void VerletManager::onMousePressed(QMouseEvent *e)
+{
+    //dragging
+    if(e->button() == Qt::LeftButton && m_curV>-1){
+        m_dragMode = true;
+        m_draggedPoint = m_curI;
+        m_draggedVerlet = getVerlet(m_curV);
+        m_interpolate = m_draggedVerlet->getPoint(m_draggedPoint);
+    }
+}
+
+void VerletManager::onMouseMoved(QMouseEvent *, float, float)
+{
+    if(m_dragMode)
+        m_draggedVerlet->setPos(m_draggedPoint, m_interpolate);
+}
+
+void VerletManager::onMouseReleased(QMouseEvent *e)
+{
+    if(e->button() == Qt::LeftButton)
+        m_dragMode = false;
+}
+
+void VerletManager::onMouseDragged(QMouseEvent *, float, float)
+{
+    if(m_dragMode)
+        m_draggedVerlet->setPos(m_draggedPoint, m_interpolate);
+}
+
+void VerletManager::onKeyPressed(QKeyEvent *e)
+{
+    if(e->key() == Qt::Key_T)
+        m_tearMode=true;
+}
+
+void VerletManager::onKeyReleased(QKeyEvent *e)
+{
+    switch (e->key())
+    {
+    case Qt::Key_F:
+        enableSolve();
+        break;
+    case Qt::Key_Down:
+        m_windDirection = glm::vec3(0,0,1);
+        break;
+    case Qt::Key_Up:
+        m_windDirection = glm::vec3(0,0,-1);
+        break;
+    case Qt::Key_Left:
+        m_windDirection = glm::vec3(-1,0,0);
+        break;
+    case Qt::Key_Right:
+        m_windDirection = glm::vec3(1,0,0);
+        break;
+    case Qt::Key_T:
+        m_tearMode = false;
+        break;
+    default:
+        break;
+    }
+}
+
 

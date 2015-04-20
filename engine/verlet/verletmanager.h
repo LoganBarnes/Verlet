@@ -2,7 +2,7 @@
 #define VERLETMANAGER_H
 
 #include "manager.h"
-#include <glm/glm.hpp>
+#include <glm.hpp>
 #include "link.h"
 #include "verlet.h"
 #include "rope.h"
@@ -27,6 +27,14 @@ public:
     glm::vec3 collideTerrain(MovableEntity* e);
     void rayTrace(float x, float y);
 
+    virtual void onMousePressed(QMouseEvent *e);
+    virtual void onMouseMoved(QMouseEvent *e, float deltaX, float deltaY);
+    virtual void onMouseReleased(QMouseEvent *e);
+    virtual void onMouseDragged(QMouseEvent *e, float deltaX, float deltaY);
+
+    virtual void onKeyPressed(QKeyEvent *e);
+    virtual void onKeyReleased(QKeyEvent *e);
+
     //Settings
     glm::vec3 gravity = glm::vec3(0,-3,0);
     glm::vec3 wind = glm::vec3(0,0,0.5);
@@ -35,9 +43,6 @@ public:
     //Whether constraints are solved
     bool solve = true;
 
-    int m_curV;
-    int m_curI;
-    Ray *m_ray;
 private:
     //Verlet objects manager maintains
     std::vector<Verlet*> verlets;
@@ -59,6 +64,33 @@ private:
     void constraints();
     // updates any vbos if necessary
     void updateBuffer();
+
+    //testing dragging
+    bool m_dragMode; //true if player selects point + holds LMB
+
+    //Selected attributes- don't change once dragMode is enabled
+    int m_draggedPoint;
+    Verlet* m_draggedVerlet;
+
+    //For moving the selected point
+    //World-space pt: where cursor's ray intersects w/ draggedPoint's plane
+    glm::vec3 m_draggedMouse;
+
+    //from draggedPoint to draggedMouse
+    glm::vec3 m_interpolate;
+
+    //testing wind
+    glm::vec3 m_windDirection;
+
+    //testing tearing
+    bool m_tearMode;
+    //World-space pt: where cursor's ray intersects w/ tear's plane
+    glm::vec3 m_tearMouse;
+    Link* m_tearLink;
+
+    int m_curV;
+    int m_curI;
+    Ray *m_ray;
 };
 
 #endif // VERLETMANAGER_H

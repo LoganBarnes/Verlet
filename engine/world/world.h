@@ -38,7 +38,12 @@ public:
     ObjectsInfo *getObjectInfo();
 
     // mouse events
+    virtual void onMousePressed(QMouseEvent *e);
     virtual void onMouseMoved(QMouseEvent *e, float deltaX, float deltaY);
+    virtual void onMouseReleased(QMouseEvent *e);
+
+    virtual void onMouseDragged(QMouseEvent *e, float deltaX, float deltaY);
+    virtual void onMouseWheel(QWheelEvent *e);
 
     // key events
     virtual void onKeyPressed(QKeyEvent *e);

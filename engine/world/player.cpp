@@ -72,13 +72,14 @@ glm::vec3 Player::getEyePos()
     return (getPosition() + glm::vec3(0, m_eyeHeight, 0));
 }
 
-
+// mouse event
 void Player::onMouseMoved(QMouseEvent *, float deltaX, float deltaY)
 {
     m_camera->yaw(deltaX / 10.f);
     m_camera->pitch(deltaY / 10.f);
 }
 
+// key events
 void Player::onKeyPressed(QKeyEvent *e)
 {
     switch (e->key())
@@ -160,4 +161,10 @@ void Player::handleCollision(Collision *col)
 
 }
 
+// unused
+void Player::onMousePressed(QMouseEvent *) {}
+void Player::onMouseReleased(QMouseEvent *) {}
+
+void Player::onMouseDragged(QMouseEvent *, float, float) {}
+void Player::onMouseWheel(QWheelEvent *) {}
 
