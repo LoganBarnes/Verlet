@@ -5,6 +5,6 @@
 
 #include <iostream>
 using namespace std;
-#include <glm/gtx/string_cast.hpp>
+#include <gtx/string_cast.hpp>
 
 #endif // DEBUGPRINTING_H

@@ -2,7 +2,7 @@
 #define VERLETMANAGER_H
 
 #include "manager.h"
-#include <glm/glm.hpp>
+#include <glm.hpp>
 #include "link.h"
 #include "verlet.h"
 #include "rope.h"

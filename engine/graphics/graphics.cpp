@@ -6,13 +6,12 @@
 #include <QGLWidget>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtx/vector_angle.hpp>
-
-#include "debugprinting.h"
+#include <gtc/type_ptr.hpp>
+#include <gtx/transform.hpp>
+#include <gtx/vector_angle.hpp>
 
 #define MAX_NUM_LIGHTS 10
 
@@ -460,13 +459,17 @@ void Graphics::loadTexturesFromDirectory()
     QDir imageDir(":/images");
     QFileInfoList fileList = imageDir.entryInfoList();
 
-    cout << "Loaded images:" << endl;
     foreach (QFileInfo fileInfo, fileList)
     {
         QString filename = fileInfo.fileName();
-        cout << filename.toStdString() << endl;
         loadTexture(":/images/" + filename, filename);
     }
+
+    std::cout << "Loaded images:" << std::endl;
+
+    QList<QString> keys = m_textures.keys();
+    foreach(QString filename, keys)
+        std::cout << filename.toStdString() << std::endl;
 }
 
 
@@ -476,7 +479,7 @@ void Graphics::loadTexture(const QString &filename, const QString &key)
     QFile file(filename);
     if (!file.exists() || m_textures.contains(key))
     {
-        cout << "no tex" << endl;
+        std::cout << "no tex" << std::endl;
         return;
     }
 

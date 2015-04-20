@@ -33,6 +33,8 @@ public:
 
     virtual void handleCollision(Collision *col);
 
+    void useSound(Audio *audio);
+
 protected:
     ActionCamera *m_camera;
     float m_offset;

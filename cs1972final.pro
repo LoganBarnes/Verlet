@@ -8,10 +8,12 @@ DESTDIR     = $$system(pwd)
 OBJECTS_DIR = $$DESTDIR/bin
 
 unix:!macx {
-    LIBS += -lGLU
+    LIBS += -lGLU -lOpenAL
     QMAKE_CXXFLAGS += -std=c++11
 }
 macx {
+    LIBS += -framework OpenAL
+
     QMAKE_CFLAGS += -mmacosx-version-min=10.7
     QMAKE_CXXFLAGS = $$QMAKE_CFLAGS_X86_64
 
@@ -23,7 +25,7 @@ macx {
 
 QMAKE_CXXFLAGS += -Wno-c++11-extensions
 
-INCLUDEPATH +=  glm engine game shaders \
+INCLUDEPATH +=  lib/glm engine game shaders \
                 engine/common \
                 engine/ui \
                 engine/graphics \
@@ -32,6 +34,7 @@ INCLUDEPATH +=  glm engine game shaders \
                 engine/collisions \
                 engine/objects \
                 engine/verlet \
+                engine/sound \
                 game/gamescreens \
                 game/world \
                 game/entities \
@@ -39,7 +42,7 @@ INCLUDEPATH +=  glm engine game shaders \
                 res/images/cubemap \
                 res/levels
 
-DEPENDPATH +=   glm engine game shaders \
+DEPENDPATH +=   lib/glm engine game shaders \
                 engine/common \
                 engine/ui \
                 engine/graphics \
@@ -48,6 +51,7 @@ DEPENDPATH +=   glm engine game shaders \
                 engine/collisions \
                 engine/objects \
                 engine/verlet \
+                engine/sound \
                 game/gamescreens \
                 game/world \
                 game/entities \
@@ -105,7 +109,10 @@ SOURCES += \
     game/gamescreens/testlevelscreen.cpp \
     engine/shapes/mesh.cpp \
     engine/verlet/trianglemesh.cpp \
-    engine/common/ray.cpp
+    engine/common/ray.cpp \
+    engine/sound/audio.cpp \
+    engine/common/wavreader.cpp \
+    game/entities/soundtester.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -158,7 +165,10 @@ HEADERS += \
     game/gamescreens/testlevelscreen.h \
     engine/shapes/mesh.h \
     engine/verlet/trianglemesh.h \
-    engine/common/ray.h
+    engine/common/ray.h \
+    engine/sound/audio.h \
+    engine/common/wavreader.h \
+    game/entities/soundtester.h
 
 
 FORMS += engine/ui/mainwindow.ui
@@ -177,13 +187,15 @@ RESOURCES += \
 
 ################################ LEAP #################################
 macx {
-    LIBS += -L$$PWD/leap/ -lLeap
+    LEAP_DIR = $$PWD/lib/leap
+    LIBS += -L$$LEAP_DIR/ -lLeap
 
-    INCLUDEPATH +=  $$PWD/leap/include \
+    INCLUDEPATH +=  $$LEAP_DIR/include \
                     engine/leap
 
-    DEPENDPATH +=   $$PWD/leap/include \
+    DEPENDPATH +=   $$LEAP_DIR/include \
                     engine/leap
 }
 
 ################################ CUDA #################################
+

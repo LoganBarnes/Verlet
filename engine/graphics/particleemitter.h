@@ -1,7 +1,7 @@
 #ifndef PARTICLEEMITTER_H
 #define PARTICLEEMITTER_H
 #include <GL/glew.h>
-#include "glm/glm.hpp"
+#include "glm.hpp"
 
 class ParticleEmitter
 {

@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 #include <QString>
-#include <glm/glm.hpp>
+#include <glm.hpp>
 
 class CubeMap
 {

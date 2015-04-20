@@ -28,10 +28,14 @@ public:
 
     void setTempSolid() { m_tempSolid = true; }
 
+    void setUpdatePositionOnTick(bool updatePos) { m_updatePosOnTick = updatePos; }
+
 protected:
     float m_mass;
     glm::vec3 m_vel, m_force, m_impulse;
     glm::vec3 m_destination;
+
+    bool m_updatePosOnTick;
 
     bool m_tempSolid; // temporarily set to true if the object is colliding with a geometric object
 };

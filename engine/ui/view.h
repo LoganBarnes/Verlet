@@ -6,7 +6,7 @@
 #include <qgl.h>
 #include <QTime>
 #include <QTimer>
-#include <glm/glm.hpp>
+#include <glm.hpp>
 #include "application.h"
 
 class View : public QGLWidget

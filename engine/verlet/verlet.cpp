@@ -2,16 +2,9 @@
 #include "verletmanager.h"
 #include "graphics.h"
 #include "movableentity.h"
-//#include "engine/common/graphic.h"
-//#include "engine/common/entity.h"
-//#include "engine/common/ellipsoid.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtx/norm.hpp>
-
-//#include <iostream>
-
-//#include "debugprinting.h"
+#include <gtx/norm.hpp>
 
 Verlet::Verlet(VerletManager* m)
 {

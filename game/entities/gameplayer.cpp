@@ -1,10 +1,8 @@
 #include "gameplayer.h"
 #include "ellipsoid.h"
 
-#include <glm/gtx/constants.hpp>
-#include <glm/gtx/vector_angle.hpp>
-
-#include "debugprinting.h"
+#include <gtx/constants.hpp>
+#include <gtx/vector_angle.hpp>
 
 GamePlayer::GamePlayer(ActionCamera *camera, glm::vec3 pos)
     : Player(camera, pos)

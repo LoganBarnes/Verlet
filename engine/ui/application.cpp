@@ -1,4 +1,5 @@
 #include "application.h"
+#include "audio.h"
 
 Application::Application()
 {
@@ -11,6 +12,7 @@ Application::Application()
 
     // create graphics object
     m_g = new Graphics();
+    m_a = new Audio();
 
     m_decoupleKey = std::numeric_limits<int>::min();
     m_decoupleMouse = false;
@@ -30,6 +32,7 @@ Application::~Application()
         delete s;
 
     delete m_g;
+    delete m_a;
 
 #ifdef LEAP
     if (m_leapController)
@@ -42,6 +45,7 @@ void Application::init(Screen *initScreen)
 {
     m_currentScreen = initScreen;
     m_g->init();
+    m_a->initAudio();
 }
 
 void Application::addScreen(Screen *s)
@@ -348,6 +352,11 @@ void Application::setMouseDecoupled(bool decoupled)
 bool Application::isMouseDecoupled()
 {
     return m_permanentDecouple;
+}
+
+Audio *Application::getAudioObject()
+{
+    return m_a;
 }
 
 

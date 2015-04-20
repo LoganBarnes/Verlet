@@ -1,7 +1,8 @@
 #include "player.h"
+#include "audio.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtx/norm.hpp>
+#include <gtx/norm.hpp>
 
 Player::Player(ActionCamera *cam, glm::vec3 pos)
     : MovableEntity(pos),
@@ -14,6 +15,7 @@ Player::Player(ActionCamera *cam, glm::vec3 pos)
       m_eyeHeight(.75f)
 {
     m_camera->setOffset(m_offset);
+    setUpdatePositionOnTick(false);
 
     setMass(1.f);
 }
@@ -64,6 +66,9 @@ void Player::onTick(float secs)
 void Player::setCameraPos()
 {
     m_camera->setCenter(getPosition() + glm::vec3(0, m_eyeHeight, 0));
+
+    if (m_audio)
+        m_audio->setListener(m_camera->getEye(), getVelocity(), m_camera->getLook(), m_camera->getUp());
 }
 
 
@@ -158,6 +163,13 @@ void Player::handleCollision(Collision *col)
     if (glm::dot(col->impulse, glm::vec3(0, 1, 0)) > .5)
         m_canJump = true;
 
+}
+
+
+void Player::useSound(Audio *audio)
+{
+    m_audio = audio;
+    m_audio->setListener(m_camera->getEye(), getVelocity(), m_camera->getLook(), m_camera->getUp());
 }
 
 

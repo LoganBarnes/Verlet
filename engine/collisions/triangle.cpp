@@ -3,7 +3,7 @@
 #include <algorithm>
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtx/norm.hpp>
+#include <gtx/norm.hpp>
 
 Triangle::Triangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3){
     vertices[0] = v1;

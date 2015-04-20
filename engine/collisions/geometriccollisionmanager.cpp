@@ -5,9 +5,7 @@
 #include "world.h"
 
 #define GLM_FORCE_RADIANS
-#include <glm/gtx/norm.hpp>
-
-#include "debugprinting.h"
+#include <gtx/norm.hpp>
 
 GeometricCollisionManager::GeometricCollisionManager()
 {
