@@ -8,7 +8,7 @@ DESTDIR     = $$system(pwd)
 OBJECTS_DIR = $$DESTDIR/bin
 
 unix:!macx {
-    LIBS += -lGLU -lOpenAL
+    LIBS += -lGLU -lalut
     QMAKE_CXXFLAGS += -std=c++11
 }
 macx {
