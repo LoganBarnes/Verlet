@@ -194,7 +194,7 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
         //interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(0.01, seconds));
     }
 
-
+    //If setting m_tear_ptB is based on direction the mouse travels, might be better
     if(m_tearMode && m_curV > -1){
         Verlet* hitV = getVerlet(m_curV);
         glm::vec3 point = hitV->getPoint(m_curI);
