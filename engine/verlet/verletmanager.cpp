@@ -17,7 +17,9 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
       m_draggedPoint(0),
       m_draggedVerlet(NULL),
       m_tearMode(false),
-      m_tearLink(NULL)
+      m_tear_ptA(-1),
+      m_tear_ptB(-1),
+      m_tearVerlet(NULL)
 
 {
     //initial curtain
@@ -201,11 +203,24 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
 
         float t = m_ray->hitPlane(point, glm::vec3(n));
         m_tearMouse = m_ray->getPoint(t);
-        m_tearLink = hitV->closestLink(m_curI, m_tearMouse);
 
-        //Comment these out to visualize edge selection
-        hitV->tearLink(m_tearLink);
-        m_tearLink = NULL;
+        if(m_tear_ptA<0){
+            m_tear_ptA = m_curI;
+            m_tearVerlet = hitV;
+        }
+        else if(m_tear_ptA>0&&m_tearVerlet!=NULL&&m_tear_ptB<0){
+            QList<Link*> proximity = m_tearVerlet->link_map[m_tear_ptA];
+            foreach(Link* l, proximity){
+                if(m_curI==l->pointA||m_curI==l->pointB)
+                    m_tear_ptB = m_curI;
+            }
+        }
+        else if(m_tear_ptA>0&&m_tear_ptB>0){
+            Link* tearLink = m_tearVerlet->findLink(m_tear_ptA, m_tear_ptB);
+            m_tearVerlet->tearLink(tearLink);
+            m_tear_ptA = m_tear_ptB;
+            m_tear_ptB = -1;
+        }
     }
 }
 
@@ -291,6 +306,9 @@ void VerletManager::onKeyReleased(QKeyEvent *e)
         break;
     case Qt::Key_T:
         m_tearMode = false;
+        m_tear_ptA=-1;
+        m_tear_ptB=-1;
+        m_tearVerlet=NULL;
         break;
     default:
         break;

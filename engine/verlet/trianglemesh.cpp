@@ -180,6 +180,28 @@ Link* TriangleMesh::createShear(int a, int b, int c, Link* seg1, Link* seg2){
     return l;
 }
 
+bool TriangleMesh::checkShearValid(Link* s){
+    QList<int> points;
+    points.push_back(s->pointA);
+    points.push_back(s->pointB);
+    points.push_back(s->pointC);
+
+    QList<Link*> segments = shear_to_link[s];
+    bool a = points.contains(segments[0]->pointA);
+    bool b = points.contains(segments[1]->pointA);
+    bool c = points.contains(segments[0]->pointB);
+    bool d = points.contains(segments[1]->pointB);
+
+    if(!(a==b==c==d==true)){
+        //std::cout<<"*invalid shear: non-matching"<<std::endl;
+        //std::cout<<"indices:"<<s->pointA<<","<<s->pointB<<","<<s->pointC<<std::endl;
+        //std::cout<<"edges:"<<segments[0]->pointA<<","<<segments[0]->pointB<<std::endl;
+        //std::cout<<"edges:"<<segments[1]->pointA<<","<<segments[1]->pointB<<std::endl;
+        return false;
+    }
+    return true;
+}
+
 void TriangleMesh::removeShear(Link* s){
     //remove link from 'shear_map' of a and b
     removeFromHash(s->pointA,s,shear_map);
@@ -188,8 +210,9 @@ void TriangleMesh::removeShear(Link* s){
     removeFromHash(s->pointC,s,crossover_map);
     //remove shear from 'link_to_shear' of its segments
     QList<Link*> segments = shear_to_link[s];
+    if(segments.size()>1)
+        removeFromHash(segments[1],s,link_to_shear);
     removeFromHash(segments[0],s,link_to_shear);
-    removeFromHash(segments[1],s,link_to_shear);
     //remove shear from 'shear_to_link'
     shear_to_link.remove(s);
     //remove link from 'links'
@@ -215,7 +238,6 @@ void TriangleMesh::tearLink(Link* l){
 
         //2. Duplicate 'single' shears l is part of, record 'duplicates'
         QList<Link*> shears = link_to_shear[l];
-        std::vector<Duplicate> duplicate;
         QHash<int,QList<Link*> > cMap;
 
         foreach(Link* s, shears)
@@ -237,13 +259,9 @@ void TriangleMesh::tearLink(Link* l){
             //Assign l1 and l2 (to each 'l' segment)
             else if(shears_at_c.size()==2){
                 Link* s1 = shears_at_c[0];
+                removeFromHash(s1,l,shear_to_link);
                 Link* s2 = shears_at_c[1];
-                QList<Link*> segments1 = shear_to_link[s1];
-                Link* other_link1 = (segments1[0]==l) ? segments1[1] : segments1[0];
-                QList<Link*> segments2 = shear_to_link[s2];
-                Link* other_link2 = (segments2[0]==l) ? segments2[1] : segments2[0];
-                Duplicate d = Duplicate(s1,s2,l1,l2,other_link1,other_link2);
-                duplicate.push_back(d);
+                removeFromHash(s2,l,shear_to_link);
             }
             else
                 std::cout<<"Error in tearLink(): shears_at_c isn't 1/2"<<std::endl;
@@ -253,18 +271,19 @@ void TriangleMesh::tearLink(Link* l){
 
         //4. Check each end to see if it needs to be torn
         if(checkTorn(a))
-            insertPoint(a,t1,l1,t2,l2,duplicate);
+            insertPoint(a,t1,l1,t2,l2);
         if(checkTorn(b))
-            insertPoint(b,t2,l2,t1,l1,duplicate);
+            insertPoint(b,t2,l2,t1,l1);
+
     }
 }
 
 //Returns whether point 'a' needs to be torn
 bool TriangleMesh::checkTorn(int a){
-    QList<Link*> l = link_map[a];
+    QList<Link*> list = link_map[a];
     int splitLinks = 0;
-    for(int i = 0; i<l.size(); i++){
-        QList<Tri*> tri = link_to_tri[l[i]];
+    foreach(Link* l, list){
+        QList<Tri*> tri = link_to_tri[l];
         if(tri.size()<2) //edge only has 1 triangle -> tearing= necessary
             splitLinks++;
     }
@@ -282,8 +301,8 @@ int TriangleMesh::duplicatePoint(int index){
 }
 
 //Finds all links + triangles adjoining l1 and attached to index
-void TriangleMesh::findConnecting(int index, Tri*& t1, Link*& l1,
-                                  QList<Tri*>& triangles, QList<Link*>& links){
+void TriangleMesh::findConnecting(int index, Tri*& t1, Link*& l1, QList<Tri*>& triangles,
+                                  QList<Link*>& links, QList<int> &points){
     links.push_back(l1);
     triangles.push_back(t1);
 
@@ -291,6 +310,10 @@ void TriangleMesh::findConnecting(int index, Tri*& t1, Link*& l1,
     Link* oppositeEdge = NULL; //other link in triangle connected to new point
 
     while(currentTriangle!=NULL){
+        points.push_back(currentTriangle->a);
+        points.push_back(currentTriangle->b);
+        points.push_back(currentTriangle->c);
+
         //find opposite edge
         for(int i = 0; i<3; i++){
             Link* l = currentTriangle->edges[i];
@@ -312,34 +335,33 @@ void TriangleMesh::findConnecting(int index, Tri*& t1, Link*& l1,
 
 //If 'a' needs to be torn, insert another point there is is
 //and reassign triangles/ links as necessary
-void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2, std::vector<Duplicate> duplicate){
+void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2){
     //1.Duplicate point
     int index2 = duplicatePoint(index);
 
     //2.Find triangles + edges on each side (from given edge until next split edge)
     //Side1: to be reassigned with index2
-    QList<Tri*> connectedTri1; QList<Link*> connectedLink1;
-    findConnecting(index,t1,l1,connectedTri1,connectedLink1);
+    QList<Tri*> connectedTri1; QList<Link*> connectedLink1; QList<int> points1;
+    findConnecting(index,t1,l1,connectedTri1,connectedLink1,points1);
     //Side2: to keep index
-    QList<Tri*> connectedTri2; QList<Link*> connectedLink2;
-    findConnecting(index,t2,l2,connectedTri2,connectedLink2);
+    QList<Tri*> connectedTri2; QList<Link*> connectedLink2; QList<int> points2;
+    findConnecting(index,t2,l2,connectedTri2,connectedLink2,points2);
 
-    QList<int> points1;
-    QList<int> points2;
-    foreach(Tri* t, connectedTri1){
-        points1.push_back(t->a);
-        points1.push_back(t->b);
-        points1.push_back(t->c);
-    }
-    foreach(Tri* t, connectedTri2){
-        points2.push_back(t->a);
-        points2.push_back(t->b);
-        points2.push_back(t->c);
-    }
+    //Keep track of:
+    Link* link_a1 = l1;
+    Link* link_a2 = connectedLink1.last();
+    Link* link_b1 = l2;
+    Link* link_b2 = connectedLink2.last();
+    QList<Link*> shear_a;
+    QList<Link*> shear_b;
+    QList<Link*> border_a;
+    QList<Link*> border_b;
 
     //3.Assign index2 to triangles (connectedTri1)
     foreach(Tri* t, connectedTri1)
         t->replaceIndex(index,index2);
+    points1.removeAll(index);  //update points1 to contain index2 instead of index
+    points1.push_back(index2);
 
     //4.Assign index2 to structural edges (connectedLink1): update link_map
     QList<Link*> remainingLinks = link_map[index];
@@ -350,90 +372,120 @@ void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2, 
     }
     link_map[index]=remainingLinks;
 
-    //5.Resolve duplicates: insure that edges each overlaps is consistent w/ its indices
-    for(unsigned int i = 0; i < duplicate.size(); i++){
-        Duplicate d = duplicate[i];
-        QPair<Link*,Link*> pair1;
-        QPair<Link*,Link*> pair2;
-        pair1.first = d.seg3;
-        pair2.first = d.seg4;
-        if(d.seg3->pointA==d.seg1->pointA||d.seg3->pointA==d.seg1->pointB||
-                d.seg3->pointB==d.seg1->pointA||d.seg3->pointB==d.seg1->pointB){
-            pair1.second=d.seg1;
-            pair2.second=d.seg2;
-            link_to_shear[d.seg1]+=d.shear1;
-            link_to_shear[d.seg2]+=d.shear2;
-        }
-        else{
-            pair1.second=d.seg2;
-            pair2.second=d.seg1;
-            link_to_shear[d.seg2]+=d.shear1;
-            link_to_shear[d.seg1]+=d.shear2;
-        }
-        QList<Link*> s1;
-        s1.push_back(pair1.first);
-        s1.push_back(pair1.second);
-        shear_to_link[d.shear1]=s1;
-        QList<Link*> s2;
-        s2.push_back(pair2.first);
-        s2.push_back(pair2.second);
-        shear_to_link[d.shear2]=s2;
-
-        if(d.shear1->pointC==index)
-            d.shear1->pointC=index2;
-        else if(d.shear1->pointA==index)
-            d.shear1->pointA=index2;
-        else
-            d.shear1->pointB=index2;
-    }
-
-    //6.Find all shears to be reassigned to index2 (shear1) by matching them w/ connectedLink1
+    //5.Group shears into:
+    //shear_a / shear_b: on side1 / side2, doesn't contain border links
+    //border_a / border_b: on side1/ side2, contain border links
     QList<Link*> shear = shear_map[index];
-    QList<Link*> shear1;
     foreach(Link* s, shear){
         QList<Link*> segments = shear_to_link[s];
-        foreach(Link* l, connectedLink1){
-            if(l==segments[0]||l==segments[1]){  //matching segment
-                Link* other = (segments[0]==l) ? segments[1] : segments[0];
-                //Check if other segment is connected to it
-                if(other->pointA==l->pointA||other->pointB==l->pointA||
-                        other->pointA==l->pointB||other->pointB==l->pointB)
-                    shear1.push_back(s);
-                else
-                    removeShear(s);
-            }
+        for(int i = 1; i<connectedLink1.size()-1; i++){
+            Link* l = connectedLink1[i];
+            if(segments.contains(l))
+                shear_a.push_back(s);
         }
-        foreach(Link* l, connectedLink2){
-            if(l==segments[0]||l==segments[1]){
-                Link* other = (segments[0]==l) ? segments[1] : segments[0];
-                if(!(other->pointA==l->pointA||other->pointB==l->pointA||
-                        other->pointA==l->pointB||other->pointB==l->pointB))
-                    removeShear(s);
-            }
+        for(int i = 1; i<connectedLink2.size()-1; i++){
+            Link* l = connectedLink2[i];
+            if(segments.contains(l))
+                shear_b.push_back(s);
         }
+        if(segments.contains(link_a1)||segments.contains(link_a2))
+            border_a.push_back(s);
+        if(segments.contains(link_b1)||segments.contains(link_b2))
+            border_b.push_back(s);
     }
-    shear = shear_map[index];
 
-    //7.Assign index2 to shear constraints (shear1): update shear_map
-    foreach(Link* s, shear1){
-        //if(!duplicates.contains(s)){
-            (s->pointA==index) ? s->pointA=index2 : s->pointB=index2;
-            shear_map[index2]+=s;
-            shear.removeOne(s);
-        //}
+    //6.Assign index2 to shear (shear_a, border_a): update shear map
+    foreach(Link* s, shear_a){
+        (s->pointA==index) ? s->pointA=index2 : s->pointB=index2;
+        shear_map[index2]+=s;
+        removeFromHash(index,s,shear_map);
     }
-    shear_map[index]=shear;
+     foreach(Link* s, border_a){
+         (s->pointA==index) ? s->pointA=index2 : s->pointB=index2;
+         shear_map[index2]+=s;
+         removeFromHash(index,s,shear_map);
+     }
 
-    //8.Destroy any crossing shear constraints in which a and b aren't on the same side
-    QList<Link*> cross = crossover_map[index];
-    foreach(Link* c, cross){
-        int a = c->pointA;
-        int b = c->pointB;
-        bool onSide1 = points1.contains(a)&&points1.contains(b);
-        bool onSide2 = points2.contains(a)&&points2.contains(b);
-        if(!(onSide1||onSide2))
-            removeShear(c);
-    }
+     //7.Remove shears in which segments aren't connected
+     foreach(Link* s, border_a){
+         if(!checkShearValid(s)){
+             border_a.removeOne(s);
+             removeShear(s);
+         }
+     }
+     foreach(Link* s, border_b){
+         if(!checkShearValid(s)){
+             border_b.removeOne(s);
+             removeShear(s);
+         }
+     }
+
+     //8.Destroy any crossing shear constraints in which a and b aren't on the same side
+     QList<Link*> cross = crossover_map[index];
+     foreach(Link* s, cross){
+         //Handle duplicates
+         QList<Link*> segments = shear_to_link[s];
+         if(segments.size()==1&&segments[0]==link_a1){
+             shear_to_link[s]+=link_a2;
+             link_to_shear[link_a2]+=s;
+             crossover_map[index2]+=s;
+             removeFromHash(index,s,crossover_map);
+         }
+         else if(segments.size()==1&&segments[0]==link_a2){
+             shear_to_link[s]+=link_a1;
+             link_to_shear[link_a1]+=s;
+             crossover_map[index2]+=s;
+             removeFromHash(index,s,crossover_map);
+         }
+         else if(segments.size()==1&&segments[0]==link_b1){
+             shear_to_link[s]+=link_b2;
+             link_to_shear[link_b2]+=s;
+         }
+         else if(segments.size()==1&&segments[0]==link_b2){
+             shear_to_link[s]+=link_b1;
+             link_to_shear[link_b1]+=s;
+         }
+         else if(segments.size()==1){
+             std::cout<<"no match"<<std::endl;
+             removeShear(s);
+         }
+     }
+
+     QList<Link*> cross2 = crossover_map[index];  //on the side of index
+     QList<Link*> cross1; //on the side of index2
+
+
+     //Update index
+     foreach(Link* c, cross2){
+         QList<Link*> segments = shear_to_link[c];
+         if(segments[0]->pointA==index2||segments[0]->pointB==index2||segments[1]->pointA==index2||segments[1]->pointB==index2){
+             c->pointC=index2;
+             crossover_map[index2]+=c;
+             cross2.removeOne(c);
+             cross1.push_back(c);
+             //removeFromHash(index,c,crossover_map);
+         }
+     }
+     foreach(Link* c, cross2){
+         int a = c->pointA;
+         int b = c->pointB;
+         bool onSide = points2.contains(a)&&points2.contains(b)&&points2.contains(c->pointC);
+         if(!onSide||!checkShearValid(c)){
+             removeShear(c);
+             cross2.removeOne(c);
+         }
+     }
+     foreach(Link* c, cross1){
+         int a = c->pointA;
+         int b = c->pointB;
+         bool onSide = points1.contains(a)&&points1.contains(b)&&points1.contains(c->pointC);
+         if(!onSide||!checkShearValid(c)){
+             removeShear(c);
+             cross1.removeOne(c);
+         }
+     }
+     crossover_map[index]=cross2;
+     crossover_map[index2]=cross1;
 
     //recalculate scalar + numTri for index + i (new index)
     numTri[index2] = connectedTri1.size();

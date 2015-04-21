@@ -41,18 +41,6 @@ struct Tri
     }
 };
 
-struct Duplicate
-{
-    Link* shear1;
-    Link* shear2;
-    Link* seg1; Link* seg2; Link* seg3; Link* seg4;
-
-    Duplicate(Link* s1, Link* s2, Link* l1, Link* l2, Link* l3, Link* l4){
-        shear1 = s1; shear2 = s2;
-        seg1 = l1; seg2= l2; seg3 = l3; seg4 = l4;
-    }
-};
-
 class TriangleMesh: public Verlet
 {
 public:
@@ -91,13 +79,13 @@ private:
     bool checkTorn(int index);
     //Called from tearLink if there are tears to merge- inserts a point so they
     //can be separated
-    void insertPoint(int index, Tri* t1, Link* l1,
-                     Tri* t2, Link* l2, std::vector<Duplicate> duplicate);
+    void insertPoint(int index, Tri* t1, Link* l1,Tri* t2, Link* l2);
     //Helper: copies all data from index into a new point at returned index
     int duplicatePoint(int index);
     //Helper: finds all links + triangles adjoining l1 and attached to index
-    void findConnecting(int index, Tri*& t1, Link*& l1,
-                        QList<Tri*>& triangles, QList<Link*>& links);
+    void findConnecting(int index, Tri*& t1, Link*& l1,QList<Tri*>& triangles,
+                         QList<Link*>& links, QList<int>& points);
+    bool checkShearValid(Link* s);
 
     //For tearing
     //which shear constraints end at index: reassign if point is duplicated

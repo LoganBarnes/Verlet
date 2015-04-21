@@ -86,7 +86,10 @@ private:
     bool m_tearMode;
     //World-space pt: where cursor's ray intersects w/ tear's plane
     glm::vec3 m_tearMouse;
-    Link* m_tearLink;
+    int m_tear_ptA;
+    int m_tear_ptB;
+    Verlet* m_tearVerlet;
+
 
     int m_curV;
     int m_curI;
