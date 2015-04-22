@@ -20,7 +20,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_parentApp->setMouseDecoupled(true);
 //    m_parentApp->setMouseDecoupleKey(Qt::Key_Shift);
 
-    GLuint shader = m_parentApp->getShader(DEFAULT);
+    GLuint shader = m_parentApp->getShader(GEOMETRY);
     QList<Triangle *> tris;
 
     m_oh = new ObjectHandler();
@@ -36,7 +36,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     player->useSound(m_parentApp->getAudioObject());
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
-    vm = new VerletManager(cam, m_parentApp->getShader(DEFAULT));
+    vm = new VerletManager(cam, m_parentApp->getShader(GEOMETRY));
 
     m_world = new GameWorld();
     m_world->addManager(gcm);
@@ -93,24 +93,11 @@ void TestLevelScreen::onRender(Graphics *g)
     g->setWorldColor(.2f,.2f,.2f);
     g->setColor(1,1,1,1,0);
 
-//    Light light;
-//    light.id = 0;
-//    light.type = DIRECTIONAL;
-//    light.posDir = glm::vec3(-1);
-//    light.color = glm::vec3(1);
-//    g->addLight(light);
-
-//    light.id = 1;
-//    light.type = DIRECTIONAL;
-//    light.posDir = glm::vec3(1,-1,1);
-//    light.color = glm::vec3(.2f);
-//    g->addLight(light);
-
     g->setTexture("grass.png", 5.f, 5.f);
 
 //    m_level->draw(glm::mat4());
-    m_world->onDraw(g, m_level);
-//      vm->onDraw(g);
+    m_world->onDraw(g, m_level, vm);
+//    vm->onDraw(g);
 
     //for dragging
     if(dragMode){

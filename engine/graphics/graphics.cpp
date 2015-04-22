@@ -197,6 +197,7 @@ void Graphics::loadDeferredLightFBOs(int width, int height){
     //create and load the first pass framebuffer with position and normal texture attachments
     GLuint geomPass, lightPass, finalPass;
     GLuint positionAttachment, normalAttachment, depthAttachment, diffuseAttachment, specularAttachment, fullLightAttachment;
+    GLuint materialColorAttachment, materialTextureAttachment;
 
     // Bind first pass framebuffer with position and normal textures to write to
     // OpenGL garbage:
@@ -219,6 +220,16 @@ void Graphics::loadDeferredLightFBOs(int width, int height){
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
     glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normalAttachment, 0);
 
+    // material properties:
+    // diffuse color + spec color
+    glActiveTexture( GL_TEXTURE2 );
+    glGenTextures( 1, &materialColorAttachment );
+    glBindTexture( GL_TEXTURE_2D, materialColorAttachment );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
+    glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, materialColorAttachment, 0);
+
     // depth buffer
     glGenRenderbuffers( 1, &depthAttachment);
     glBindRenderbuffer( GL_RENDERBUFFER, depthAttachment);
@@ -228,6 +239,7 @@ void Graphics::loadDeferredLightFBOs(int width, int height){
     m_fbos.insert("geomPass", geomPass);
     m_textures.insert("posAttachment", positionAttachment);
     m_textures.insert("normalAttachment", normalAttachment);
+    m_textures.insert("materialColorAttachment", materialColorAttachment);
     m_textures.insert("depthAttachment", depthAttachment);
 
     glBindFramebuffer( GL_FRAMEBUFFER, 0 );
@@ -359,7 +371,6 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
     case LIGHT:
     {
         m_currentShader = m_shaders["lightShader"];
-//        m_fullscreen_quad->init(m_currentShader);
         glUseProgram(m_currentShader);
 
         // Send attachments from the geometry fbo as textures to lightPass
@@ -379,11 +390,6 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
         m_currentShader = m_shaders["compositeShader"];
         glUseProgram(m_currentShader);
 
-        glUniformMatrix4fv(m_compositeLocs["projection"], 1, GL_FALSE,
-                glm::value_ptr(m_currProj));
-        glUniformMatrix4fv(m_compositeLocs["view"], 1, GL_FALSE,
-                glm::value_ptr(m_currView));
-
         // Send attachments from the geometry fbo as textures to lightPass
         glUniform1i( glGetUniformLocation(m_currentShader, "diffuseLights"), 0 );
         glActiveTexture(GL_TEXTURE0);
@@ -393,15 +399,16 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, m_textures["specularAttachment"]);
 
-        glUniform2f(glGetUniformLocation(m_currentShader, "viewport") , m_w, m_h);
-        glUniform1i(glGetUniformLocation(m_currentShader, "usingFog"), m_usingFog);
+        glUniform1i( glGetUniformLocation(m_currentShader, "materialColors"), 2 );
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, m_textures["materialColorAttachment"]);
 
+        glUniform2f(glGetUniformLocation(m_currentShader, "viewport") , m_w, m_h);
         break;
     }
     case FOG:
     {
-        // attach lit image and viewport. eyepos set gameside if using
-        // may attach depth buffer
+        // attach lit image and viewport
         m_currentShader = m_shaders["fogShader"];
         glUseProgram(m_currentShader);
 
@@ -410,9 +417,10 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
         glBindTexture( GL_TEXTURE_2D, m_textures["fullLightAttachment"]);
 
         glUniform1i( glGetUniformLocation(m_currentShader, "positions"), 1 );
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, m_textures["posAttachment"]);
+        glActiveTexture( GL_TEXTURE1 );
+        glBindTexture( GL_TEXTURE_2D, m_textures["posAttachment"]);
 
+        glUniform1i(glGetUniformLocation(m_currentShader, "usingFog"), m_usingFog);
         glUniform2f( glGetUniformLocation(m_currentShader, "viewport"), m_w, m_h );
         break;
     }
@@ -679,8 +687,6 @@ void Graphics::drawParticles(glm::vec3 source, float fuzziness)
 }
 
 
-//Below two methods can be combined into one
-
 // Set up the first frame buffer for rendering into and bind geom shader
 GLuint Graphics::setupFirstPass(){
 
@@ -693,8 +699,8 @@ GLuint Graphics::setupFirstPass(){
     glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
 
     // Necessary to enable multiple drawing targets
-    GLenum buffersToDraw[] = { GL_COLOR_ATTACHMENT0 , GL_COLOR_ATTACHMENT1 };
-    glDrawBuffers( 2, buffersToDraw );
+    GLenum buffersToDraw[] = { GL_COLOR_ATTACHMENT0 , GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    glDrawBuffers( 3, buffersToDraw );
 
     return setGraphicsMode(GEOMETRY);
 }
@@ -714,11 +720,8 @@ GLuint Graphics::setupSecondPass(){
 
 GLuint Graphics::setupFinalPass(){
     // composite the final image from lighting
-    //if using fog bind final pass framebuffer to write to
 
-//    if(m_usingFog)
-//        glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["finalPass"]);
-
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["finalPass"]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -729,9 +732,61 @@ GLuint Graphics::setupFinalPass(){
     return setGraphicsMode(COMPOSITE);
 }
 
-GLuint Graphics::setupFogPass(){
+GLuint Graphics::setupFogPass(bool fog){
     // composite final image with fog
+    m_usingFog = fog;
     return setGraphicsMode(FOG);
+}
+
+// Draw light shapes relative to the given eye position
+void Graphics::drawLightShapes(glm::vec3 eyePos, GLuint lightShader, QList<Light*> lights){
+
+
+    // draw the light shape based on type
+    foreach(Light* light, lights){
+
+        // position and radius determine parameters of shape
+        glm::mat4 trans;
+        //set the uniforms for this light in the light shader
+        glUniform1i( glGetUniformLocation(lightShader, "lightType"), light->type );
+        glUniform3f( glGetUniformLocation(lightShader, "lightPosition"), light->posDir.x, light->posDir.y, light->posDir.z);
+        glUniform3f( glGetUniformLocation(lightShader, "lightAttentuation"), light->function.x, light->function.y, light->function.z);
+        glUniform3f( glGetUniformLocation(lightShader, "lightColor"), light->color.x, light->color.y, light->color.z);
+
+        bool inLight;
+
+        if(light->type==POINT){
+
+            inLight = isInLight(light, eyePos);
+            inLight = true;
+            glUniform1i( glGetUniformLocation(lightShader, "inLight"), inLight );
+
+            // check if eye position is in light radius
+            if(inLight)                // if in the light, render as a full screen quad
+                drawFullScreenQuad(glm::mat4());
+            else{
+                trans = glm::translate(glm::mat4(), light->posDir);
+                trans = glm::scale(trans, glm::vec3(light->radius, light->radius, light->radius));
+                drawSphere(trans);
+            }
+        }
+    }
+
+}
+
+// returns whether or not the given position is in the light
+bool Graphics::isInLight(Light* l, glm::vec3 pos){
+
+    if(l->type==POINT){
+        glm::vec3 diff = pos - l->posDir;
+        float lengthSquared = diff.x*diff.x + diff.y*diff.y + diff.z*diff.z;
+        float r = l->radius+1;
+        return lengthSquared <= (r*r);
+    }
+    else if(l->type==DIRECTIONAL)
+        return true;
+
+    return false;
 }
 
 

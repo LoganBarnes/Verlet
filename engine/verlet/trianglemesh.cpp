@@ -228,9 +228,16 @@ void TriangleMesh::updateBuffer()
     m_mesh->setTriangles(_triangles, getPosArray());
 }
 
-void TriangleMesh::onDraw(Graphics *g)
+void TriangleMesh::onDraw(Graphics *g, GLuint shader, int pass)
 {
-    g->setColor(.5f,.5f,1.f,1.f,0.f);
+//    g->setColor(.5f,.5f,1.f,1.f,0.f);
+    if(pass==1){
+        glUniform1f(glGetUniformLocation(shader, "shininess"), 0);
+        glUniform4f(glGetUniformLocation(shader, "materialColor"), 1, 1, 1, .7);
+    }
+    else
+        g->setColor(1, 1, 1, 1, 0);
+
     glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"),
                        1, GL_FALSE, glm::value_ptr(glm::mat4()));
     m_mesh->onDraw(GL_TRIANGLES);

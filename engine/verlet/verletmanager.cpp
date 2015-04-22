@@ -176,11 +176,11 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     rayTrace(mouseX, mouseY);
 }
 
-void VerletManager::onDraw(Graphics *g){
+void VerletManager::onDraw(Graphics *g, GLuint shader, int pass){
 
     g->setTexture("");
     for(unsigned int i=0; i<verlets.size(); i++)
-        verlets.at(i)->onDraw(g);
+        verlets.at(i)->onDraw(g, shader, pass);
 //    g->setColor(glm::vec3(1,1,1));
 //    g->drawLineSeg(_boxMin,glm::vec3(_boxMin.x,_boxMin.y,_boxMax.z), .3f);
 //    g->drawLineSeg(_boxMin,glm::vec3(_boxMin.x,_boxMax.y,_boxMin.z), .3f);

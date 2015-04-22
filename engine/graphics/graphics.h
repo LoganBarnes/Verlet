@@ -50,6 +50,7 @@ struct Light
     glm::vec3 color;
     glm::vec3 posDir;   // position for point, direction for directional
     glm::vec3 function; // Attenuation function
+    float radius;
 };
 
 struct ObjectsInfo
@@ -107,7 +108,10 @@ public:
     GLuint setupFirstPass();
     GLuint setupSecondPass();
     GLuint setupFinalPass();
-    GLuint setupFogPass();
+    GLuint setupFogPass(bool fog);
+
+    void drawLightShapes(glm::vec3 eyePos, GLuint lightShader, QList<Light*> lights);
+    bool isInLight(Light* l, glm::vec3 pos);
 
     void drawLine(const glm::vec3 &a, const glm::vec3 &b);
 

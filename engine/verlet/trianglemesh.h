@@ -41,7 +41,7 @@ public:
     virtual ~TriangleMesh();
 
     void onTick(float seconds);
-    virtual void onDraw(Graphics *g);
+    virtual void onDraw(Graphics *g, GLuint shader, int pass);
     virtual void updateBuffer();
 
     //Called per tick to update triangle vertices + normal based

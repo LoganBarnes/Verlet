@@ -5,6 +5,7 @@ in vec2 uv;
 
 uniform sampler2D diffuseLights;    // color attachments from the geometry FBO
 uniform sampler2D specularLights;
+uniform sampler2D materialColors;   // diffuse color + monochromatic spec
 
 uniform vec2 viewport;
 
@@ -12,36 +13,30 @@ uniform vec2 viewport;
 uniform vec3 globalConstants;       // ka,kd,ks
 uniform vec3 worldColor = vec3(0.2);
 
-// material properties
-uniform vec3 cDiffuse, cSpec;
-uniform sampler2D tex;
-
-uniform bool usingFog;
-
-out vec4 fragColor;
-
 void main(){
 
     vec2 tCoord = gl_FragCoord.xy/viewport;
 
     vec4 diffLight = texture(diffuseLights,tCoord);
     vec4 specLight = texture(specularLights,tCoord);
+    vec4 materialColor = texture(materialColors, tCoord);
+
+    vec3 diffColor = materialColor.xyz;
+    vec3 specColor = vec3(materialColor.w);
 
     // ambient term:
     vec3 ambient = worldColor*globalConstants.x;
 
     // diffuse term:
-    vec3 diffuse = diffLight.xyz*cDiffuse*globalConstants.y;
+    vec3 diffuse = diffLight.xyz*diffColor*globalConstants.y;
 
     // specular term:
-    vec3 specular = specLight.xyz*cSpec*globalConstants.z;
+    vec3 specular = specLight.xyz*specColor*globalConstants.z;
 
     // final
-    vec3 finalColor = ambient + diffuse + specular;
+    vec3 finalColor = ambient+diffuse+specular;
+
     finalColor = clamp(finalColor + vec3(0.0), 0.0, 1.0) * vec3(1.0);
 
-//    if(usingFog)
-//        gl_FragData[0] = vec4(finalColor,1);
-//    else
-        fragColor = vec4(finalColor,1);
+    gl_FragData[0] = vec4(finalColor,1);
 }

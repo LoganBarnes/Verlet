@@ -5,7 +5,7 @@
 #include <vector>
 #include "link.h"
 #include <QHash>
-
+#include "graphics.h"
 class VerletManager;
 class Graphics;
 class MovableEntity;
@@ -41,7 +41,7 @@ public:
     void pinConstraint();
 
     virtual void onTick(float seconds);
-    virtual void onDraw(Graphics *g);
+    virtual void onDraw(Graphics *g, GLuint shader, int pass);
     virtual void updateBuffer() {}
     glm::vec3 collide(MovableEntity *e);
 

@@ -3,6 +3,7 @@
 
 #include "world.h"
 #include "obj.h"
+#include "verletmanager.h"
 
 class GameWorld : public World
 {
@@ -11,7 +12,7 @@ public:
     virtual ~GameWorld();
 
     Triangle *intersectWorld(glm::vec3 p, glm::vec3 d, float *t);
-    void onDraw(Graphics *g, OBJ* level);
+    void onDraw(Graphics *g, OBJ* level, VerletManager* vm);
     void drawShapes(Graphics* g, int pass, GLuint shader);
     void onKeyPressed(QKeyEvent *e);
 
@@ -19,6 +20,7 @@ public:
 
 private:
     int mode;
+    bool usingFog;
 
 };
 

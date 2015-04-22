@@ -172,12 +172,6 @@ void Shape::transformAndRender(GLuint shader, glm::mat4 trans, GLenum mode)
     glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(trans));
     glDrawArrays(mode, 0, m_numVerts);
     glBindVertexArray(0);
-
-//    glUniform3f(glGetUniformLocation(shader, "allBlack"), 0, 0, 0);
-//    glBindVertexArray(m_vaoID);
-//    glDrawArrays(GL_LINE_STRIP, 0, m_numVerts);
-//    glBindVertexArray(0);
-//    glUniform3f(glGetUniformLocation(shader, "allBlack"), 1, 1, 1);
 }
 
 void Shape::addVertex(int *i, glm::vec3 v, glm::vec3 norm)

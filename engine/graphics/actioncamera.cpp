@@ -11,7 +11,6 @@ ActionCamera::~ActionCamera()
 {
 }
 
-
 float ActionCamera::getOffset()
 {
     return m_offset;

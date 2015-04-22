@@ -15,13 +15,15 @@ GameWorld::GameWorld()
         light = new Light();
         light->id = i;                  // index into array in shader
         light->type = POINT;            // can be POINT or DIRECTIONAL for now
-        light->color = glm::vec3(.2f);  // rgb color
-        light->posDir = glm::vec3(cos(angle) * 12, 11, sin(angle) * 12);// position or direction depending on light type
+        light->color = glm::vec3(.5f);  // rgb color
+        light->posDir = glm::vec3(cos(angle), 10, sin(angle));// position or direction depending on light type
+        light->radius = 10.f;
 
         m_tempLights.append(light);
     }
 
     mode = 0;
+    usingFog = false;
 }
 
 
@@ -55,12 +57,12 @@ Triangle* GameWorld::intersectWorld(glm::vec3 p, glm::vec3 d, float *t)
 void GameWorld::onKeyPressed(QKeyEvent *e)
 {
     // temp lighting controls
-    if(e->key()==49)
-        mode=0;
-    else if(e->key()==50)
-        mode=1;
-    else if(e->key()==51)
-        mode=2;
+    if(e->key()==49){
+        if(usingFog)
+            usingFog = false;
+        else
+            usingFog = true;
+    }
 
     World::onKeyPressed(e);
 }
@@ -78,122 +80,103 @@ void GameWorld::drawShapes(Graphics *g, int pass, GLuint shader){
 
     // transparency left out cause it don't play nice with deferred lighting...
 
-    glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(.1f));
+    glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(1.f));
 
     // sphere
 
-    if(pass==1)
+    if(pass==1){
         glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
-    else if(pass==3){
-        glUniform3f(glGetUniformLocation(shader, "cDiffuse"), 1, 0, 0);
-        glUniform3f(glGetUniformLocation(shader, "cSpec"),.7,.7,.7);
+        glUniform4f(glGetUniformLocation(shader, "materialColor"), 1, 0, 0, .7);
     }
     else
         g->setColor(1, 0, 0, 1, 0);
 
-    trans = glm::translate(glm::mat4(), glm::vec3(0, 1, -6));
+    trans = glm::translate(glm::mat4(), glm::vec3(0, 1, 0));
     g->drawSphere(trans);
 
     // cone
-    if(pass==1)
+    if(pass==1){
         glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
-    else if(pass==3){
-        glUniform3f(glGetUniformLocation(shader, "cDiffuse"), 1, .5, 0);
-        glUniform3f(glGetUniformLocation(shader, "cSpec"),.7,.7,.7);
+        glUniform4f(glGetUniformLocation(shader, "materialColor"), 1, .5, 0, .7);
     }
     else
         g->setColor(1, .5, 0, 1, 0);
-    trans = glm::translate(glm::mat4(), glm::vec3(6, 1, -3));
+    trans = glm::translate(glm::mat4(), glm::vec3(2, 1, 2));
     g->drawCone(trans);
 
     // cube
-    if(pass==1)
+    if(pass==1){
         glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
-    else if(pass==3){
-        glUniform3f(glGetUniformLocation(shader, "cDiffuse"), .5, 1, 0);
-        glUniform3f(glGetUniformLocation(shader, "cSpec"),.7,.7,.7);
+        glUniform4f(glGetUniformLocation(shader, "materialColor"), .5, 1, 0, .7);
     }
     else
         g->setColor(.5, 1, 0, 1, 0);
-    trans = glm::translate(glm::mat4(), glm::vec3(12, 1, 0));
+    trans = glm::translate(glm::mat4(), glm::vec3(-2, 1, 2));
     g->drawCube(trans);
 
     // cylinder
-    if(pass==1)
+    if(pass==1){
         glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
-    else if(pass==3){
-        glUniform3f(glGetUniformLocation(shader, "cDiffuse"), 0, 1, .3);
-        glUniform3f(glGetUniformLocation(shader, "cSpec"),.7,.7,.7);
+        glUniform4f(glGetUniformLocation(shader, "materialColor"), 0, 1, .3, .7);
     }
     else
         g->setColor(0, 1, .3, 1, 0);
-    trans = glm::translate(glm::mat4(), glm::vec3(6, 1, 3));
+    trans = glm::translate(glm::mat4(), glm::vec3(-10, 1, 2));
     g->drawCylinder(trans);
 
-    // extra sphere
-    if(pass==1)
+
+    if(pass==1){
         glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
-    else if(pass==3){
-        glUniform3f(glGetUniformLocation(shader, "cDiffuse"), 0, 0, 1);
-        glUniform3f(glGetUniformLocation(shader, "cSpec"),.7,.7,.7);
+        glUniform4f(glGetUniformLocation(shader, "materialColor"), 0, 0, 1, .7);
     }
     else
         g->setColor(0, 0, 1, 1, 0);
 
-    trans = glm::translate(glm::mat4(), glm::vec3(0, 1, 6));
+    trans = glm::translate(glm::mat4(), glm::vec3(-13, 1, 5));
     g->drawSphere(trans);
 
 }
 
-void GameWorld::onDraw(Graphics *g, OBJ* level){
+
+void GameWorld::onDraw(Graphics *g, OBJ* level, VerletManager* vm){
 
     if(useDeferredLighting){
 
-        if(mode==1 || mode==2){
 
-            // first pass:
-            GLuint firstPassShader = g->setupFirstPass();
-//            drawShapes(g,1,firstPassShader);        //render all geometry
-            level->draw(glm::mat4(), g, 1, firstPassShader);
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            glUseProgram(0);
+        // first pass:
+        GLuint firstPassShader = g->setupFirstPass();
+        level->draw(glm::mat4(), g, 1, firstPassShader);
+        drawShapes(g,1,firstPassShader);        //render all geometry
+        vm->onDraw(g, firstPassShader, 1);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glUseProgram(0);
 
-            // second pass:
-            GLuint secondPassShader = g->setupSecondPass();
-            glm::vec3 pos = m_player->getEyePos();
-            glUniform3f(glGetUniformLocation(secondPassShader, "eyePos"),pos.x, pos.y, pos.z);
+        // second pass:
+        GLuint secondPassShader = g->setupSecondPass();
+        glm::vec4 pos = m_player->getCamEye();
+        glUniform3f(glGetUniformLocation(secondPassShader, "eyePos"),pos.x, pos.y, pos.z);
 
-            foreach(Light *light, m_tempLights){
-                g->addLight(*light);
-            }
-            g->drawFullScreenQuad(glm::mat4());
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            glUseProgram(0);
+        g->drawLightShapes(glm::vec3(pos.x,pos.y,pos.z), secondPassShader, m_tempLights);
+        glDisable(GL_BLEND);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glUseProgram(0);
 
-            // third pass:
-            GLuint finalPassShader = g->setupFinalPass();
-            glUniform1i( glGetUniformLocation(finalPassShader, "mode"), mode );
-            // set global coefficients ka,kd,ks
-            glUniform3f( glGetUniformLocation(finalPassShader, "globalConstants"), 1.0, 1.0, 1.0 );
-//            drawShapes(g,3,finalPassShader);            //render all geometry
-            level->draw(glm::mat4(), g, 3, finalPassShader);
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            glUseProgram(0);
+        // third pass:
+        glEnable(GL_DEPTH_TEST);
+        GLuint finalPassShader = g->setupFinalPass();
+        // set global coefficients ka,kd,ks
+        glUniform3f( glGetUniformLocation(finalPassShader, "globalConstants"), 1.0, 1.0, 1.0 );
+        g->drawFullScreenQuad(glm::mat4());
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glUseProgram(0);
 
-//            // fog pass:
-//            GLuint fogShader = g->setupFogPass();
-//            glUniform3f(glGetUniformLocation(secondPassShader, "eyePos"),pos.x, pos.y, pos.z);
-//            g->drawFullScreenQuad(glm::mat4());
-//            glBindFramebuffer( GL_FRAMEBUFFER,0 );
-//            glUseProgram(0);
+        // fog pass:
+        GLuint fogShader = g->setupFogPass(usingFog);
+        glUniform3f(glGetUniformLocation(fogShader, "eyePos"),pos.x, pos.y, pos.z);
+        g->drawFullScreenQuad(glm::mat4());
+        glBindFramebuffer( GL_FRAMEBUFFER,0 );
+        glUseProgram(0);
 
-        }
-        else{
-            foreach(Light *light, m_tempLights){
-                g->addLight(*light);
-            }
-            drawShapes(g,0,0);
-        }
     }
 
 }
