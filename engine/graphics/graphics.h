@@ -105,6 +105,7 @@ public:
 
     void drawLine(const glm::vec3 &a, const glm::vec3 &b);
 
+
 private:
     void clearLights();
 

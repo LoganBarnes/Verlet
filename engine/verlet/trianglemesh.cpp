@@ -447,6 +447,13 @@ void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2){
          }
          else if(segments.size()==1){
              std::cout<<"no match"<<std::endl;
+             std::cout<<"shear:"<<s->pointA<<" "<<s->pointB<<" "<<s->pointC;
+             std::cout<<"segment1:"<<segments[0]->pointA<<" "<<segments[0]->pointB;
+             std::cout<<"matches:"<<std::endl;
+             std::cout<<"a1:"<<link_a1->pointA<<" "<<link_a1->pointB;
+             std::cout<<"a2:"<<link_a2->pointA<<" "<<link_a2->pointB;
+             std::cout<<"b1:"<<link_b1->pointA<<" "<<link_b1->pointB;
+             std::cout<<"b2:"<<link_b2->pointA<<" "<<link_b2->pointB;
              removeShear(s);
          }
      }

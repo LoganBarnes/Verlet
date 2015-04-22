@@ -19,8 +19,8 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
       m_tearMode(false),
       m_tear_ptA(-1),
       m_tear_ptB(-1),
-      m_tearVerlet(NULL)
-
+      m_tearVerlet(NULL),
+      m_tearLink(NULL)
 {
     //initial curtain
     /*
@@ -199,6 +199,11 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     }
     delete col;
 
+
+    //glMatrixMode(GL_MODELVIEW);
+    //glLoadMatrixf(m_cam->getViewMatrix());
+    //glLoadMatrixf(this->);
+
     rayTrace(mouseX, mouseY);
 
     if(m_dragMode){
@@ -214,56 +219,51 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     }
 
     //If setting m_tear_ptB is based on direction the mouse travels, might be better
-    if(m_tearMode && m_curV > -1){
-        Verlet* hitV = getVerlet(m_curV);
-        glm::vec3 point = hitV->getPoint(m_curI);
-        glm::vec4 n = world->getPlayer()->getCamera()->getLook();
-        n*=-1;
-
-        float t = m_ray->hitPlane(point, glm::vec3(n));
-        m_tearMouse = m_ray->getPoint(t);
-
-        if(m_tear_ptA<0){
+    if(m_tearMode){
+        if(m_tear_ptA<0 && m_curV > -1){
             m_tear_ptA = m_curI;
-            m_tearVerlet = hitV;
-            m_tear_ptB = -1;
+            m_tearVerlet = getVerlet(m_curV);
         }
         else if(m_tear_ptA>0&&m_tear_ptB<0){
             QList<Link*> proximity = m_tearVerlet->link_map[m_tear_ptA];
             std::vector<int> p;
+            QHash<int,Link*> pairs;
+
             foreach(Link* l, proximity){
-                if(l->pointA==m_tear_ptA)
+                if(l->pointA==m_tear_ptA){
                     p.push_back(l->pointB);
-                else if(l->pointB==m_tear_ptA)
+                    pairs[l->pointB]=l;
+                }
+                else if(l->pointB==m_tear_ptA){
                     p.push_back(l->pointA);
+                    pairs[l->pointA]=l;
+                }
             }
-            int id = rayTrace(mouseX, mouseY, p, hitV);
-            /*
-            if(id>-1)
+            int id = rayTrace(mouseX, mouseY, p, m_tearVerlet);
+            if(id>-1){
                 m_tear_ptB=id;
-            */
+                m_tearLink = pairs[m_tear_ptB];
+            }
+            /*
             foreach(Link* l, proximity){
                 if(m_curI==l->pointA||m_curI==l->pointB)
                     m_tear_ptB = m_curI;
             }
+            */
 
         }
         else if(m_tear_ptA>0&&m_tear_ptB>0){
-            if(m_tear_ptA==m_tear_ptB)
-                m_tear_ptB=-1;
-            else{
-                Link* tearLink = m_tearVerlet->findLink(m_tear_ptA, m_tear_ptB);
-                if(tearLink!=NULL)
-                    m_tearVerlet->tearLink(tearLink);
-                m_tear_ptA = m_tear_ptB;
-                m_tear_ptB = -1;
-            }
+            //Link* tearLink = m_tearVerlet->findLink(m_tear_ptA, m_tear_ptB);
+            if(m_tearLink!=NULL)
+                m_tearVerlet->tearLink(m_tearLink);
+            m_tear_ptA = m_tear_ptB;
+            m_tear_ptB = -1;
+            m_tearLink = NULL;
         }
     }
 }
 
 void VerletManager::onDraw(Graphics *g){
-
     g->setTexture("");
     for(unsigned int i=0; i<verlets.size(); i++)
         verlets.at(i)->onDraw(g);
@@ -276,11 +276,23 @@ void VerletManager::onDraw(Graphics *g){
         g->drawSphere(trans);
     }
     //for tearing
-    if(m_tearMode&&m_tear_ptA>0){
+    if(m_tearMode){
         g->setColor(1, 0, 0, 1, 0);
-        glm::mat4 trans = glm::translate(glm::mat4(), m_tearVerlet->getPoint(m_tear_ptA));
-        trans *= glm::scale(glm::mat4(), glm::vec3(.2,.2,.2));
-        g->drawSphere(trans);
+        if(m_tear_ptA>0&&m_tearVerlet!=NULL){
+            std::cout<<"point a:"<<m_tear_ptA<<std::endl;
+
+            glm::mat4 trans = glm::translate(glm::mat4(), m_tearVerlet->getPoint(m_tear_ptA));
+            trans *= glm::scale(glm::mat4(), glm::vec3(.2,.2,.2));
+            g->drawSphere(trans);
+            /*
+            for(unsigned int i=0; i<4; i++){
+                for(unsigned int j=0; j<4; j++){
+                    std::cout<<trans[i][j]<<"  ";
+                }
+                std::cout<<std::endl;
+            }
+            */
+        }
     }
 }
 

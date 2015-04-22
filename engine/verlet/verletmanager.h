@@ -85,10 +85,10 @@ private:
     //testing tearing
     bool m_tearMode;
     //World-space pt: where cursor's ray intersects w/ tear's plane
-    glm::vec3 m_tearMouse;
     int m_tear_ptA;
     int m_tear_ptB;
     Verlet* m_tearVerlet;
+    Link* m_tearLink;
     int rayTrace(float x, float y, std::vector<int> points, Verlet* v);
 
 
