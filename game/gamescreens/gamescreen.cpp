@@ -136,7 +136,7 @@ void GameScreen::onRender(Graphics *g)
     /////////////////////////////////////////////////////////
 
     // draw world (draws whatever has been added to the world)
-    m_world->onDraw(g);
+//    m_world->onDraw(g);
 }
 
 void GameScreen::render2D(Graphics *)

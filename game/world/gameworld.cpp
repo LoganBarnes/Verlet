@@ -16,7 +16,7 @@ GameWorld::GameWorld()
         light->id = i;                  // index into array in shader
         light->type = POINT;            // can be POINT or DIRECTIONAL for now
         light->color = glm::vec3(.2f);  // rgb color
-        light->posDir = glm::vec3(cos(angle) * 10, 10, sin(angle) * 10 - 15);// position or direction depending on light type
+        light->posDir = glm::vec3(cos(angle) * 12, 11, sin(angle) * 12);// position or direction depending on light type
 
         m_tempLights.append(light);
     }
@@ -91,7 +91,7 @@ void GameWorld::drawShapes(Graphics *g, int pass, GLuint shader){
     else
         g->setColor(1, 0, 0, 1, 0);
 
-    trans = glm::translate(glm::mat4(), glm::vec3(-5, 0, -35));
+    trans = glm::translate(glm::mat4(), glm::vec3(0, 1, -6));
     g->drawSphere(trans);
 
     // cone
@@ -103,7 +103,7 @@ void GameWorld::drawShapes(Graphics *g, int pass, GLuint shader){
     }
     else
         g->setColor(1, .5, 0, 1, 0);
-    trans = glm::translate(glm::mat4(), glm::vec3(-2.5, 0, -25));
+    trans = glm::translate(glm::mat4(), glm::vec3(6, 1, -3));
     g->drawCone(trans);
 
     // cube
@@ -115,7 +115,7 @@ void GameWorld::drawShapes(Graphics *g, int pass, GLuint shader){
     }
     else
         g->setColor(.5, 1, 0, 1, 0);
-    trans = glm::translate(glm::mat4(), glm::vec3(0, 0, -15));
+    trans = glm::translate(glm::mat4(), glm::vec3(12, 1, 0));
     g->drawCube(trans);
 
     // cylinder
@@ -127,10 +127,10 @@ void GameWorld::drawShapes(Graphics *g, int pass, GLuint shader){
     }
     else
         g->setColor(0, 1, .3, 1, 0);
-    trans = glm::translate(glm::mat4(), glm::vec3(2.5, 0, -25));
+    trans = glm::translate(glm::mat4(), glm::vec3(6, 1, 3));
     g->drawCylinder(trans);
 
-    // quad
+    // extra sphere
     if(pass==1)
         glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
     else if(pass==3){
@@ -139,19 +139,22 @@ void GameWorld::drawShapes(Graphics *g, int pass, GLuint shader){
     }
     else
         g->setColor(0, 0, 1, 1, 0);
-    trans = glm::translate(glm::mat4(), glm::vec3(5, 0, -35));
-    g->drawQuad(trans);
+
+    trans = glm::translate(glm::mat4(), glm::vec3(0, 1, 6));
+    g->drawSphere(trans);
 
 }
 
-void GameWorld::onDraw(Graphics *g){
+void GameWorld::onDraw(Graphics *g, OBJ* level){
 
     if(useDeferredLighting){
 
         if(mode==1 || mode==2){
+
             // first pass:
             GLuint firstPassShader = g->setupFirstPass();
-            drawShapes(g,1,firstPassShader);
+//            drawShapes(g,1,firstPassShader);        //render all geometry
+            level->draw(glm::mat4(), g, 1, firstPassShader);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glUseProgram(0);
 
@@ -172,16 +175,17 @@ void GameWorld::onDraw(Graphics *g){
             glUniform1i( glGetUniformLocation(finalPassShader, "mode"), mode );
             // set global coefficients ka,kd,ks
             glUniform3f( glGetUniformLocation(finalPassShader, "globalConstants"), 1.0, 1.0, 1.0 );
-            drawShapes(g,3,finalPassShader);
+//            drawShapes(g,3,finalPassShader);            //render all geometry
+            level->draw(glm::mat4(), g, 3, finalPassShader);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glUseProgram(0);
 
-            // fog pass:
-            GLuint fogShader = g->setupFogPass();
-            glUniform3f(glGetUniformLocation(secondPassShader, "eyePos"),pos.x, pos.y, pos.z);
-            g->drawFullScreenQuad(glm::mat4());
-            glBindFramebuffer( GL_FRAMEBUFFER,0 );
-            glUseProgram(0);
+//            // fog pass:
+//            GLuint fogShader = g->setupFogPass();
+//            glUniform3f(glGetUniformLocation(secondPassShader, "eyePos"),pos.x, pos.y, pos.z);
+//            g->drawFullScreenQuad(glm::mat4());
+//            glBindFramebuffer( GL_FRAMEBUFFER,0 );
+//            glUseProgram(0);
 
         }
         else{

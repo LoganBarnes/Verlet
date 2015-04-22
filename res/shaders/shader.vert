@@ -24,41 +24,4 @@ void main(){
     normal_cameraSpace = vec4(normalize(mat3(transpose(inverse(view * model))) * normal), 0.0);
 
     gl_Position = projection * position_cameraSpace;
-
-<<<<<<< HEAD
-    color = world_color * diffuse_color; // Add ambient component
-
-    for (int i = 0; i < MAX_LIGHTS; i++) {
-        vec4 vertexToLight;
-        // Point Light
-        if (lightTypes[i] == 0)
-            vertexToLight = normalize(view * vec4(lightPositions[i], 1) - position_cameraSpace);
-        // Directional Light
-        else if (lightTypes[i] == 1)
-            vertexToLight = normalize(view * vec4(-lightPositions[i], 0));
-        else
-            continue;
-
-        if (transparency < 1.0)
-            color = diffuse_color;
-        else
-        {
-            // Add diffuse component
-            float diffuseIntensity = max(0.0, dot(vertexToLight, normal_cameraSpace));
-            color += max(vec3(0), lightColors[i] * diffuse_color * diffuseIntensity);
-
-            // Add specular component
-            if (abs(shininess) > 0.001)
-            {
-                vec4 lightReflection = normalize(-reflect(vertexToLight, normal_cameraSpace));
-                vec4 eyeDirection = normalize(vec4(0,0,0,1) - position_cameraSpace);
-                float specIntensity = pow(max(0.0, dot(eyeDirection, lightReflection)), shininess);
-                color += max (vec3(0), lightColors[i] * specular_color * specIntensity);
-            }
-        }
-    }
-    color = clamp(color + allWhite, 0.0, 1.0) * allBlack;
-
-=======
->>>>>>> 9d07dd576c71f555aef09335aa1fa64eea25d1da
 }

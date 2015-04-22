@@ -37,13 +37,6 @@ uniform int useTexture = 0;
 
 void main()
 {
-<<<<<<< HEAD
-//    vec3 texColor = texture(tex, texc).rgb;
-//    texColor = clamp(texColor + vec3(1-useTexture), vec3(0.0), vec3(1.0));
-//    fragColor = vec4(color * texColor, transparency);
-
-    fragColor = vec4(color,1);
-=======
     vec4 norm_camSpace = normal_cameraSpace;
     if (!gl_FrontFacing)
         norm_camSpace = -normal_cameraSpace;
@@ -84,5 +77,4 @@ void main()
     vec3 texColor = texture(tex, texc).rgb;
     texColor = clamp(texColor + vec3(1-useTexture), vec3(0.0), vec3(1.0));
     fragColor = vec4(color * texColor, transparency);
->>>>>>> 9d07dd576c71f555aef09335aa1fa64eea25d1da
 }

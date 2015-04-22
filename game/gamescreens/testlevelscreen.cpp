@@ -28,7 +28,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
 
     ActionCamera *cam;
     cam = new ActionCamera();
-    glm::vec3 playerPos = glm::vec3(0, 3, 0);
+    glm::vec3 playerPos = glm::vec3(0, 0, 0);
 //    glm::vec3 playerPos = glm::vec3(-7, 12, 18);
     cam->setCenter(playerPos);
 
@@ -43,7 +43,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_world->addManager(vm);
     m_world->setPlayer(player);
     m_world->addToMesh(tris);
-    m_world->setGravity(glm::vec3(0,-10,0));
+    m_world->setGravity(glm::vec3(0,0,0));
 
     SoundTester *st = new SoundTester(glm::vec3());
     st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
@@ -93,23 +93,23 @@ void TestLevelScreen::onRender(Graphics *g)
     g->setWorldColor(.2f,.2f,.2f);
     g->setColor(1,1,1,1,0);
 
-    Light light;
-    light.id = 0;
-    light.type = DIRECTIONAL;
-    light.posDir = glm::vec3(-1);
-    light.color = glm::vec3(1);
-    g->addLight(light);
+//    Light light;
+//    light.id = 0;
+//    light.type = DIRECTIONAL;
+//    light.posDir = glm::vec3(-1);
+//    light.color = glm::vec3(1);
+//    g->addLight(light);
 
-    light.id = 1;
-    light.type = DIRECTIONAL;
-    light.posDir = glm::vec3(1,-1,1);
-    light.color = glm::vec3(.2f);
-    g->addLight(light);
+//    light.id = 1;
+//    light.type = DIRECTIONAL;
+//    light.posDir = glm::vec3(1,-1,1);
+//    light.color = glm::vec3(.2f);
+//    g->addLight(light);
 
     g->setTexture("grass.png", 5.f, 5.f);
 
-    m_level->draw(glm::mat4());
-    m_world->onDraw(g);
+//    m_level->draw(glm::mat4());
+    m_world->onDraw(g, m_level);
 //      vm->onDraw(g);
 
     //for dragging

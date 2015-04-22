@@ -18,7 +18,7 @@ uniform sampler2D tex;
 
 uniform bool usingFog;
 
-//out vec4 fragColor;
+out vec4 fragColor;
 
 void main(){
 
@@ -40,8 +40,8 @@ void main(){
     vec3 finalColor = ambient + diffuse + specular;
     finalColor = clamp(finalColor + vec3(0.0), 0.0, 1.0) * vec3(1.0);
 
-    if(usingFog)
-        gl_FragData[0] = vec4(finalColor,1);
+//    if(usingFog)
+//        gl_FragData[0] = vec4(finalColor,1);
 //    else
-//        fragColor = vec4(finalColor,1);
+        fragColor = vec4(finalColor,1);
 }

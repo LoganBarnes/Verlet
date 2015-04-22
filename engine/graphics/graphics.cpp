@@ -716,8 +716,8 @@ GLuint Graphics::setupFinalPass(){
     // composite the final image from lighting
     //if using fog bind final pass framebuffer to write to
 
-    if(m_usingFog)
-        glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["finalPass"]);
+//    if(m_usingFog)
+//        glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["finalPass"]);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
