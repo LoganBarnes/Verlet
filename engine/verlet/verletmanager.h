@@ -89,6 +89,7 @@ private:
     int m_tear_ptA;
     int m_tear_ptB;
     Verlet* m_tearVerlet;
+    int rayTrace(float x, float y, std::vector<int> points, Verlet* v);
 
 
     int m_curV;

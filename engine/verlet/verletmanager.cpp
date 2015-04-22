@@ -123,6 +123,25 @@ void VerletManager::rayTrace(float x, float y)
     m_curI = index;
 }
 
+int VerletManager::rayTrace(float x, float y, std::vector<int> points, Verlet* v)
+{
+    m_ray->setRay(x, y);
+
+    float bestT = std::numeric_limits<float>::infinity();
+    float t;
+    int index = -1;
+    float radius = v->rayTraceSize;;
+    for (int i = 0; i < points.size(); i++){
+        t = m_ray->intersectPoint(v->getPoint(points[i]), radius).w;
+        if (t < bestT)
+        {
+            bestT = t;
+            index = points[i];
+        }
+    }
+    return index;
+}
+
 void VerletManager::addVerlet(Verlet* v){
     verlets.push_back(v);
 }
@@ -207,19 +226,38 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
         if(m_tear_ptA<0){
             m_tear_ptA = m_curI;
             m_tearVerlet = hitV;
+            m_tear_ptB = -1;
         }
-        else if(m_tear_ptA>0&&m_tearVerlet!=NULL&&m_tear_ptB<0){
+        else if(m_tear_ptA>0&&m_tear_ptB<0){
             QList<Link*> proximity = m_tearVerlet->link_map[m_tear_ptA];
+            std::vector<int> p;
+            foreach(Link* l, proximity){
+                if(l->pointA==m_tear_ptA)
+                    p.push_back(l->pointB);
+                else if(l->pointB==m_tear_ptA)
+                    p.push_back(l->pointA);
+            }
+            int id = rayTrace(mouseX, mouseY, p, hitV);
+            /*
+            if(id>-1)
+                m_tear_ptB=id;
+            */
             foreach(Link* l, proximity){
                 if(m_curI==l->pointA||m_curI==l->pointB)
                     m_tear_ptB = m_curI;
             }
+
         }
         else if(m_tear_ptA>0&&m_tear_ptB>0){
-            Link* tearLink = m_tearVerlet->findLink(m_tear_ptA, m_tear_ptB);
-            m_tearVerlet->tearLink(tearLink);
-            m_tear_ptA = m_tear_ptB;
-            m_tear_ptB = -1;
+            if(m_tear_ptA==m_tear_ptB)
+                m_tear_ptB=-1;
+            else{
+                Link* tearLink = m_tearVerlet->findLink(m_tear_ptA, m_tear_ptB);
+                if(tearLink!=NULL)
+                    m_tearVerlet->tearLink(tearLink);
+                m_tear_ptA = m_tear_ptB;
+                m_tear_ptB = -1;
+            }
         }
     }
 }
@@ -237,7 +275,13 @@ void VerletManager::onDraw(Graphics *g){
         trans *= glm::scale(glm::mat4(), glm::vec3(.2,.2,.2));
         g->drawSphere(trans);
     }
-
+    //for tearing
+    if(m_tearMode&&m_tear_ptA>0){
+        g->setColor(1, 0, 0, 1, 0);
+        glm::mat4 trans = glm::translate(glm::mat4(), m_tearVerlet->getPoint(m_tear_ptA));
+        trans *= glm::scale(glm::mat4(), glm::vec3(.2,.2,.2));
+        g->drawSphere(trans);
+    }
 }
 
 glm::vec3 VerletManager::collideTerrain(MovableEntity *e)
