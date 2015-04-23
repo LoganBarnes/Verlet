@@ -4,6 +4,7 @@
 #include <QTextStream>
 #include <QStringList>
 #include "triangle.h"
+#include "graphics.h"
 
 #define GLM_FORCE_RADIANS
 #include <gtc/type_ptr.hpp>
@@ -13,6 +14,9 @@ OBJ::OBJ(GLuint shader)
     m_shader = shader;
     m_vaoID = 0;
     m_vboID = 0;
+
+    m_texture = "";
+    m_color = glm::vec4(1, 1, 1, 0); // w is shininess (no transparency for objs)
 }
 
 OBJ::~OBJ()
@@ -28,8 +32,11 @@ GLuint OBJ::getShader()
     return m_shader;
 }
 
-void OBJ::draw(glm::mat4 trans) const
+void OBJ::draw(Graphics *g, glm::mat4 trans) const
 {
+    g->setTexture(m_texture);
+    g->setColor(m_color.r, m_color.g, m_color.b, 1, m_color.w);
+
     glBindVertexArray(m_vaoID);
     glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"), 1, GL_FALSE, glm::value_ptr(trans));
     glDrawArrays(GL_TRIANGLES, 0, m_numVerts);

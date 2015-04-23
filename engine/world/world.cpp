@@ -1,5 +1,6 @@
 #include "world.h"
 #include "manager.h"
+#include "obj.h"
 
 //#include "debugprinting.h"
 
@@ -10,6 +11,7 @@ World::World()
     m_collisions.clear();
     m_me2Delete.clear();
     m_managers.clear();
+    m_objs.clear();
 
     m_player = NULL;
     m_gravity = glm::vec3();
@@ -32,6 +34,11 @@ World::~World()
 void World::addToMesh(QList<Triangle *> tris)
 {
     m_mesh.append(tris);
+}
+
+void World::addObject(OBJ *obj)
+{
+    m_objs.append(obj);
 }
 
 void World::addMovableEntity(MovableEntity *me)
@@ -149,6 +156,9 @@ void World::onDraw(Graphics *g)
 
     foreach(Entity *e, m_movableEntities)
         e->onDrawOpaque(g);
+
+    foreach(OBJ *obj, m_objs)
+        obj->draw(g, glm::mat4());
 
     foreach(Entity *e, m_staticEntities)
         e->onDrawTransparent(g);

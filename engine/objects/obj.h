@@ -4,8 +4,11 @@
 #include <GL/glew.h>
 #include <glm.hpp>
 #include <QList>
+#include <QString>
 
 class Triangle;
+class Graphics;
+
 // A simple parser that reads and writes Wavefront .obj files
 class OBJ
 {
@@ -36,10 +39,13 @@ public:
     QList<glm::vec3> normals;
     QList<Tri> triangles;
 
-    void draw(glm::mat4 trans) const;
+    void draw(Graphics *g, glm::mat4 trans) const;
     void drawTriangle(int start, glm::mat4 trans) const;
     bool read(const QString &path, QList<Triangle *> *tris);
     bool write(const QString &path) const;
+
+    void setTexture(QString tex) { m_texture = tex; }
+    void setColor(glm::vec4 color) { m_color = color; }
 
     GLuint getShader();
 
@@ -54,6 +60,9 @@ private:
     GLuint m_vaoID;
     GLuint m_vboID;
     int m_numVerts;
+
+    QString m_texture;
+    glm::vec4 m_color;
 
 };
 

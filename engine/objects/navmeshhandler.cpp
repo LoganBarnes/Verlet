@@ -53,9 +53,9 @@ QList<Triangle*> *NavMeshHandler::getTriangleList()
     return &m_mesh;
 }
 
-void NavMeshHandler::draw(glm::mat4 trans)
+void NavMeshHandler::draw(glm::mat4 )
 {
-    m_obj->draw(trans);
+//    m_obj->draw(trans);
 }
 
 void NavMeshHandler::drawLines(glm::mat4 trans)

@@ -83,7 +83,7 @@ Link* Verlet::closestLink(int id, const glm::vec3& point){
     //Find which of these points is closest to 'point'
     float nearest = 100000000;
     int closest = id;
-    for(int i = 0; i<indices.size(); i++){
+    for(uint i = 0; i<indices.size(); i++){
         int index = indices.at(i);
         float distance = glm::length2(_pos[index]-point);
         if(distance<nearest){

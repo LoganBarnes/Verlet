@@ -131,7 +131,7 @@ int VerletManager::rayTrace(float x, float y, std::vector<int> points, Verlet* v
     float t;
     int index = -1;
     float radius = v->rayTraceSize;;
-    for (int i = 0; i < points.size(); i++){
+    for (uint i = 0; i < points.size(); i++){
         t = m_ray->intersectPoint(v->getPoint(points[i]), radius).w;
         if (t < bestT)
         {

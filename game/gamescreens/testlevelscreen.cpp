@@ -20,6 +20,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
 
     m_oh = new ObjectHandler();
     m_level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris);
+    m_level->setTexture("grass.png");
 
     ActionCamera *cam;
     cam = new ActionCamera();
@@ -37,6 +38,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_world->addManager(gcm);
     m_world->addManager(vm);
     m_world->setPlayer(player);
+    m_world->addObject(m_level);
     m_world->addToMesh(tris);
     m_world->setGravity(glm::vec3(0,-10,0));
 
@@ -87,9 +89,8 @@ void TestLevelScreen::onRender(Graphics *g)
     light.color = glm::vec3(.2f);
     g->addLight(light);
 
-    g->setTexture("grass.png", 5.f, 5.f);
+//    g->setTexture("grass.png", 5.f, 5.f);
 
-    m_level->draw(glm::mat4());
     m_world->onDraw(g);
 
     g->setAllWhite(true);

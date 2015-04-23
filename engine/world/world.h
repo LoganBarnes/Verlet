@@ -8,6 +8,7 @@
 #include <QList>
 
 class Manager;
+class OBJ;
 
 class World
 {
@@ -16,6 +17,7 @@ public:
     virtual ~World();
 
     void addToMesh(QList<Triangle *> tris);
+    void addObject(OBJ *obj);
     void addMovableEntity(MovableEntity *me);
     void addStaticEntity(StaticEntity *se);
     bool removeMovableEntity(MovableEntity *me, bool clearMem);
@@ -55,6 +57,7 @@ protected:
     QList<StaticEntity *> m_staticEntities;
     QList<MovableEntity *> m_movableEntities;
     QList<Triangle *> m_mesh;
+    QList<OBJ *> m_objs;
 
     QList<Collision *> m_collisions;
     QList<MovableEntity *> m_me2Delete;
