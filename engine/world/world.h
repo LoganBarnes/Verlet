@@ -8,6 +8,8 @@
 #include <QList>
 
 class Manager;
+class OBJ;
+class VerletManager;
 
 class World
 {
@@ -28,7 +30,8 @@ public:
     void setToDeleteMovable(MovableEntity *me);
 
     virtual void onTick(float secs, float mouseX = 0.f, float mouseY = 0.f);
-    virtual void onDraw(Graphics *g, int pass, GLuint shader);
+    virtual void onDraw(Graphics *g, OBJ* level, VerletManager* vm);
+//    virtual void onDraw(Graphics *g, int pass, GLuint shader);
 
     void addManager(Manager *m);
     void setGravity(glm::vec3 gravity);

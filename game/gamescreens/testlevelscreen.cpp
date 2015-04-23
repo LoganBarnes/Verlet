@@ -45,10 +45,10 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_world->addToMesh(tris);
     m_world->setGravity(glm::vec3(0,-10,0));
 
-    SoundTester *st = new SoundTester(glm::vec3());
-    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
-    st->playSound();
-    m_world->addMovableEntity(st);
+//    SoundTester *st = new SoundTester(glm::vec3());
+//    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
+//    st->playSound();
+//    m_world->addMovableEntity(st);
 
     setCamera(cam);
 

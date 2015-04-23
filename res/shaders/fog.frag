@@ -11,7 +11,7 @@ out vec4 fragColor;
 void main(){
 
     vec2 tCoord = gl_FragCoord.xy/viewport;
-    vec4 image = texture(litImage,tCoord);
+    vec4 image = texture(litImage, tCoord);
     vec4 position = texture(positions, tCoord);
 
     // get the difference between eye and world space pos

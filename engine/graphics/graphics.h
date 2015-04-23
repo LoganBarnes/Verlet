@@ -146,7 +146,16 @@ private:
     Shape *m_cube;
     Shape *m_cyl;
     Shape *m_sphere;
+
+    // deferred
+    Shape *m_dquad;
+    Shape *m_dcone;
+    Shape *m_dcube;
+    Shape *m_dcyl;
+    Shape *m_dsphere;
+
     Shape* m_fullscreen_quad;
+    Shape* m_dfullscreen_quad;
 
     bool m_useCubeMap;
     bool m_usingAtlas;

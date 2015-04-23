@@ -76,7 +76,7 @@ void GameScreen::onRender(Graphics *g)
 
     // a translation matrix representing a shape's position/scale/rotation
     // gets passed to the graphics object each time a shape is drawn.
-    glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(.1f));
+//    glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(.1f));
 
     /*
      * Adding and drawing lights.

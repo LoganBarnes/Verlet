@@ -136,28 +136,28 @@ ObjectsInfo *World::getObjectInfo()
     return info;
 }
 
-void World::onDraw(Graphics *g, int pass, GLuint shader)
+void World::onDraw(Graphics *g, OBJ *level, VerletManager *vm)
 {
-    foreach(Manager *m, m_managers)
-        if (m->isDrawable())
-        {
-            g->setGraphicsMode(m->getGraphicsMode());
-            m->onDraw(g);
-        }
+//    foreach(Manager *m, m_managers)
+//        if (m->isDrawable())
+//        {
+//            g->setGraphicsMode(m->getGraphicsMode());
+//            m->onDraw(g);
+//        }
 
-    g->setGraphicsMode(DEFAULT);
+////    g->setGraphicsMode(DEFAULT);
 
-    foreach(Entity *e, m_staticEntities)
-        e->onDrawOpaque(g, pass, shader);
+//    foreach(Entity *e, m_staticEntities)
+//        e->onDrawOpaque(g, level, vm);
 
-    foreach(Entity *e, m_movableEntities)
-        e->onDrawOpaque(g, pass, shader);
+//    foreach(Entity *e, m_movableEntities)
+//        e->onDrawOpaque(g, level, vm);
 
-    foreach(Entity *e, m_staticEntities)
-        e->onDrawTransparent(g);
+//    foreach(Entity *e, m_staticEntities)
+//        e->onDrawTransparent(g);
 
-    foreach(Entity *e, m_movableEntities)
-        e->onDrawTransparent(g);
+//    foreach(Entity *e, m_movableEntities)
+//        e->onDrawTransparent(g);
 }
 
 void World::addManager(Manager *m)

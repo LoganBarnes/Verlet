@@ -12,7 +12,7 @@ public:
     virtual ~GameWorld();
 
     Triangle *intersectWorld(glm::vec3 p, glm::vec3 d, float *t);
-    void onDraw(Graphics *g, OBJ* level, VerletManager* vm);
+    virtual void onDraw(Graphics *g, OBJ* level, VerletManager* vm);
     void drawShapes(Graphics* g, int pass, GLuint shader);
     void onKeyPressed(QKeyEvent *e);
 
