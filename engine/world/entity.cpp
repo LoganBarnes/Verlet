@@ -85,8 +85,14 @@ glm::mat4 Entity::getRotation()
     return m_rotation;
 }
 
-void Entity::onDrawOpaque(Graphics *g)
+void Entity::onDrawOpaque(Graphics *g, int pass, GLuint shader)
 {
+    if(pass==1){
+        glUniform1f(glGetUniformLocation(shader, "shininess"), 0);
+        glUniform4f(glGetUniformLocation(shader, "materialColor"), 1, 1, 1, .7);
+    }
+    else
+        g->setColor(1, 1, 1, 1, 0);
     glm::mat4 posMat = glm::translate(glm::mat4(), m_pos) * m_rotation;
 
     drawFromList(g, m_renderShapes, posMat);
