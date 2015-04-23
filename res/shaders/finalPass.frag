@@ -3,6 +3,8 @@
 // Read in diffuse and spec light and combine with material properties/global settings to complete lighting model
 in vec2 uv;
 
+out vec4 fragColor;
+
 uniform sampler2D diffuseLights;    // color attachments from the geometry FBO
 uniform sampler2D specularLights;
 uniform sampler2D materialColors;   // diffuse color + monochromatic spec
@@ -38,5 +40,5 @@ void main(){
 
     finalColor = clamp(finalColor + vec3(0.0), 0.0, 1.0) * vec3(1.0);
 
-    gl_FragData[0] = vec4(finalColor,1);
+    fragColor = vec4(finalColor,1);
 }
