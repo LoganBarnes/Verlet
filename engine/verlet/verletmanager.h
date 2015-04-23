@@ -54,9 +54,6 @@ private:
     int _numSolves = 3;
 
     //Helpers for onTick, to cycle through each step
-    //Store acceleration for all points
-    void accumulateForces();
-    void resetForces();
     //Updates positions of all points w/ velocity + acc
     void verlet(float seconds);
     //Adjusts positions to satisfy listed constraints

@@ -156,17 +156,6 @@ void VerletManager::verlet(float seconds){
         verlets.at(i)->verlet(seconds);
 }
 
-void VerletManager::accumulateForces(){
-    glm::vec3 totalForce = gravity + wind;
-    for(unsigned int i=0; i<verlets.size(); i++)
-        verlets.at(i)->applyForce(totalForce);
-}
-
-void VerletManager::resetForces(){
-    for(unsigned int i=0; i<verlets.size(); i++)
-        verlets.at(i)->resetForce();
-}
-
 void VerletManager::constraints(){
     for(unsigned int i=0; i<verlets.size(); i++) {
         Verlet* v = verlets.at(i);
@@ -279,7 +268,7 @@ void VerletManager::onDraw(Graphics *g){
     if(m_tearMode){
         g->setColor(1, 0, 0, 1, 0);
         if(m_tear_ptA>0&&m_tearVerlet!=NULL){
-            std::cout<<"point a:"<<m_tear_ptA<<std::endl;
+            //std::cout<<"point a:"<<m_tear_ptA<<std::endl;
 
             glm::mat4 trans = glm::translate(glm::mat4(), m_tearVerlet->getPoint(m_tear_ptA));
             trans *= glm::scale(glm::mat4(), glm::vec3(.2,.2,.2));

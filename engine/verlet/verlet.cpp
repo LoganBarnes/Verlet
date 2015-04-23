@@ -55,22 +55,10 @@ Link* Verlet::findLink(int a, int b){
     return links.at(0);
 }
 
-void Verlet::removeLink(int id){
-    QList<Link*> list = link_map[id];
-    //clears list of links index is mapped to in 'link_map'
-    QList<Link*> at;
-    link_map[id]=at;
-    //erase all links in 'links'
-    foreach(Link* l, list){
-        links.erase(std::remove(links.begin(), links.end(), l), links.end());
-        delete l;
-    }
-}
-
 void Verlet::removeLink(Link* l){
     //remove link from 'link_map' of a and b
-    removeFromHash(l->pointA,l,link_map);
-    removeFromHash(l->pointB,l,link_map);
+    link_map[l->pointA].removeOne(l);
+    link_map[l->pointB].removeOne(l);
     //remove link from 'links'
     links.erase(std::remove(links.begin(), links.end(), l), links.end());
     delete l;
@@ -78,30 +66,9 @@ void Verlet::removeLink(Link* l){
 
 void Verlet::replaceLink(Link* key, Link* oldLink, Link* newLink,
                                QHash<Link*, QList<Link*> >& hash){
-    removeFromHash(key,oldLink,hash);
+    hash[key].removeOne(oldLink);
     hash[key]+=newLink;
 }
-
-/*
-void Verlet::replaceLink(int key, Link* oldLink, Link* newLink,
-                               QHash<int, QList<Link*> >& hash){
-    removeFromHash(key,oldLink,hash);
-    hash[key]+=newLink;
-}
-*/
-
-void Verlet::removeFromHash(int key, Link *toRemove, QHash<int, QList<Link *> > &hash){
-    QList<Link*> list = hash[key];
-    list.removeOne(toRemove);
-    hash[key]=list;
-}
-
-void Verlet::removeFromHash(Link* key, Link *toRemove, QHash<Link*, QList<Link *> > &hash){
-    QList<Link*> list = hash[key];
-    list.removeOne(toRemove);
-    hash[key]=list;
-}
-
 //***************************for tearing*****************************//
 Link* Verlet::closestLink(int id, const glm::vec3& point){
     //Find all points id is connected to
@@ -114,9 +81,9 @@ Link* Verlet::closestLink(int id, const glm::vec3& point){
             indices.push_back(l->pointB);
     }
     //Find which of these points is closest to 'point'
-    float nearest = 10000;
+    float nearest = 100000000;
     int closest = id;
-    for(unsigned int i = 0; i<indices.size(); i++){
+    for(int i = 0; i<indices.size(); i++){
         int index = indices.at(i);
         float distance = glm::length2(_pos[index]-point);
         if(distance<nearest){
@@ -146,16 +113,6 @@ void Verlet::verlet(float seconds){
         _acc[i]=glm::vec3(0,0,0);
         _normal[i]=glm::vec3(0,0,0);
     }
-}
-
-void Verlet::applyForce(const glm::vec3& force){
-    for(int i=0; i<numPoints; i++)
-            _acc[i] += force;
-}
-
-void Verlet::resetForce(){
-    for(int i=0; i<numPoints; i++)
-            _acc[i] = glm::vec3(0,0,0);
 }
 
 void Verlet::boxConstraint(const glm::vec3& _boxMin,

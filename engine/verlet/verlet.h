@@ -30,9 +30,6 @@ public:
     void setPos(int index, const glm::vec3& pos);
 
     //Per update, called in VerletManager's onTick:
-    //Set acceleration of points
-    void applyForce(const glm::vec3& force);
-    void resetForce();
     //Update pos + prevPos
     void verlet(float seconds);
     //Solve individual constraints
@@ -45,13 +42,9 @@ public:
     virtual void updateBuffer() {}
     glm::vec3 collide(MovableEntity *e);
 
-    //Map from indices to links, for tearing
-    QHash<int, QList<Link*> > link_map;
-    void removeLink(Link* l);
-    void removeLink(int id);
-    Link* findLink(int a, int b);
     virtual Link* closestLink(int id, const glm::vec3& point);
     virtual void tearLink(Link* l);
+    QHash<int, QList<Link*> > link_map;
 
     glm::vec3 *getPosArray() { return _pos; }
     glm::vec3 *getNormArray() { return _normal; }
@@ -79,13 +72,11 @@ protected:
     std::vector<Pin> pins;
     std::vector<Link*> links;
 
-    //Helpers for manipulating values in hash
+    //Utility for editing links (tearing)
+    void removeLink(Link* l);
+    Link* findLink(int a, int b);
     void replaceLink(Link* key, Link* oldLink, Link* newLink,
                      QHash<Link*, QList<Link*> >& hash);
-    //void replaceLink(int key, Link* oldLink, Link* newLink,
-    //                 QHash<int, QList<Link*> >& hash);
-    void removeFromHash(int key, Link* toRemove, QHash<int, QList<Link*> >& hash);
-    void removeFromHash(Link* key, Link* toRemove, QHash<Link*, QList<Link*> >& hash);
 };
 
 #endif // VERLET_H
