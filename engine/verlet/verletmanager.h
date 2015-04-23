@@ -23,7 +23,7 @@ public:
     void setWind(const glm::vec3& w){wind = w;}
 
     virtual void manage(World *world, float onTickSecs, float mouseX, float mouseY);
-    virtual void onDraw(Graphics *g, GLuint shader, int pass);
+    virtual void onDraw(Graphics *g);
     glm::vec3 collideTerrain(MovableEntity* e);
     void rayTrace(float x, float y);
 

@@ -157,6 +157,7 @@ void Graphics::init()
     m_geomLocs["projection"] = glGetUniformLocation(geomShader, "projection");
     m_geomLocs["view"] = glGetUniformLocation(geomShader, "view");
     m_geomLocs["model"] = glGetUniformLocation(geomShader, "model");
+    m_geomLocs["materialColor"] = glGetUniformLocation(geomShader, "materialColor");
     m_geomLocs["shininess"] = glGetUniformLocation(geomShader, "shininess");
 
     m_shaders.insert("geomShader", geomShader);
@@ -475,6 +476,13 @@ void Graphics::setWorldColor(float r, float g, float b)
 
 void Graphics::setColor(float r, float g, float b, float transparency, float shininess)
 {
+    if (m_currentShader == m_shaders["geomShader"])
+    {
+//        glUniform4f(m_geomLocs["materialColor"], .05, .05, .05, .7);
+        glUniform4f(m_geomLocs["materialColor"], r, g, b, transparency);
+        glUniform1f(m_geomLocs["shininess"], shininess);
+        return;
+    }
     glUniform3f(m_defaultLocs["diffuse_color"], r, g, b);
     glUniform1f(m_defaultLocs["transparency"], transparency);
     glUniform1f(m_defaultLocs["shininess"], shininess);

@@ -138,17 +138,15 @@ void GameWorld::drawShapes(Graphics *g, int pass, GLuint shader){
 }
 
 
-void GameWorld::onDraw(Graphics *g, OBJ* level, VerletManager* vm){
+void GameWorld::onDraw(Graphics *g){
 
     if(useDeferredLighting){
 
 
         // first pass:
         GLuint firstPassShader = g->setupFirstPass();
-        level->draw(glm::mat4(), g, 1, firstPassShader);
+        World::onDraw(g);
         drawShapes(g,1,firstPassShader);        //render all geometry
-        vm->onDraw(g, firstPassShader, 1);
-        m_player->onDrawOpaque(g, 1, firstPassShader);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glUseProgram(0);
 
@@ -179,5 +177,4 @@ void GameWorld::onDraw(Graphics *g, OBJ* level, VerletManager* vm){
         glUseProgram(0);
 
     }
-
 }

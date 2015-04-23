@@ -17,7 +17,7 @@ public:
     GraphicsMode getGraphicsMode() { return m_gm; }
 
     virtual void manage(World *world, float onTickSecs, float mouseX, float mouseY) = 0;
-    virtual void onDraw(Graphics *, GLuint, int) {}
+    virtual void onDraw(Graphics *) {}
 
 private:
     GraphicsMode m_gm;

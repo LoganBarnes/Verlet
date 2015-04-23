@@ -53,7 +53,7 @@ QList<Triangle*> *NavMeshHandler::getTriangleList()
     return &m_mesh;
 }
 
-void NavMeshHandler::draw(glm::mat4 trans)
+void NavMeshHandler::draw(glm::mat4 /*trans*/)
 {
 //    m_obj->draw(trans);
 }

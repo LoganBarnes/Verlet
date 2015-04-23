@@ -189,7 +189,7 @@ void Verlet::linkConstraint(){
     }
 }
 
-void Verlet::onDraw(Graphics *g, GLuint , int ){
+void Verlet::onDraw(Graphics *g){
     for(unsigned int i=0; i<links.size(); i++){
         Link* l = links.at(i);
         g->drawLineSeg(_pos[l->pointA],_pos[l->pointB], .1f);
