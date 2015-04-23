@@ -148,6 +148,7 @@ void GameWorld::onDraw(Graphics *g, OBJ* level, VerletManager* vm){
         level->draw(glm::mat4(), g, 1, firstPassShader);
         drawShapes(g,1,firstPassShader);        //render all geometry
         vm->onDraw(g, firstPassShader, 1);
+        m_player->onDrawOpaque(g, 1, firstPassShader);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glUseProgram(0);
 
