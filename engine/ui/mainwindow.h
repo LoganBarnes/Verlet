@@ -17,6 +17,10 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+private slots:
+    void changeTitle(const QString &title);
+
 };
 
 #endif // MAINWINDOW_H

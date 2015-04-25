@@ -4,6 +4,9 @@
 
 in vec2 uv;
 
+layout(location=0) out vec4 out0;
+layout(location=1) out vec4 out1;
+
 uniform sampler2D positions;    // color attachments from the geometry FBO
 uniform sampler2D normals;
 
@@ -60,7 +63,7 @@ void main(){
     diffLight = clamp(atten*diffLight, 0.0, 1.0);
     specLight = clamp(atten*specLight, 0.0, 1.0);
 
-    gl_FragData[0] = vec4(diffLight,1);
-    gl_FragData[1] = vec4(specLight,1);
+    out0 = vec4(diffLight, 1);
+    out1 = vec4(diffLight, 1);
 
 }

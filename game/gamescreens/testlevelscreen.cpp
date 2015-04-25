@@ -36,19 +36,20 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     player->useSound(m_parentApp->getAudioObject());
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
-    vm = new VerletManager(cam, m_parentApp->getShader(GEOMETRY));
+    vm = new VerletManager(cam, shader);
 
     m_world = new GameWorld();
     m_world->addManager(gcm);
     m_world->addManager(vm);
+    m_world->addObject(m_level);
     m_world->setPlayer(player);
     m_world->addToMesh(tris);
     m_world->setGravity(glm::vec3(0,-10,0));
 
-    SoundTester *st = new SoundTester(glm::vec3());
-    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
-    st->playSound();
-    m_world->addMovableEntity(st);
+//    SoundTester *st = new SoundTester(glm::vec3());
+//    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
+//    st->playSound();
+//    m_world->addMovableEntity(st);
 
     setCamera(cam);
 
@@ -72,7 +73,6 @@ void TestLevelScreen::onTick(float secs)
     vm->setWind(windDirection);
 
     m_world->onTick(secs, m_cursor[3][0], m_cursor[3][1]);
-//    vm->rayTrace(m_cursor[3][0], m_cursor[3][1]);
 
     if(dragMode){
         glm::vec3 point = draggedVerlet->getPoint(draggedPoint);
@@ -95,9 +95,7 @@ void TestLevelScreen::onRender(Graphics *g)
 
     g->setTexture("grass.png", 5.f, 5.f);
 
-//    m_level->draw(glm::mat4());
-    m_world->onDraw(g, m_level, vm);
-//    vm->onDraw(g);
+    m_world->onDraw(g);
 
     //for dragging
     if(dragMode){

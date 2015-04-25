@@ -41,7 +41,7 @@ public:
     void pinConstraint();
 
     virtual void onTick(float seconds);
-    virtual void onDraw(Graphics *g, GLuint shader, int pass);
+    virtual void onDraw(Graphics *g);
     virtual void updateBuffer() {}
     glm::vec3 collide(MovableEntity *e);
 

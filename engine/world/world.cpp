@@ -1,7 +1,6 @@
 #include "world.h"
 #include "manager.h"
-#include <iostream>
-using namespace std;
+#include "obj.h"
 //#include "debugprinting.h"
 
 
@@ -12,6 +11,7 @@ World::World()
     m_collisions.clear();
     m_me2Delete.clear();
     m_managers.clear();
+    m_objs.clear();
 
     m_player = NULL;
     m_gravity = glm::vec3();
@@ -35,6 +35,11 @@ World::~World()
 void World::addToMesh(QList<Triangle *> tris)
 {
     m_mesh.append(tris);
+}
+
+void World::addObject(OBJ *obj)
+{
+    m_objs.append(obj);
 }
 
 void World::addMovableEntity(MovableEntity *me)
@@ -137,21 +142,25 @@ ObjectsInfo *World::getObjectInfo()
 }
 
 void World::onDraw(Graphics *g, int pass, GLuint shader)
+//void World::onDraw(Graphics *g)
 {
     foreach(Manager *m, m_managers)
         if (m->isDrawable())
         {
-            g->setGraphicsMode(m->getGraphicsMode());
+//            g->setGraphicsMode(m->getGraphicsMode());
             m->onDraw(g);
         }
 
-    g->setGraphicsMode(DEFAULT);
+//    g->setGraphicsMode(DEFAULT);
 
     foreach(Entity *e, m_staticEntities)
         e->onDrawOpaque(g, pass, shader);
 
     foreach(Entity *e, m_movableEntities)
         e->onDrawOpaque(g, pass, shader);
+
+    foreach(OBJ *obj, m_objs)
+        obj->draw(glm::mat4(), g);
 
     foreach(Entity *e, m_staticEntities)
         e->onDrawTransparent(g);

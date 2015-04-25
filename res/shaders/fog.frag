@@ -11,10 +11,9 @@ out vec4 fragColor;
 void main(){
 
     vec2 tCoord = gl_FragCoord.xy/viewport;
-    vec4 image = texture(litImage,tCoord);
+    vec4 image = texture(litImage, tCoord);
     vec4 position = texture(positions, tCoord);
 
-    // get the difference between eye and world space pos
     float distance = length(eyePos - position.xyz);
     vec4 fogColor = vec4(.6,.6,.7,1);
 
@@ -27,16 +26,9 @@ void main(){
     float interpVal;
 
     if(usingFog){
-
-        // linear interpolation
-    //    float fogStart = 2.f;
-    //    float fogEnd = 20.f;
-    //    interpVal = (fogEnd-distance)/(fogEnd-fogStart);
-
         // exponential interpolation
         float b = .05;
-        interpVal = 1.0/(exp(b*distance));
-
+        interpVal = 1.0/(exp(b*distance)) + .5;
         clamp(interpVal, 0.0, 1.0);
 
         fragColor = vec4((image*(interpVal) + fogColor*(1.0-interpVal)).xyz,1);

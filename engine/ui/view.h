@@ -45,6 +45,10 @@ private:
     int freq;
     int counter;
     float totalfps;
+
+signals:
+    void changeTitle(const QString);
+
 };
 
 #endif // VIEW_H

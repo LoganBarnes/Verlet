@@ -16,10 +16,17 @@ MainWindow::MainWindow(QWidget *parent) :
     QGridLayout *gridLayout = new QGridLayout(ui->view);
     View *view = new View(qglFormat, this);
     gridLayout->addWidget(view);
+
+    connect(view, SIGNAL(changeTitle(const QString)), this, SLOT(changeTitle(const QString)));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::changeTitle(const QString &title)
+{
+    this->setWindowTitle(title);
 }
 

@@ -13,6 +13,8 @@
 #include <gtx/transform.hpp>
 #include <gtx/vector_angle.hpp>
 
+#include "debugprinting.h"
+
 #define MAX_NUM_LIGHTS 10
 
 #include <iostream>
@@ -26,6 +28,13 @@ Graphics::Graphics()
     m_cyl = new Cylinder(50);
     m_sphere = new Sphere(50);
     m_fullscreen_quad = new Shape(-1);
+
+    m_dquad = new Shape(10);
+    m_dcone = new Cone(50);
+    m_dcube = new Cube(10);
+    m_dcyl = new Cylinder(50);
+    m_dsphere = new Sphere(50);
+    m_dfullscreen_quad = new Shape(-1);
 
     m_cubeMap = new CubeMap();
     m_useCubeMap = false;
@@ -62,6 +71,14 @@ Graphics::~Graphics()
     delete m_cube;
     delete m_cyl;
     delete m_sphere;
+    delete m_fullscreen_quad;
+
+    delete m_dquad;
+    delete m_dcone;
+    delete m_dcube;
+    delete m_dcyl;
+    delete m_dsphere;
+    delete m_dfullscreen_quad;
 
     // skybox
     delete m_cubeMap;
@@ -143,6 +160,7 @@ void Graphics::init()
     m_geomLocs["projection"] = glGetUniformLocation(geomShader, "projection");
     m_geomLocs["view"] = glGetUniformLocation(geomShader, "view");
     m_geomLocs["model"] = glGetUniformLocation(geomShader, "model");
+    m_geomLocs["materialColor"] = glGetUniformLocation(geomShader, "materialColor");
     m_geomLocs["shininess"] = glGetUniformLocation(geomShader, "shininess");
 
     m_shaders.insert("geomShader", geomShader);
@@ -169,6 +187,7 @@ void Graphics::init()
     m_compositeLocs["specularLights"] = glGetUniformLocation(compositeShader, "specularLights");
 
     m_shaders.insert("compositeShader", compositeShader);
+//    cout << m_defaultLocs["position"] << endl;
 
     // load fog shader
     fogShader = Graphics::loadShaders(
@@ -185,6 +204,15 @@ void Graphics::init()
     m_cyl->init(m_currentShader);
     m_sphere->init(m_currentShader);
     m_fullscreen_quad->init(lightShader);
+
+    m_currentShader = geomShader;
+
+    m_dquad->init(m_currentShader);
+    m_dcone->init(m_currentShader);
+    m_dcube->init(m_currentShader);
+    m_dcyl->init(m_currentShader);
+    m_dsphere->init(m_currentShader);
+    m_dfullscreen_quad->init(fogShader);
 //    m_rayQuad->init(m_rayShader);
 
     loadTexturesFromDirectory();
@@ -202,7 +230,7 @@ void Graphics::loadDeferredLightFBOs(int width, int height){
     //create and load the first pass framebuffer with position and normal texture attachments
     GLuint geomPass, lightPass, finalPass;
     GLuint positionAttachment, normalAttachment, depthAttachment, diffuseAttachment, specularAttachment, fullLightAttachment;
-    GLuint materialColorAttachment, materialTextureAttachment;
+    GLuint materialColorAttachment;/*, materialTextureAttachment*/;
 
     // Bind first pass framebuffer with position and normal textures to write to
     // OpenGL garbage:
@@ -458,6 +486,13 @@ void Graphics::setWorldColor(float r, float g, float b)
 
 void Graphics::setColor(float r, float g, float b, float transparency, float shininess)
 {
+    if (m_currentShader == m_shaders["geomShader"])
+    {
+//        glUniform4f(m_geomLocs["materialColor"], .05, .05, .05, .7);
+        glUniform4f(m_geomLocs["materialColor"], r, g, b, transparency);
+        glUniform1f(m_geomLocs["shininess"], shininess);
+        return;
+    }
     glUniform3f(m_defaultLocs["diffuse_color"], r, g, b);
     glUniform1f(m_defaultLocs["transparency"], transparency);
     glUniform1f(m_defaultLocs["shininess"], shininess);
@@ -657,36 +692,54 @@ void Graphics::drawLineSeg(glm::vec3 p1, glm::vec3 p2, float width, GLenum mode)
 
 void Graphics::drawQuad(glm::mat4 trans, GLenum mode)
 {
-    m_quad->transformAndRender(m_currentShader, trans, mode);
+    if (m_currentShader == m_shaders["geomShader"])
+        m_dquad->transformAndRender(m_currentShader, trans, mode);
+    else
+        m_quad->transformAndRender(m_currentShader, trans, mode);
 }
 
 void Graphics::drawFullScreenQuad(glm::mat4 trans, GLenum mode)
 {
-    m_fullscreen_quad->transformAndRender(m_currentShader, trans, mode);
+    if (m_currentShader == m_shaders["fogShader"])
+        m_dfullscreen_quad->transformAndRender(m_currentShader, trans, mode);
+    else
+        m_fullscreen_quad->transformAndRender(m_currentShader, trans, mode);
 }
 
 
 void Graphics::drawCone(glm::mat4 trans, GLenum mode)
 {
-    m_cone->transformAndRender(m_currentShader, trans, mode);
+    if (m_currentShader == m_shaders["geomShader"])
+        m_dcone->transformAndRender(m_currentShader, trans, mode);
+    else
+        m_cone->transformAndRender(m_currentShader, trans, mode);
 }
 
 
 void Graphics::drawCube(glm::mat4 trans, GLenum mode)
 {
-    m_cube->transformAndRender(m_currentShader, trans, mode);
+    if (m_currentShader == m_shaders["geomShader"])
+        m_dcube->transformAndRender(m_currentShader, trans, mode);
+    else
+        m_cube->transformAndRender(m_currentShader, trans, mode);
 }
 
 
 void Graphics::drawCylinder(glm::mat4 trans, GLenum mode)
 {
-    m_cyl->transformAndRender(m_currentShader, trans, mode);
+    if (m_currentShader == m_shaders["geomShader"])
+        m_dcyl->transformAndRender(m_currentShader, trans, mode);
+    else
+        m_cyl->transformAndRender(m_currentShader, trans, mode);
 }
 
 
 void Graphics::drawSphere(glm::mat4 trans, GLenum mode)
 {
-    m_sphere->transformAndRender(m_currentShader, trans, mode);
+    if (m_currentShader == m_shaders["geomShader"])
+        m_dsphere->transformAndRender(m_currentShader, trans, mode);
+    else
+        m_sphere->transformAndRender(m_currentShader, trans, mode);
 }
 
 

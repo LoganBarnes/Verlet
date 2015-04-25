@@ -17,7 +17,7 @@ public:
         VerletManager* vm, GLuint shader);
     virtual ~Net();
 
-    virtual void onDraw(Graphics *g, GLuint shader, int pass);
+    virtual void onDraw(Graphics *g);
     virtual void updateBuffer();
 
 private:

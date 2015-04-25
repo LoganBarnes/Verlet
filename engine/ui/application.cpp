@@ -240,7 +240,7 @@ void Application::onRender()
         if (m_g->cubeMapIsActive())
             m_g->drawCubeMap(m_currentScreen->getCamera());
 
-        m_g->setGraphicsMode(DEFAULT);
+//        m_g->setGraphicsMode(DEFAULT);
         m_g->setWorldColor(0.f, 0.f, 0.f);
         m_g->setColor(0.f, 0.f, 0.f, 1.f, 0.f);
 

@@ -8,6 +8,8 @@
 #include <QList>
 
 class Manager;
+class OBJ;
+class VerletManager;
 
 class World
 {
@@ -16,6 +18,7 @@ public:
     virtual ~World();
 
     void addToMesh(QList<Triangle *> tris);
+    void addObject(OBJ *obj);
     void addMovableEntity(MovableEntity *me);
     void addStaticEntity(StaticEntity *se);
     bool removeMovableEntity(MovableEntity *me, bool clearMem);
@@ -28,7 +31,9 @@ public:
     void setToDeleteMovable(MovableEntity *me);
 
     virtual void onTick(float secs, float mouseX = 0.f, float mouseY = 0.f);
+
     virtual void onDraw(Graphics *g, int pass, GLuint shader);
+//    virtual void onDraw(Graphics *g);
 
     void addManager(Manager *m);
     void setGravity(glm::vec3 gravity);
@@ -50,6 +55,7 @@ protected:
     QList<StaticEntity *> m_staticEntities;
     QList<MovableEntity *> m_movableEntities;
     QList<Triangle *> m_mesh;
+    QList<OBJ *> m_objs;
 
     QList<Collision *> m_collisions;
     QList<MovableEntity *> m_me2Delete;

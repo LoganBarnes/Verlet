@@ -42,16 +42,17 @@ void Net::updateBuffer()
 }
 
 
-void Net::onDraw(Graphics *g, GLuint shader, int pass)
+void Net::onDraw(Graphics *g)
 {
 //    g->setColor(.5,.5,1.f,1,64);
 
-    if(pass==1){
-        glUniform1f(glGetUniformLocation(shader, "shininess"), 0);
-        glUniform4f(glGetUniformLocation(shader, "materialColor"), 1, 1, 1, .7);
-    }
-    else
-        g->setColor(1, 1, 1, 1, 0);
+//    if(pass==1){
+//        glUniform1f(glGetUniformLocation(m_shader, "shininess"), 0);
+//        glUniform4f(glGetUniformLocation(m_shader, "materialColor"), 1, 1, 1, .7);
+//    }
+//    else
+//        g->setColor(1, 1, 1, 1, 0);
+    g->setColor(1, 1, 1, .7f, 0);
 
     glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"),
                        1, GL_FALSE, glm::value_ptr(glm::mat4()));

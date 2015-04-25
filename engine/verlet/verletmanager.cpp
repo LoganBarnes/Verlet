@@ -5,6 +5,7 @@
 #include "verletcube.h"
 #include "ray.h"
 #include "world.h"
+#include "verlet.h"
 
 #define GLM_FORCE_RADIANS
 #include <gtc/matrix_transform.hpp>
@@ -143,9 +144,8 @@ void VerletManager::resetForces(){
 void VerletManager::constraints(){
     for(unsigned int i=0; i<verlets.size(); i++) {
         Verlet* v = verlets.at(i);
-//        v->boxConstraint(_boxMin, _boxMax);
-        v->linkConstraint();
         v->pinConstraint();
+        v->linkConstraint();
     }
 }
 
@@ -176,22 +176,11 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     rayTrace(mouseX, mouseY);
 }
 
-void VerletManager::onDraw(Graphics *g, GLuint shader, int pass){
+void VerletManager::onDraw(Graphics *g){
 
     g->setTexture("");
     for(unsigned int i=0; i<verlets.size(); i++)
-        verlets.at(i)->onDraw(g, shader, pass);
-//    g->setColor(glm::vec3(1,1,1));
-//    g->drawLineSeg(_boxMin,glm::vec3(_boxMin.x,_boxMin.y,_boxMax.z), .3f);
-//    g->drawLineSeg(_boxMin,glm::vec3(_boxMin.x,_boxMax.y,_boxMin.z), .3f);
-//    g->drawLineSeg(_boxMin,glm::vec3(_boxMax.x,_boxMin.y,_boxMin.z), .3f);
-//    if (m_curV > -1)
-//    {
-//        g->setColor(1, 0, 0, 1, 0);
-//        glm::mat4 trans = glm::translate(glm::mat4(), verlets[m_curV]->getPoint(m_curI));
-//        trans *= glm::scale(glm::mat4(), glm::vec3(verlets[m_curV]->rayTraceSize));
-//        g->drawSphere(trans);
-//    }
+        verlets.at(i)->onDraw(g);
 
 }
 

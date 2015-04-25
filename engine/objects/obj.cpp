@@ -5,8 +5,7 @@
 #include <QStringList>
 #include "triangle.h"
 
-#include <iostream>
-using namespace std;
+#include "debugprinting.h"
 
 #define GLM_FORCE_RADIANS
 #include <gtc/type_ptr.hpp>
@@ -31,15 +30,16 @@ GLuint OBJ::getShader()
     return m_shader;
 }
 
-void OBJ::draw(glm::mat4 trans, Graphics*g, int pass, GLuint shader) const
+void OBJ::draw(glm::mat4 trans, Graphics*g) const
 {
 
-    if(pass==1){
-        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
-        glUniform4f(glGetUniformLocation(shader, "materialColor"), .05, .05, .05, .7);
-    }
-    else
-        g->setColor(0, .5, 0, 1, 0);
+//    if(pass==1){
+//        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
+//        glUniform4f(glGetUniformLocation(shader, "materialColor"), .05, .05, .05, .7);
+//    }
+//    else
+//        g->setColor(0, .5, 0, 1, 0);
+    g->setColor(.05f, .05f, .05f, .7f, 0);
 
     glBindVertexArray(m_vaoID);
     glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"), 1, GL_FALSE, glm::value_ptr(trans));
