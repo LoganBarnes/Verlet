@@ -15,9 +15,10 @@ GameWorld::GameWorld()
         light = new Light();
         light->id = i;                  // index into array in shader
         light->type = POINT;            // can be POINT or DIRECTIONAL for now
-        light->color = glm::vec3(.5f);  // rgb color
-        light->posDir = glm::vec3(cos(angle), 10, sin(angle));// position or direction depending on light type
-        light->radius = 10.f;
+        light->color = glm::vec3(4.f);  // rgb color
+        light->posDir = glm::vec3(cos(angle)*10, 2, sin(angle)*10);// position or direction depending on light type
+        light->radius = 20.f;
+        light->function = glm::vec3(1.0, .1, .01);
 
         m_tempLights.append(light);
     }
@@ -148,6 +149,7 @@ void GameWorld::onDraw(Graphics *g, OBJ* level, VerletManager* vm){
         level->draw(glm::mat4(), g, 1, firstPassShader);
         drawShapes(g,1,firstPassShader);        //render all geometry
         vm->onDraw(g, firstPassShader, 1);
+        m_player->onDrawOpaque(g, 1, firstPassShader);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glUseProgram(0);
 

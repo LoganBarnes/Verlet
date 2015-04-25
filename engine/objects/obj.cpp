@@ -35,7 +35,7 @@ void OBJ::draw(glm::mat4 trans, Graphics*g, int pass, GLuint shader) const
 {
 
     if(pass==1){
-        glUniform1f(glGetUniformLocation(shader, "shininess"), 0);
+        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
         glUniform4f(glGetUniformLocation(shader, "materialColor"), .05, .05, .05, .7);
     }
     else

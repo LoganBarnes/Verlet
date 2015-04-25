@@ -16,6 +16,7 @@ uniform vec3 lightAttenuation; // Constant, linear, and quadratic term
 uniform vec3 lightColor;
 
 uniform vec2 viewport;
+uniform int mode;
 
 void main(){
 
@@ -27,14 +28,22 @@ void main(){
 
     vec3 diffLight = vec3(0,0,0);
     vec3 specLight = vec3(0,0,0);
+    float atten = 0.0;
+    float d;
 
     vec4 vertexToLight;
     // Point Light
-    if (lightType == 0)
-        vertexToLight = normalize(vec4(lightPosition,1) - position_worldSpace);
+    if (lightType == 0){
+        vertexToLight = vec4(lightPosition,1.0) - vec4(position_worldSpace.xyz,1.0);
+        d = length(vertexToLight);
+        vertexToLight = normalize(vertexToLight);
+        atten = 1.0/(lightAttenuation.x*d*d + lightAttenuation.y*d*d*d + lightAttenuation.z*d*d*d*d);
+    }
     // Directional Light
-    else if (lightType == 1)
+    else if (lightType == 1){
         vertexToLight = normalize(vec4(-lightPosition, 0));
+        atten = 1.0;
+    }
 
     float diffuseIntensity = max(0.0, dot(vertexToLight, normal_worldSpace));
     diffLight += max(vec3(0), lightColor * diffuseIntensity);
@@ -48,8 +57,8 @@ void main(){
         specLight += max (vec3(0), lightColor * specIntensity);
     }
 
-    diffLight = clamp(diffLight, 0.0, 1.0);
-    specLight = clamp(specLight, 0.0, 1.0);
+    diffLight = clamp(atten*diffLight, 0.0, 1.0);
+    specLight = clamp(atten*specLight, 0.0, 1.0);
 
     gl_FragData[0] = vec4(diffLight,1);
     gl_FragData[1] = vec4(specLight,1);

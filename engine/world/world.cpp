@@ -136,7 +136,7 @@ ObjectsInfo *World::getObjectInfo()
     return info;
 }
 
-void World::onDraw(Graphics *g)
+void World::onDraw(Graphics *g, int pass, GLuint shader)
 {
     foreach(Manager *m, m_managers)
         if (m->isDrawable())
@@ -148,10 +148,10 @@ void World::onDraw(Graphics *g)
     g->setGraphicsMode(DEFAULT);
 
     foreach(Entity *e, m_staticEntities)
-        e->onDrawOpaque(g);
+        e->onDrawOpaque(g, pass, shader);
 
     foreach(Entity *e, m_movableEntities)
-        e->onDrawOpaque(g);
+        e->onDrawOpaque(g, pass, shader);
 
     foreach(Entity *e, m_staticEntities)
         e->onDrawTransparent(g);

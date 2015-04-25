@@ -37,7 +37,7 @@ public:
     virtual void addCollisionShape(CollisionShape *cs);
 
     virtual void onTick(float secs);
-    virtual void onDrawOpaque(Graphics *g);
+    virtual void onDrawOpaque(Graphics *g, int pass, GLuint shader);
     virtual void onDrawTransparent(Graphics *g);
     void drawFromList(Graphics *g, QList<RenderShape *> shapes, glm::mat4 posMat);
 

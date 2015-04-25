@@ -37,6 +37,8 @@ void main(){
         float b = .05;
         interpVal = 1.0/(exp(b*distance));
 
+        clamp(interpVal, 0.0, 1.0);
+
         fragColor = vec4((image*(interpVal) + fogColor*(1.0-interpVal)).xyz,1);
     }
     else

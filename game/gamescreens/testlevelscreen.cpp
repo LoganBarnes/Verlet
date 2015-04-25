@@ -28,7 +28,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
 
     ActionCamera *cam;
     cam = new ActionCamera();
-    glm::vec3 playerPos = glm::vec3(0, 0, 0);
+    glm::vec3 playerPos = glm::vec3(0, 10, 0);
 //    glm::vec3 playerPos = glm::vec3(-7, 12, 18);
     cam->setCenter(playerPos);
 
@@ -43,7 +43,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_world->addManager(vm);
     m_world->setPlayer(player);
     m_world->addToMesh(tris);
-    m_world->setGravity(glm::vec3(0,0,0));
+    m_world->setGravity(glm::vec3(0,-10,0));
 
     SoundTester *st = new SoundTester(glm::vec3());
     st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
