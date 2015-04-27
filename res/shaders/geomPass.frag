@@ -13,9 +13,6 @@ uniform vec4 materialColor;         // keeps diffuse color and monochromatic spe
 
 void main(){
 
-//    worldPosOut = worldPos;                                      //color attachment 0 has pos
-//    worldNormalOut = worldNormal;                                   //color attachment 1 has normal & shininess
-//    materialColorOut = materialColor;
     out0 = worldPos;
     out1 = worldNormal;
     out2 = materialColor;

@@ -17,6 +17,9 @@
 
 #define MAX_NUM_LIGHTS 10
 
+#include <iostream>
+using namespace std;
+
 Graphics::Graphics()
 {
     m_quad = new Shape(10);
@@ -169,6 +172,8 @@ void Graphics::init()
                 ":/shaders/lightPass.frag");
     m_lightLocs["positions"] = glGetUniformLocation(lightShader, "positions");
     m_lightLocs["normals"] = glGetUniformLocation(lightShader, "normals");
+    m_lightLocs["projection"] = glGetUniformLocation(lightShader, "projection");
+    m_lightLocs["view"] = glGetUniformLocation(lightShader, "view");
 
     m_shaders.insert("lightShader", lightShader);
 
@@ -400,6 +405,11 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
     {
         m_currentShader = m_shaders["lightShader"];
         glUseProgram(m_currentShader);
+
+        glUniformMatrix4fv(m_lightLocs["projection"], 1, GL_FALSE,
+                glm::value_ptr(m_currProj));
+        glUniformMatrix4fv(m_lightLocs["view"], 1, GL_FALSE,
+                glm::value_ptr(m_currView));
 
         // Send attachments from the geometry fbo as textures to lightPass
         glUniform1i( m_lightLocs["positions"], 0 );
@@ -768,13 +778,18 @@ GLuint Graphics::setupSecondPass(){
     GLenum buffersToDraw[] = { GL_COLOR_ATTACHMENT0 , GL_COLOR_ATTACHMENT1 };
     glDrawBuffers( 2, buffersToDraw );
 
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
     return setGraphicsMode(LIGHT);
 }
 
 GLuint Graphics::setupFinalPass(){
     // composite the final image from lighting
-
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["finalPass"]);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -794,7 +809,6 @@ GLuint Graphics::setupFogPass(bool fog){
 // Draw light shapes relative to the given eye position
 void Graphics::drawLightShapes(glm::vec3 eyePos, GLuint lightShader, QList<Light*> lights){
 
-
     // draw the light shape based on type
     foreach(Light* light, lights){
 
@@ -803,19 +817,16 @@ void Graphics::drawLightShapes(glm::vec3 eyePos, GLuint lightShader, QList<Light
         //set the uniforms for this light in the light shader
         glUniform1i( glGetUniformLocation(lightShader, "lightType"), light->type );
         glUniform3f( glGetUniformLocation(lightShader, "lightPosition"), light->posDir.x, light->posDir.y, light->posDir.z);
-        glUniform3f( glGetUniformLocation(lightShader, "lightAttentuation"), light->function.x, light->function.y, light->function.z);
+        glUniform3f( glGetUniformLocation(lightShader, "lightAttenuation"), light->function.x, light->function.y, light->function.z);
         glUniform3f( glGetUniformLocation(lightShader, "lightColor"), light->color.x, light->color.y, light->color.z);
 
-        bool inLight;
+        bool inLight = isInLight(light, eyePos);
 
         if(light->type==POINT){
-
-            inLight = isInLight(light, eyePos);
-            inLight = true;
             glUniform1i( glGetUniformLocation(lightShader, "inLight"), inLight );
 
             // check if eye position is in light radius
-            if(inLight)                // if in the light, render as a full screen quad
+            if(inLight)              // if in the light, render as a full screen quad
                 drawFullScreenQuad(glm::mat4());
             else{
                 trans = glm::translate(glm::mat4(), light->posDir);
@@ -827,7 +838,7 @@ void Graphics::drawLightShapes(glm::vec3 eyePos, GLuint lightShader, QList<Light
 
 }
 
-// returns whether or not the given position is in the light
+// returns whether or not given position is in light
 bool Graphics::isInLight(Light* l, glm::vec3 pos){
 
     if(l->type==POINT){

@@ -32,6 +32,13 @@ GLuint OBJ::getShader()
 
 void OBJ::draw(glm::mat4 trans, Graphics*g) const
 {
+
+//    if(pass==1){
+//        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
+//        glUniform4f(glGetUniformLocation(shader, "materialColor"), .05, .05, .05, .7);
+//    }
+//    else
+//        g->setColor(0, .5, 0, 1, 0);
     g->setColor(.05f, .05f, .05f, .7f, 0);
 
     glBindVertexArray(m_vaoID);

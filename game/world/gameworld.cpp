@@ -15,9 +15,36 @@ GameWorld::GameWorld()
         light = new Light();
         light->id = i;                  // index into array in shader
         light->type = POINT;            // can be POINT or DIRECTIONAL for now
-        light->color = glm::vec3(.5f);  // rgb color
-        light->posDir = glm::vec3(cos(angle), 10, sin(angle));// position or direction depending on light type
-        light->radius = 10.f;
+
+        // Fancy fun mode
+//        if(i==0)
+//            light->color = glm::vec3(2.0, 1.0, 0.0);
+//        else if(i==1)
+//            light->color = glm::vec3(0.0, 1.0, 2.0);
+//        else if(i==1)
+//            light->color = glm::vec3(2.0, 0.0, 1.0);
+//        else if(i==2)
+//            light->color = glm::vec3(2.0, 0.0, 0.0);
+//        else if(i==3)
+//            light->color = glm::vec3(0.0, 2.0, 1.0);
+//        else if(i==4)
+//            light->color = glm::vec3(2.0, 2.0, 0.0);
+//        else if(i==5)
+//            light->color = glm::vec3(1.0, 1.0, 1.0);
+//        else if(i==6)
+//            light->color = glm::vec3(2.0, 0.0, 2.0);
+//        else if(i==7)
+//            light->color = glm::vec3(0.0, 1.0, 0.0);
+//        else if(i==8)
+//            light->color = glm::vec3(1.0, 0.0, 2.0);
+//        else if(i==9)
+//            light->color = glm::vec3(1.0, 0.0, 1.0);
+
+        light->color = glm::vec3(1.0, 1.0, 2.f);  // rgb color
+
+        light->posDir = glm::vec3(cos(angle)*10.0, 2.0, sin(angle)*10.0);// position or direction depending on light type
+        light->radius = 20.f;
+        light->function = glm::vec3(1.0, .1, .01);
 
         m_tempLights.append(light);
     }
@@ -145,8 +172,9 @@ void GameWorld::onDraw(Graphics *g){
 
         // first pass:
         GLuint firstPassShader = g->setupFirstPass();
-        World::onDraw(g);
+        World::onDraw(g, 1, firstPassShader);
         drawShapes(g,1,firstPassShader);        //render all geometry
+        m_player->onDrawOpaque(g, 1, firstPassShader);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glUseProgram(0);
 
