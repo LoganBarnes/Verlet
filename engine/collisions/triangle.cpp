@@ -191,7 +191,7 @@ float Triangle::getHeight(glm::vec3)
     return glm::min(vertices[0].y, glm::min(vertices[1].y, vertices[2].y));
 }
 
-void Triangle::compare(glm::vec3& min, glm::vec3& max){
+void Triangle::adjustHitbox(glm::vec3& min, glm::vec3& max){
     for(unsigned int i = 0; i<3; i++){
         float y = vertices[i].y;
         float x = vertices[i].x;

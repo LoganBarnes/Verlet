@@ -9,6 +9,8 @@
 #include "verletmanager.h"
 #include "audio.h"
 #include "soundtester.h"
+#include "grass.h"
+
 
 TestLevelScreen::TestLevelScreen(Application *parent)
     : Screen(parent)
@@ -37,12 +39,16 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
     VerletManager *vm = new VerletManager(cam, m_parentApp->getShader(DEFAULT));
 
+    Grass* grass = new Grass(vm, shader);
+    grass->createPatch(glm::vec2(0,0),6,m_level);
+    vm->addVerlet(grass);
+
     m_world = new GameWorld();
     m_world->addManager(gcm);
-    m_world->addManager(vm);
     m_world->setPlayer(player);
     m_world->addObject(m_level);
     m_world->addToMesh(tris);
+    m_world->addManager(vm);
     m_world->setGravity(glm::vec3(0,-10,0));
 
     // uncomment to play sound at the origin

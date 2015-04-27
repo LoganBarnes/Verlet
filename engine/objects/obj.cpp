@@ -30,15 +30,22 @@ OBJ::~OBJ()
 
 //Verlet collision information
 bool OBJ::pointOnTop(glm::vec3 &surfacePt){
-    return top->pointOnSurface(surfacePt);
+    return top->placeOnSurface(surfacePt);
 }
 
 bool OBJ::pointOnSurface(glm::vec3 &surfacePt){
-    return top->pointOnSurface(surfacePt);
+    return top->placeOnSurface(surfacePt);
     //if(top->pointOnSurface(surfacePt))
     //    return true;
     //else
     //    return bot->pointOnSurface(surfacePt);
+}
+
+bool OBJ::findY(const glm::vec2& coor, float& y, bool surface){
+    if(surface)
+        return top->findY(coor,y);
+    else
+        return bot->findY(coor,y);
 }
 
 GLuint OBJ::getShader()

@@ -113,7 +113,8 @@ SOURCES += \
     engine/sound/audio.cpp \
     engine/common/wavreader.cpp \
     game/entities/soundtester.cpp \
-    engine/objects/half.cpp
+    engine/objects/half.cpp \
+    engine/verlet/grass.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -170,7 +171,8 @@ HEADERS += \
     engine/sound/audio.h \
     engine/common/wavreader.h \
     game/entities/soundtester.h \
-    engine/objects/half.h
+    engine/objects/half.h \
+    engine/verlet/grass.h
 
 
 FORMS += engine/ui/mainwindow.ui

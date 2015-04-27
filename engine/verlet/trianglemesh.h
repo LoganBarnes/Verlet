@@ -7,40 +7,6 @@ class Mesh;
 class VerletManager;
 typedef unsigned int GLuint;
 
-struct Tri
-{
-    int a, b, c;
-    glm::vec3 vertices[3];
-    Link* edges[3];
-    glm::vec3 normal;
-    float windForce; //value between 0 + 1 representing wind influence
-
-    Tri(){}
-    Tri(int _a, int _b, int _c){
-        a = _a; b = _b; c= _c;
-    }
-
-    bool operator == (const Tri &t)
-        const {return (a==t.a&&b==t.b&&c==t.c);}
-
-    void replaceLink(Link* orig, Link*& l){
-        if(edges[0]==orig)
-            edges[0]=l;
-        if(edges[1]==orig)
-            edges[1]=l;
-        if(edges[2]==orig)
-            edges[2]=l;
-    }
-    void replaceIndex(int index, int index2){
-        if(a==index)
-            a=index2;
-        else if(b==index)
-            b=index2;
-        else
-            c=index2;
-    }
-};
-
 class TriangleMesh: public Verlet
 {
 public:
@@ -51,12 +17,6 @@ public:
     void onTick(float seconds);
     virtual void onDraw(Graphics *g);
     virtual void updateBuffer();
-
-    //Called per tick to update triangle vertices + normal based
-    //on movement of verlet's points
-    void calculate(Tri* t);
-    //@param wind: normalized vector representing wind direction
-    void applyWind(Tri* t);
 private:
     float _scalar[NUM]; //for triangleMesh: 1/numTriangles, for averaging
 

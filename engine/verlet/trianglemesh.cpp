@@ -143,22 +143,6 @@ void TriangleMesh::triangulate(int a, int b, int c){
     link_to_tri[t->edges[2]]+=t;
 }
 
-void TriangleMesh::calculate(Tri* t){
-    t->vertices[0]=_pos[t->a];
-    t->vertices[1]=_pos[t->b];
-    t->vertices[2]=_pos[t->c];
-
-    t->normal =  glm::cross((t->vertices[1] - t->vertices[0]), (t->vertices[2] - t->vertices[0]));
-    t->normal = glm::normalize(t->normal);
-
-    //Uncomment for per-vertex normals- not currently being used
-    /*
-    _normal[t->a]+=t->normal*_scalar[t->a];
-    _normal[t->b]+=t->normal*_scalar[t->b];
-    _normal[t->c]+=t->normal*_scalar[t->c];
-    */
-}
-
 //******************************EDITING SHEAR**********************************//
 Link* TriangleMesh::createShear(int a, int b, int c, Link* seg1, Link* seg2){
     float length = glm::length(_pos[b]-_pos[a]);
@@ -498,22 +482,6 @@ void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2){
 }
 
 //********************************UPDATING*************************************//
-void TriangleMesh::applyWind(Tri* t){
-    //wind has full effect to perpendicular cloth, none on parallel cloth
-    glm::vec3 windDirection = _manager->wind;
-    float windScalar =  glm::dot(windDirection, t->normal);
-
-    if(windScalar<0)
-        windScalar*=-1;
-    t->windForce = windScalar;
-
-    glm::vec3 windForce = windDirection*windScalar*_manager->windPow;
-
-    _acc[t->a] += windForce;
-    _acc[t->b] += windForce;
-    _acc[t->c] += windForce;
-}
-
 void TriangleMesh::onTick(float ){
     for(unsigned int i = 0; i<_triangles.size(); i++){
         calculate(_triangles.at(i));

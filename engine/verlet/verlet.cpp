@@ -106,8 +106,8 @@ void Verlet::verlet(float seconds){
         glm::vec3& prevPos = _prevPos[i];
         //apply gravity
         glm::vec3& acc = _acc[i]+=_manager->gravity;
-         //update positions
-        pos += (pos-prevPos)+acc*seconds*seconds;
+         //update positions- .99 so system stablizes faster
+        pos += .99f*(pos-prevPos)+acc*seconds*seconds;
         prevPos = temp;
         //reset
         _acc[i]=glm::vec3(0,0,0);
@@ -155,7 +155,40 @@ void Verlet::onDraw(Graphics *g){
 
 void Verlet::onTick(float ){}
 
+//***************************Updating triangles*****************************//
 
+void Verlet::applyWind(Tri* t){
+    //wind has full effect to perpendicular cloth, none on parallel cloth
+    glm::vec3 windDirection = _manager->wind;
+    float windScalar =  glm::dot(windDirection, t->normal);
+
+    if(windScalar<0)
+        windScalar*=-1;
+    t->windForce = windScalar;
+
+    glm::vec3 windForce = windDirection*windScalar*_manager->windPow;
+
+    _acc[t->a] += windForce;
+    _acc[t->b] += windForce;
+    _acc[t->c] += windForce;
+}
+
+
+void Verlet::calculate(Tri* t){
+    t->vertices[0]=_pos[t->a];
+    t->vertices[1]=_pos[t->b];
+    t->vertices[2]=_pos[t->c];
+
+    t->normal =  glm::cross((t->vertices[1] - t->vertices[0]), (t->vertices[2] - t->vertices[0]));
+    t->normal = glm::normalize(t->normal);
+
+    //Uncomment for per-vertex normals- not currently being used
+    /*
+    _normal[t->a]+=t->normal*_scalar[t->a];
+    _normal[t->b]+=t->normal*_scalar[t->b];
+    _normal[t->c]+=t->normal*_scalar[t->c];
+    */
+}
 //***************************Collisions*****************************//
 
 void Verlet::collideSurface(OBJ* obj){

@@ -54,7 +54,7 @@ private:
     glm::vec3 _boxMin = glm::vec3(-15,15,-15);
     glm::vec3 _boxMax = glm::vec3(15,50,15);
     //How many times constraints are solved
-    int _numSolves = 3;
+    int _numSolves = 2;
 
     //Helpers for onTick, to cycle through each step
     //Updates positions of all points w/ velocity + acc

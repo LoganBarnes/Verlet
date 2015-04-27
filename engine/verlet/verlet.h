@@ -10,6 +10,41 @@ class VerletManager;
 class Graphics;
 class MovableEntity;
 class OBJ;
+
+struct Tri
+{
+    int a, b, c;
+    glm::vec3 vertices[3];
+    Link* edges[3];
+    glm::vec3 normal;
+    float windForce; //value between 0 + 1 representing wind influence
+
+    Tri(){}
+    Tri(int _a, int _b, int _c){
+        a = _a; b = _b; c= _c;
+    }
+
+    bool operator == (const Tri &t)
+        const {return (a==t.a&&b==t.b&&c==t.c);}
+
+    void replaceLink(Link* orig, Link*& l){
+        if(edges[0]==orig)
+            edges[0]=l;
+        if(edges[1]==orig)
+            edges[1]=l;
+        if(edges[2]==orig)
+            edges[2]=l;
+    }
+    void replaceIndex(int index, int index2){
+        if(a==index)
+            a=index2;
+        else if(b==index)
+            b=index2;
+        else
+            c=index2;
+    }
+};
+
 class Verlet
 {
 public:
@@ -49,6 +84,12 @@ public:
 
     glm::vec3 *getPosArray() { return _pos; }
     glm::vec3 *getNormArray() { return _normal; }
+
+    //Called per tick to update triangle vertices + normal based
+    //on movement of verlet's points
+    void calculate(Tri* t);
+    //@param wind: normalized vector representing wind direction
+    void applyWind(Tri* t);
 protected:
     //Creates new point (at index numPoints) w/ given position
     void createPoint(const glm::vec3& pos);

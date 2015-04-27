@@ -5,6 +5,7 @@
 #include "verletcube.h"
 #include "ray.h"
 #include "world.h"
+#include "obj.h"
 
 #define GLM_FORCE_RADIANS
 #include <gtc/matrix_transform.hpp>
@@ -22,35 +23,10 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
       m_tearVerlet(NULL),
       m_tearLink(NULL)
 {
-    //initial curtain
-    /*
-    Net* n = new Net(glm::vec2(25,25), glm::vec3(2,15,2),
-                     glm::vec3(.7,0,0), glm::vec3(0,.7,0));
-    for(int i=0;i<5;i++)
-        n->createPin(i*5);
-    addVerlet(n);
-    */
-
-    // test
-
-//    Net* n = new Net(glm::vec2(5,5), glm::vec3(-2.5f,7,-5),
-//                     glm::vec3(1,0,0), glm::vec3(0,1,0), this, shader);
-//    for(int i=0;i<5;i+=2)
-//        n->createPin(i);
-//    addVerlet(n);
-
-
     TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,52), .3, glm::vec3(0,10,0), this, shader);
     tri2->createPin(0);
     tri2->createPin(11);
     addVerlet(tri2);
-
-//    Net* n1 = new Net(glm::vec2(25,25), glm::vec3(2,20,2),
-//                     glm::vec3(0,0,.3), glm::vec3(0,-.3,0));
-//    for(int i=0;i<5;i++)
-//        n1->createPin(i*5);
-//    addVerlet(n1);
-
 
     Net* n2 = new Net(glm::vec2(50,50), glm::vec3(-10,10,10),
                      glm::vec3(0,0,.3), glm::vec3(.3,0,0), this, shader);
@@ -59,21 +35,6 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
     for(int i=0;i<10;i++)
         n2->createPin((49*50)+i*5);
     addVerlet(n2);
-
-
-    //huge draping net
-    /*
-    Net* n2 = new Net(glm::vec2(150,150), glm::vec3(2,2,2),
-                     glm::vec3(0,0,.5), glm::vec3(.5,0,0));
-    for(int i=0;i<30;i++)
-        n2->createPin(i*5);
-    for(int i=0;i<30;i++)
-        n2->createPin((149*150)+i*5);
-    addVerlet(n2);
-    */
-
-//    VerletCube* c2 = new VerletCube(glm::vec3(0,20,0), glm::vec3(1,21,1), this);
-//    addVerlet(c2);
 
     m_ray = new Ray(cam);
     m_curV = -1;
@@ -179,19 +140,27 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     }
 
     QList<MovableEntity *> mes = world->getMovableEntities();
+    QList<OBJ* > obj = world->getObjs();
+
     Collision *col = new Collision();
     foreach (MovableEntity *me, mes)
     {
         col->mtv = collideTerrain(me);
         col->t = onTickSecs;
         me->handleCollision(col);
+        //check if player (bottom of sphere) intersects w/ ground - assumes radius of 1
+        glm::vec3 pos = me->getPosition()-glm::vec3(0,1,0);
+        foreach(OBJ* o, obj){
+            o->pointOnTop(pos);
+            pos+=glm::vec3(0,1,0);
+            me->setPosition(pos);
+        }
     }
     delete col;
 
-    QList<OBJ* > obj = world->getObjs();
-    foreach(OBJ* o, obj){
+    //Collide verlet against terrain
+    foreach(OBJ* o, obj)
         this->collideSurface(o);
-    }
 
     rayTrace(mouseX, mouseY);
 

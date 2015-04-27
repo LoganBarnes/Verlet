@@ -53,8 +53,11 @@ public:
     //VERLET COLLISION TESTING
     Half* top;
     Half* bot;
+    //Adjust a point within a Half's hitbox to be outside of the mesh
     bool pointOnTop(glm::vec3 &surfacePt);
     bool pointOnSurface(glm::vec3 &surfacePt);
+    //Returns y on mesh corresponding w/ given point on x-z plane. Defaults to top half
+    bool findY(const glm::vec2& coor, float& y, bool surface = true);
 protected:
     virtual void createVBO();
     GLuint m_shader;

@@ -3,9 +3,7 @@
 #include "ray.h"
 
 Half::Half()
-{
-
-}
+{}
 
 Half::Half(QList<Triangle *> tris, bool _top){
     top = _top;
@@ -19,42 +17,22 @@ Half::Half(QList<Triangle *> tris, bool _top){
     foreach(Triangle* tri, tris){
         if(tri->normal.y>normalThreshold&&top){
             _triangles.push_back(tri);
-            tri->compare(min,max);
+            tri->adjustHitbox(min,max);
         }
         else if(tri->normal.y<normalThreshold&&!top){
             _triangles.push_back(tri);
-            tri->compare(min,max);
+            tri->adjustHitbox(min,max);
         }
     }
-    readValues(min,max);
+    calcHitbox(min,max);
     createFlat();
 }
 
-/*
-Half::Half(std::vector<Triangle> triangles, bool _top){
-    top = _top;
-    Vector3 min = Vector3(std::numeric_limits<float>::infinity(),
-                  std::numeric_limits<float>::infinity(),
-                  std::numeric_limits<float>::infinity());
-    Vector3 max = Vector3(-std::numeric_limits<float>::infinity(),
-                  -std::numeric_limits<float>::infinity(),
-                  -std::numeric_limits<float>::infinity());
-    foreach(Triangle tri, triangles){
-        if(tri.normal.y>normalThreshold&&top){
-            _triangles.push_back(tri);
-            tri.compare(min,max);
-        }
-        else if(tri.normal.y<normalThreshold&&!top){
-            _triangles.push_back(tri);
-            tri.compare(min,max);
-        }
-    }
-    readValues(min,max);
-    createFlat();
-}
-*/
 
-void Half::readValues(const glm::vec3& min, const glm::vec3& max){
+Half::~Half()
+{}
+
+void Half::calcHitbox(const glm::vec3& min, const glm::vec3& max){
     glm::vec3 average = .5f*(min+max);
     center = glm::vec2(average.x,average.z);
     float diffx = max.x-min.x;
@@ -63,22 +41,8 @@ void Half::readValues(const glm::vec3& min, const glm::vec3& max){
     yLimits = glm::vec2(min.y,max.y);
 }
 
-
-//create flat triangle representation for verlet collision hack
-void Half::createFlat(){
-    float height = (top) ? yLimits.y : yLimits.x;
-    for(int i = 0; i<_triangles.size(); i++){
-        Triangle* t = _triangles[i];
-        glm::vec3 a = t->vertices[0]; a.y=height;
-        glm::vec3 b = t->vertices[1]; b.y=height;
-        glm::vec3 c = t->vertices[2]; c.y=height;
-
-        Triangle flat = Triangle(a,b,c);
-        flatTri.push_back(flat);
-    }
-}
-
-bool Half::pointOnSurface(glm::vec3 &surfacePt){
+//*******************Finding points on the surface***********************//
+bool Half::placeOnSurface(glm::vec3 &surfacePt){
     if(!(surfacePt.y>yLimits.x && surfacePt.y<yLimits.y))
         return false;
     if(surfacePt.x>center.x+radius||surfacePt.x<center.x-radius)
@@ -90,7 +54,7 @@ bool Half::pointOnSurface(glm::vec3 &surfacePt){
         Triangle* tri = _triangles[flatID];
         if(top){
             Ray r = Ray(surfacePt,glm::vec3(0,-1,0));
-            glm::vec3 pointOnSurface = r.getPointonPlane(tri->vertices[0],tri->normal)+glm::vec3(0,.05,0);
+            glm::vec3 pointOnSurface = r.getPointonPlane(tri->vertices[0],tri->normal)+glm::vec3(0,allowance,0);
             if(surfacePt.y<pointOnSurface.y){
                 surfacePt = pointOnSurface;
                 return true;
@@ -98,9 +62,9 @@ bool Half::pointOnSurface(glm::vec3 &surfacePt){
         }
         else if(!top){
             Ray r = Ray(surfacePt,glm::vec3(0,1,0));
-            glm::vec3 pointOnSurface = r.getPointonPlane(tri->vertices[0],tri->normal);
-            if(surfacePt.y>pointOnSurface.y-.05){
-                surfacePt = pointOnSurface+glm::vec3(0,-.05,0);
+            glm::vec3 pointOnSurface = r.getPointonPlane(tri->vertices[0],tri->normal)+glm::vec3(0,-allowance,0);
+            if(surfacePt.y>pointOnSurface.y){
+                surfacePt = pointOnSurface;
                 return true;
             }
         }
@@ -108,6 +72,35 @@ bool Half::pointOnSurface(glm::vec3 &surfacePt){
     }
     else
         return false;
+}
+
+bool Half::findY(const glm::vec2 &coord, float& y){
+    int flatID = getFlatTriangle(coord.x,coord.y);
+    if(flatID>0){
+        Triangle* tri = _triangles[flatID];
+        Ray r = (top) ?
+                    Ray(glm::vec3(coord.x,1000,coord.y),glm::vec3(0,-1,0)):
+                    Ray(glm::vec3(coord.x,-1000,coord.y),glm::vec3(0,1,0));
+        glm::vec3 pointOnSurface = r.getPointonPlane(tri->vertices[0],tri->normal);
+        y = pointOnSurface.y;
+        return true;
+    }
+    else
+        return false;
+}
+
+//*******************2D projection***********************//
+void Half::createFlat(){
+    float height = (top) ? yLimits.y : yLimits.x;
+    for(int i = 0; i<_triangles.size(); i++){
+        Triangle* t = _triangles[i];
+        glm::vec3 a = t->vertices[0]; a.y=height;
+        glm::vec3 b = t->vertices[1]; b.y=height;
+        glm::vec3 c = t->vertices[2]; c.y=height;
+
+        Triangle flat = Triangle(a,b,c);
+        flatTri.push_back(flat);
+    }
 }
 
 int Half::getFlatTriangle(float x, float z){
@@ -138,8 +131,4 @@ int Half::getFlatTriangle(float x, float z){
 }
 
 
-Half::~Half()
-{
-
-}
 
