@@ -18,6 +18,8 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     : Screen(parent)
 {
     m_parentApp->setMouseDecoupled(true);
+    m_parentApp->setLeapRightClick(GRAB);
+    m_parentApp->setLeapLeftClick(PINCH);
 //    m_parentApp->setMouseDecoupleKey(Qt::Key_Shift);
 
     GLuint shader = m_parentApp->getShader(GEOMETRY);
@@ -46,10 +48,10 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_world->addToMesh(tris);
     m_world->setGravity(glm::vec3(0,-10,0));
 
-//    SoundTester *st = new SoundTester(glm::vec3());
-//    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
-//    st->playSound();
-//    m_world->addMovableEntity(st);
+    SoundTester *st = new SoundTester(glm::vec3());
+    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
+    st->playSound();
+    m_world->addMovableEntity(st);
 
     setCamera(cam);
 
@@ -171,7 +173,7 @@ void TestLevelScreen::onKeyPressed(QKeyEvent *e)
 
 void TestLevelScreen::onKeyReleased(QKeyEvent *e )
 {
-    if (e->key() == Qt::Key_L)
+    if (e->key() == Qt::Key_P)
         m_parentApp->useLeapMotion(!m_parentApp->isUsingLeapMotion());
 
     //testing verlet functions

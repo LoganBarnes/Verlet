@@ -11,6 +11,11 @@
 
 class Audio;
 
+enum LeapGesture
+{
+    NO_CLICK, PINCH, GRAB, NUM_LEAP_GESTURES
+};
+
 class Application
 {
 public:
@@ -27,6 +32,8 @@ public:
     void useLeapMotion(bool useLeap);
     bool isUsingLeapMotion();
     void leapEnableKeyTapGesture();
+    void setLeapLeftClick(LeapGesture lg);
+    void setLeapRightClick(LeapGesture lg);
 
     // update and render
     void onTick(float secs);
@@ -65,10 +72,13 @@ private:
 
 #ifdef LEAP
     void handleLeapMouseEvents();
+    void checkLeapClick(Leap::Frame &frame);
 
     Leap::Controller *m_leapController;
     Leap::Frame m_previousLeapFrame;
 #endif
+    LeapGesture m_leapLeftClick;
+    LeapGesture m_leapRightClick;
 
     QList<Screen *> m_screens;
     Screen *m_currentScreen;
@@ -78,6 +88,7 @@ private:
     bool m_permanentDecouple;
 
     bool m_mouseDown;
+    bool m_currClick;
 
     glm::vec3 m_mousePos; // z is 1 if decoupled, 0 otherwise
     glm::vec3 m_prevPos;

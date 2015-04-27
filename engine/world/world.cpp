@@ -203,7 +203,7 @@ void World::onKeyPressed(QKeyEvent *e)
     m_player->onKeyPressed(e);
 
     // toggle deferred lighting
-    if(e->key()==76){
+    if(e->key() == Qt::Key_L){
         if(useDeferredLighting)
             useDeferredLighting = false;
         else
