@@ -190,3 +190,17 @@ float Triangle::getHeight(glm::vec3)
 {
     return glm::min(vertices[0].y, glm::min(vertices[1].y, vertices[2].y));
 }
+
+void Triangle::compare(glm::vec3& min, glm::vec3& max){
+    for(unsigned int i = 0; i<3; i++){
+        float y = vertices[i].y;
+        float x = vertices[i].x;
+        float z = vertices[i].z;
+        max.y = (y>max.y) ? y : max.y;
+        min.y = (y<min.y) ? y : min.y;
+        max.x = (x>max.x) ? x : max.x;
+        min.x = (x<min.x) ? x : min.x;
+        max.z = (z>max.z) ? z : max.z;
+        min.z = (z<min.z) ? z : min.z;
+    }
+}

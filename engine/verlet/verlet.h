@@ -9,7 +9,7 @@
 class VerletManager;
 class Graphics;
 class MovableEntity;
-
+class OBJ;
 class Verlet
 {
 public:
@@ -41,6 +41,7 @@ public:
     virtual void onDraw(Graphics *g);
     virtual void updateBuffer() {}
     glm::vec3 collide(MovableEntity *e);
+    virtual void collideSurface(OBJ* obj);
 
     virtual Link* closestLink(int id, const glm::vec3& point);
     virtual void tearLink(Link* l);

@@ -40,7 +40,7 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
 //    addVerlet(n);
 
 
-    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,22), .3, glm::vec3(6,7,0), this, shader);
+    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,52), .3, glm::vec3(0,10,0), this, shader);
     tri2->createPin(0);
     tri2->createPin(11);
     addVerlet(tri2);
@@ -188,10 +188,10 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     }
     delete col;
 
-
-    //glMatrixMode(GL_MODELVIEW);
-    //glLoadMatrixf(m_cam->getViewMatrix());
-    //glLoadMatrixf(this->);
+    QList<OBJ* > obj = world->getObjs();
+    foreach(OBJ* o, obj){
+        this->collideSurface(o);
+    }
 
     rayTrace(mouseX, mouseY);
 
@@ -204,7 +204,7 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
         m_draggedMouse = m_ray->getPoint(t);
 
         m_interpolate = m_draggedMouse;
-        //interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(0.01, seconds));
+        m_draggedVerlet->setPos(m_draggedPoint, m_interpolate);
     }
 
     //If setting m_tear_ptB is based on direction the mouse travels, might be better
@@ -295,6 +295,11 @@ glm::vec3 VerletManager::collideTerrain(MovableEntity *e)
     return mtv;
 }
 
+void VerletManager::collideSurface(OBJ* obj){
+    foreach(Verlet* v, verlets)
+        v->collideSurface(obj);
+}
+
 void VerletManager::onMousePressed(QMouseEvent *e)
 {
     //dragging
@@ -320,8 +325,8 @@ void VerletManager::onMouseReleased(QMouseEvent *e)
 
 void VerletManager::onMouseDragged(QMouseEvent *, float, float)
 {
-    if(m_dragMode)
-        m_draggedVerlet->setPos(m_draggedPoint, m_interpolate);
+    //if(m_dragMode)
+    //    m_draggedVerlet->setPos(m_draggedPoint, m_interpolate);
 }
 
 void VerletManager::onKeyPressed(QKeyEvent *e)

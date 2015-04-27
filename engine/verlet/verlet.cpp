@@ -2,7 +2,7 @@
 #include "verletmanager.h"
 #include "graphics.h"
 #include "movableentity.h"
-
+#include "obj.h"
 #define GLM_FORCE_RADIANS
 #include <gtx/norm.hpp>
 
@@ -154,6 +154,20 @@ void Verlet::onDraw(Graphics *g){
 }
 
 void Verlet::onTick(float ){}
+
+
+//***************************Collisions*****************************//
+
+void Verlet::collideSurface(OBJ* obj){
+    for(unsigned int i = 0; i<numPoints; i++){
+        glm::vec3 flatPoint = _pos[i];
+        glm::vec3 prev = _prevPos[i];
+        float difference = glm::length2(prev-flatPoint); //only perform check if velocity is high
+        if(difference>.000001){
+            obj->pointOnSurface(_pos[i]);
+        }
+    }
+}
 
 glm::vec3 Verlet::collide(MovableEntity *e)
 {

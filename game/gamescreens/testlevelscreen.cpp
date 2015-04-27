@@ -20,7 +20,10 @@ TestLevelScreen::TestLevelScreen(Application *parent)
 
     m_oh = new ObjectHandler();
     m_level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris);
+    //m_level = m_oh->getObject(":/objects/01.obj", shader, &tris);
+    //m_level->setTexture("01.png");
     m_level->setTexture("grass.png");
+
 
     ActionCamera *cam;
     cam = new ActionCamera();

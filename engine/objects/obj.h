@@ -8,6 +8,7 @@
 
 class Triangle;
 class Graphics;
+class Half;
 
 // A simple parser that reads and writes Wavefront .obj files
 class OBJ
@@ -49,6 +50,11 @@ public:
 
     GLuint getShader();
 
+    //VERLET COLLISION TESTING
+    Half* top;
+    Half* bot;
+    bool pointOnTop(glm::vec3 &surfacePt);
+    bool pointOnSurface(glm::vec3 &surfacePt);
 protected:
     virtual void createVBO();
     GLuint m_shader;

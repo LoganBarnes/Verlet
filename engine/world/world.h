@@ -24,6 +24,7 @@ public:
     bool removeStaticEntity(StaticEntity *se, bool clearMem);
 
     QList<MovableEntity *> getMovableEntities();
+    QList<OBJ* > getObjs();
     QList<StaticEntity *> getStaticEntities();
     QList<Triangle *> getMesh();
 

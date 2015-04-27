@@ -5,6 +5,7 @@
 #include <QStringList>
 #include "triangle.h"
 #include "graphics.h"
+#include "half.h"
 
 #define GLM_FORCE_RADIANS
 #include <gtc/type_ptr.hpp>
@@ -25,6 +26,19 @@ OBJ::~OBJ()
         glDeleteVertexArrays(1, &m_vaoID);
     if (m_vboID)
         glDeleteBuffers(1, &m_vboID);
+}
+
+//Verlet collision information
+bool OBJ::pointOnTop(glm::vec3 &surfacePt){
+    return top->pointOnSurface(surfacePt);
+}
+
+bool OBJ::pointOnSurface(glm::vec3 &surfacePt){
+    return top->pointOnSurface(surfacePt);
+    //if(top->pointOnSurface(surfacePt))
+    //    return true;
+    //else
+    //    return bot->pointOnSurface(surfacePt);
 }
 
 GLuint OBJ::getShader()
@@ -92,6 +106,9 @@ bool OBJ::read(const QString &path, QList<Triangle *> *tris)
         }
     } while (!line.isNull());
 
+    //Create respresentations of mesh in top and bottom half for verlet collision
+    top = new Half(*tris,true);
+    bot = new Half(*tris,false);
     createVBO();
 
     return true;

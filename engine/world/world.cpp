@@ -82,6 +82,11 @@ QList<StaticEntity *> World::getStaticEntities()
     return m_staticEntities;
 }
 
+QList<OBJ* > World::getObjs(){
+    return m_objs;
+}
+
+
 QList<Triangle *> World::getMesh()
 {
     return m_mesh;
