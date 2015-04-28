@@ -154,6 +154,8 @@ private:
     Shape *m_dcyl;
     Shape *m_dsphere;
 
+    Shape *m_lsphere;
+
     Shape* m_fullscreen_quad;
     Shape* m_dfullscreen_quad;
 

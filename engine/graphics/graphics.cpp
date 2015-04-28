@@ -34,6 +34,7 @@ Graphics::Graphics()
     m_dcube = new Cube(10);
     m_dcyl = new Cylinder(50);
     m_dsphere = new Sphere(50);
+    m_lsphere = new Sphere(50);
     m_dfullscreen_quad = new Shape(-1);
 
     m_cubeMap = new CubeMap();
@@ -78,6 +79,7 @@ Graphics::~Graphics()
     delete m_dcube;
     delete m_dcyl;
     delete m_dsphere;
+    delete m_lsphere;
     delete m_dfullscreen_quad;
 
     // skybox
@@ -212,7 +214,8 @@ void Graphics::init()
     m_dcube->init(m_currentShader);
     m_dcyl->init(m_currentShader);
     m_dsphere->init(m_currentShader);
-    m_dfullscreen_quad->init(fogShader);
+    m_lsphere->init(m_shaders["lightShader"]);
+    m_dfullscreen_quad->init(m_shaders["fogShader"]);
 //    m_rayQuad->init(m_rayShader);
 
     loadTexturesFromDirectory();
@@ -738,6 +741,8 @@ void Graphics::drawSphere(glm::mat4 trans, GLenum mode)
 {
     if (m_currentShader == m_shaders["geomShader"])
         m_dsphere->transformAndRender(m_currentShader, trans, mode);
+    else if (m_currentShader == m_shaders["lightShader"])
+        m_lsphere->transformAndRender(m_currentShader, trans, mode);
     else
         m_sphere->transformAndRender(m_currentShader, trans, mode);
 }
