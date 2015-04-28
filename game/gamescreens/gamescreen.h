@@ -8,7 +8,7 @@
 
 class GamePlayer;
 
-class GameScreen : public Screen
+class GameScreen : public ScreenH
 {
 public:
     GameScreen(Application *parent);

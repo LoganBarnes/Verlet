@@ -8,7 +8,7 @@
 #include <gtc/constants.hpp>
 
 GameScreen::GameScreen(Application *parent)
-    : Screen(parent)
+    : ScreenH(parent)
 {
     m_parentApp->setUseCubeMap(false);
 

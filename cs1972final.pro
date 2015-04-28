@@ -10,6 +10,7 @@ OBJECTS_DIR = $$DESTDIR/bin
 unix:!macx {
     LIBS += -lGLU -lalut
     QMAKE_CXXFLAGS += -std=c++11
+    DEFINES += LINUX
 }
 macx {
     LIBS += -framework OpenAL

@@ -7,7 +7,7 @@
 #include <gtx/transform.hpp>
 
 GameMenu::GameMenu(Application *parent)
-    : Screen(parent)
+    : ScreenH(parent)
 {
     float aspect = m_camera->getAspectRatio();
 
@@ -69,7 +69,7 @@ void GameMenu::onMousePressed(QMouseEvent *e)
 
 void GameMenu::onResize(int w, int h)
 {
-    Screen::onResize(w, h);
+    ScreenH::onResize(w, h);
 
     float aspect = w * 1.f / h;
 

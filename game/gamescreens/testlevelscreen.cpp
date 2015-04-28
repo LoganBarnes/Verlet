@@ -13,7 +13,7 @@
 
 
 TestLevelScreen::TestLevelScreen(Application *parent)
-    : Screen(parent)
+    : ScreenH(parent)
 {
     m_parentApp->setMouseDecoupled(true);
     m_parentApp->setLeapRightClick(GRAB);
@@ -169,7 +169,7 @@ void TestLevelScreen::onKeyReleased(QKeyEvent *e )
 
 void TestLevelScreen::onResize(int w, int h)
 {
-    Screen::onResize(w, h);
+    ScreenH::onResize(w, h);
 
     float inverseAspect = h * 1.f / w;
 

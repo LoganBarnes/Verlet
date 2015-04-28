@@ -4,7 +4,7 @@
 #include "screen.h"
 #include "button.h"
 
-class GameMenu : public Screen
+class GameMenu : public ScreenH
 {
 public:
     GameMenu(Application *parent);
