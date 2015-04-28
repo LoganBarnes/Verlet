@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <glm.hpp>
-#include <qlist>
+#include <QList>
 
 class Triangle;
 
