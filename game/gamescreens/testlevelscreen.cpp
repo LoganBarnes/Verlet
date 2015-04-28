@@ -21,15 +21,22 @@ TestLevelScreen::TestLevelScreen(Application *parent)
 //    m_parentApp->setMouseDecoupleKey(Qt::Key_Shift);
 
     GLuint shader = m_parentApp->getShader(GEOMETRY);
+//    GLuint shader = m_parentApp->getShader(DEFAULT);
     QList<Triangle *> tris;
 
     m_oh = new ObjectHandler();
-    m_level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris);
+    m_level = m_oh->getObject(":/objects/level_one.obj", shader, &tris);
+
+
+    // make an object handler for the lights and parse them in from an obj
+    // save into a list of lights and send to the world
+    LightParser lightParser;
+    QList<Light*> lights = lightParser.getLights(":/objects/island_lights.obj");
 
     ActionCamera *cam;
     cam = new ActionCamera();
-    glm::vec3 playerPos = glm::vec3(0, 10, 0);
-//    glm::vec3 playerPos = glm::vec3(-7, 12, 18);
+    glm::vec3 playerPos = glm::vec3(0, 11, 13);
+//        glm::vec3 playerPos = glm::vec3(0, 10, 0);
     cam->setCenter(playerPos);
 
     GamePlayer *player = new GamePlayer(cam, playerPos);
@@ -39,6 +46,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     vm = new VerletManager(cam, shader);
 
     m_world = new GameWorld();
+    m_world->setLights(lights);
     m_world->addManager(gcm);
     m_world->addManager(vm);
     m_world->addObject(m_level);

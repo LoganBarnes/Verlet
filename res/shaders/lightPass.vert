@@ -11,10 +11,12 @@ uniform mat4 model;
 uniform bool inLight;
 
 out vec2 uv;
+out vec3 worldPos;
 
 void main()
 {
     uv = texCoord;
+    worldPos = position;
 
     if(inLight)
         gl_Position =  vec4(position,1.0);          //render as full screen quad

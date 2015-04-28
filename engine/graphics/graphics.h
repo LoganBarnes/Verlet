@@ -109,6 +109,7 @@ public:
     GLuint setupSecondPass();
     GLuint setupFinalPass();
     GLuint setupFogPass(bool fog);
+    GLuint getShader(GraphicsMode m);
 
     void drawLightShapes(glm::vec3 eyePos, GLuint lightShader, QList<Light*> lights);
     bool isInLight(Light* l, glm::vec3 pos);

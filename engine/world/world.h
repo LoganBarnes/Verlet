@@ -38,6 +38,7 @@ public:
     void addManager(Manager *m);
     void setGravity(glm::vec3 gravity);
     void setPlayer(Player *player);
+    void setLights(QList<Light*> l);
     Player *getPlayer();
 
     ObjectsInfo *getObjectInfo();
@@ -63,6 +64,8 @@ protected:
     QList<Manager *> m_managers;
     glm::vec3 m_gravity;
     bool useDeferredLighting;
+
+    QList<Light*> m_lights;
 
 };
 

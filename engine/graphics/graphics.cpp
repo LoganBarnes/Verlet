@@ -92,7 +92,7 @@ void Graphics::init()
     GLuint defaultShader, sparseShader, cubeShader, geomShader, lightShader, compositeShader, fogShader;
 
     defaultShader = Graphics::loadShaders(
-                ":/shaders/default.vert",
+                ":/shaders/geomPass.vert",
                 ":/shaders/default.frag");
 
     m_defaultLocs["projection"] = glGetUniformLocation(defaultShader, "projection");
@@ -466,6 +466,26 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
     return m_currentShader;
 }
 
+GLuint Graphics::getShader(GraphicsMode m){
+    switch(m)
+    {
+    case DEFAULT:
+        return m_shaders["defaultShader"];
+    case SPARSE:
+        return m_shaders["sparseShader"];
+    case GEOMETRY:
+        return m_shaders["geomShader"];
+    case LIGHT:
+        return m_shaders["lightShader"];
+    case COMPOSITE:
+        return m_shaders["compositeShader"];
+    case FOG:
+        return m_shaders["fogShader"];
+    default:
+        return m_currentShader;
+    }
+}
+
 
 void Graphics::clearLights()
 {
@@ -644,22 +664,13 @@ void Graphics::addLight(const Light &light)
     os << light.id;
     std::string indexString = "[" + os.str() + "]"; // e.g. [0], [1], etc.
 
-//    glUniform1i(glGetUniformLocation(m_shaders["defaultShader"], ("lightTypes" + indexString).c_str()), light.type);
-//    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightPositions" + indexString).c_str()), 1,
-//            glm::value_ptr(light.posDir));
-//    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightColors" + indexString).c_str()), 1,
-//                glm::value_ptr(light.color));
-//    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightAttenuations" + indexString).c_str()), 1,
-//            glm::value_ptr(light.function));
-
-    glUniform1i(glGetUniformLocation(m_shaders["lightShader"], ("lightTypes" + indexString).c_str()), light.type);
-    glUniform3fv(glGetUniformLocation(m_shaders["lightShader"], ("lightPositions" + indexString).c_str()), 1,
+    glUniform1i(glGetUniformLocation(m_shaders["defaultShader"], ("lightTypes" + indexString).c_str()), light.type);
+    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightPositions" + indexString).c_str()), 1,
             glm::value_ptr(light.posDir));
-    glUniform3fv(glGetUniformLocation(m_shaders["lightShader"], ("lightColors" + indexString).c_str()), 1,
+    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightColors" + indexString).c_str()), 1,
                 glm::value_ptr(light.color));
-    glUniform3fv(glGetUniformLocation(m_shaders["lightShader"], ("lightAttenuations" + indexString).c_str()), 1,
+    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightAttenuations" + indexString).c_str()), 1,
             glm::value_ptr(light.function));
-
 }
 
 
@@ -819,6 +830,7 @@ void Graphics::drawLightShapes(glm::vec3 eyePos, GLuint lightShader, QList<Light
         glUniform3f( glGetUniformLocation(lightShader, "lightPosition"), light->posDir.x, light->posDir.y, light->posDir.z);
         glUniform3f( glGetUniformLocation(lightShader, "lightAttenuation"), light->function.x, light->function.y, light->function.z);
         glUniform3f( glGetUniformLocation(lightShader, "lightColor"), light->color.x, light->color.y, light->color.z);
+        glUniform1f( glGetUniformLocation(lightShader, "lightRadius"), light->radius );
 
         bool inLight = isInLight(light, eyePos);
 
