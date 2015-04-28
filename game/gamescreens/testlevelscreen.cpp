@@ -28,7 +28,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
 
 //    m_level = m_oh->getObject(":/objects/LargeLevel.obj", shader, &tris);
 
-    m_level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris);
+    m_level = m_oh->getObject(":/objects/LevelRiver.obj", shader, &tris);
     //m_level = m_oh->getObject(":/objects/01.obj", shader, &tris);
     //m_level->setTexture("01.png");
     m_level->setTexture("grass.png");
@@ -38,7 +38,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     // make an object handler for the lights and parse them in from an obj
     // save into a list of lights and send to the world
     LightParser lightParser;
-    QList<Light*> lights = lightParser.getLights(":/objects/island_lights.obj");
+    QList<Light*> lights = lightParser.getLights(":/objects/RiverLights.obj");
 
     ActionCamera *cam;
     cam = new ActionCamera();
@@ -52,9 +52,9 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
     VerletManager *vm = new VerletManager(cam, shader);
 
-//    Grass* grass = new Grass(vm, shader);
-//    grass->createPatch(glm::vec2(0,0),6,m_level);
-//    vm->addVerlet(grass);
+    Grass* grass = new Grass(vm, shader);
+    grass->createPatch(glm::vec2(0,0),6,m_level);
+    vm->addVerlet(grass);
 
     m_world = new GameWorld();
     m_world->setLights(lights);

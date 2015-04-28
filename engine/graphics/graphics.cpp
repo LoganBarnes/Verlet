@@ -871,6 +871,7 @@ void Graphics::drawLightShapes(glm::vec3 eyePos, GLuint lightShader, QList<Light
         glUniform1f( glGetUniformLocation(lightShader, "lightRadius"), light->radius );
 
         bool inLight = isInLight(light, eyePos);
+//        inLight = true;
 
         if(light->type==POINT){
             glUniform1i( glGetUniformLocation(lightShader, "inLight"), inLight );

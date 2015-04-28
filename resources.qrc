@@ -34,6 +34,8 @@
         <file alias="TestLights.obj">res/objects/TestLights.obj</file>
         <file alias="island_lights.obj">res/objects/island_lights.obj</file>
         <file alias="LargeLevel.obj">res/objects/LargeLevel.obj</file>
+        <file alias="LevelRiver.obj">res/objects/LevelRiver.obj</file>
+        <file alias="RiverLights.obj">res/objects/RiverLights.obj</file>
     </qresource>
     <qresource prefix="/audio">
         <file alias="kickDrumMod.wav">res/audio/kickDrumMod.wav</file>

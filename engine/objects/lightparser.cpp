@@ -38,7 +38,7 @@ QList<Light*> LightParser::getLights(const QString &path){
 
         light->posDir = t->vertices[0];
 
-        light->radius = 30.f;
+        light->radius = 50.f;
         light->function = glm::vec3(1.0, .1, .01);
 
         lights.append(light);

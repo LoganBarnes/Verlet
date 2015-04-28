@@ -20,5 +20,5 @@ void main(){
 
     out0 = worldPos;
     out1 = worldNormal;
-    out2 = materialColor;
+    out2 = worldNormal;
 }

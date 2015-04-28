@@ -41,7 +41,7 @@ void main()
     if (!gl_FrontFacing)
         norm_camSpace = -normal_cameraSpace;
 
-    vec3 color = world_color * diffuse_color; // Add ambient component
+    vec3 color = world_color * worldNormal.xyz; // Add ambient component
 
     for (int i = 0; i < MAX_LIGHTS; i++) {
         vec4 vertexToLight;
@@ -60,7 +60,7 @@ void main()
 //        {
             // Add diffuse component
             float diffuseIntensity = max(0.0, dot(vertexToLight, norm_camSpace));
-            color += max(vec3(0), lightColors[i] * diffuse_color * diffuseIntensity);
+            color += max(vec3(0), lightColors[i] * worldNormal.xyz * diffuseIntensity);
 
             // Add specular component
             if (abs(shininess) > 0.001)

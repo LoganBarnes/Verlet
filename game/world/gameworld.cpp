@@ -7,6 +7,31 @@ GameWorld::GameWorld()
 {
     mode = 0;
     usingFog = false;
+
+    Light* light;
+
+//    for(int i=0; i<1; i++){
+
+//        glm::vec3 norm = t->normal;
+
+//        // use triangle information to make a light
+//        light = new Light();
+//        light->id = counter++;                  // index into array in shader
+
+
+//        if(norm.y>0)
+//            light->type = POINT;            // can be POINT or DIRECTIONAL for now
+//        else
+//            light->type = DIRECTIONAL;
+//        light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
+
+//        light->posDir = t->vertices[0];
+
+//        light->radius = 30.f;
+//        light->function = glm::vec3(1.0, .1, .01);
+
+//        lights.append(light);
+//    }
 }
 
 
