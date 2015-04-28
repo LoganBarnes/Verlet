@@ -58,7 +58,7 @@ void View::initializeGL()
 
 //    glEnable(GL_DOUBLEBUFFER);
 #ifdef LINUX
-    if (GLX_SGI_swap_control) glXSwapIntervalSGI(1);
+    if (GLX_SGI_swap_control) glXSwapIntervalSGI(0);
 #endif
     // Move the polygons back a bit so lines are still drawn even though they are coplanar with the
     // polygons they came from, which will be drawn before them.

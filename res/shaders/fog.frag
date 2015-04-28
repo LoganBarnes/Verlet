@@ -25,11 +25,9 @@ void main(){
     float interpVal;
 
     if(usingFog){
-
         // clear color
         if(!(position.w>.99 && position.w<1.1)){
-//            fragColor = fogColor;
-            fragColor = vec4(.05,.05,0.1,1);
+            fragColor = fogColor;
             return;
         }
 
