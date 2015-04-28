@@ -33,7 +33,7 @@ Application::~Application()
     if (m_currentScreen)
         delete m_currentScreen;
 
-    foreach(Screen *s, m_screens)
+    foreach(ScreenH *s, m_screens)
         delete s;
 
     delete m_g;
@@ -46,7 +46,7 @@ Application::~Application()
 
 }
 
-void Application::init(Screen *initScreen)
+void Application::init(ScreenH *initScreen)
 {
     m_currentScreen = initScreen;
     m_g->init();
@@ -58,7 +58,7 @@ void Application::resetFBOs(int width, int height){
     m_g->loadDeferredLightFBOs(width, height);
 }
 
-void Application::addScreen(Screen *s)
+void Application::addScreen(ScreenH *s)
 {
     if (m_currentScreen)
         m_screens.append(m_currentScreen);

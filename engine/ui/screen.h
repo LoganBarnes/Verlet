@@ -8,17 +8,17 @@ class Graphics;
 
 class Application;
 
-class Screen
+class ScreenH
 {
 public:
 
-    Screen(Application *parent)
+    ScreenH(Application *parent)
     {
         m_parentApp = parent;
         m_camera = new Camera();
     }
 
-    virtual ~Screen()
+    virtual ~ScreenH()
     {
         delete m_camera;
     }

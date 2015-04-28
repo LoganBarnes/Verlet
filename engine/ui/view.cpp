@@ -2,6 +2,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include "gamemenu.h"
+#include <GL/glxew.h>
 
 #include <iostream>
 using namespace std;
@@ -56,7 +57,9 @@ void View::initializeGL()
     glEnable(GL_DEPTH_TEST);
 
 //    glEnable(GL_DOUBLEBUFFER);
-
+#ifdef LINUX
+    if (GLX_SGI_swap_control) glXSwapIntervalSGI(1);
+#endif
     // Move the polygons back a bit so lines are still drawn even though they are coplanar with the
     // polygons they came from, which will be drawn before them.
     glEnable(GL_POLYGON_OFFSET_LINE);

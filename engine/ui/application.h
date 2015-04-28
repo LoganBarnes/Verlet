@@ -22,10 +22,10 @@ public:
     Application();
     ~Application();
 
-    void init(Screen *initScreen);
+    void init(ScreenH *initScreen);
 
     // set the current screen
-    void addScreen(Screen *s);
+    void addScreen(ScreenH *s);
     void popScreens(int num);
 
     // leap motion stuff for personal mac
@@ -80,8 +80,8 @@ private:
     LeapGesture m_leapLeftClick;
     LeapGesture m_leapRightClick;
 
-    QList<Screen *> m_screens;
-    Screen *m_currentScreen;
+    QList<ScreenH *> m_screens;
+    ScreenH *m_currentScreen;
 
     int m_decoupleKey;
     bool m_decoupleMouse;

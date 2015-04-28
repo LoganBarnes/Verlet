@@ -12,7 +12,7 @@ class VerletManager;
 class Verlet;
 struct Link;
 
-class TestLevelScreen : public Screen
+class TestLevelScreen : public ScreenH
 {
 public:
     TestLevelScreen(Application *parent);
