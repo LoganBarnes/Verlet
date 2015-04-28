@@ -23,6 +23,10 @@ void main(){
     vec4 specLight = texture(specularLights,tCoord);
     vec4 materialColor = texture(materialColors, tCoord);
 
+//    // allow for diffuse lighting of non spaces
+//    if(materialColor.x==0 && materialColor.y==0 && materialColor.z==0)
+//        materialColor = vec4(1,1,1,1);
+
     vec3 diffColor = materialColor.xyz;
     vec3 specColor = vec3(materialColor.w);
 

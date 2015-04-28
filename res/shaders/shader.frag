@@ -1,16 +1,16 @@
 #version 410 core
 
 //in vec3 color;
+in mat4 viewMat;
+in vec4 worldPos;
+in vec4 worldNormal;
+
 in vec4 position_cameraSpace;
 in vec4 normal_cameraSpace;
 in vec2 texc;
 
 out vec4 fragColor;
 
-// Transformation matrices
-uniform mat4 projection;
-uniform mat4 view;
-uniform mat4 model;
 
 // Light data
 const int MAX_LIGHTS = 10;
@@ -47,17 +47,17 @@ void main()
         vec4 vertexToLight;
         // Point Light
         if (lightTypes[i] == 0)
-            vertexToLight = normalize(view * vec4(lightPositions[i], 1) - position_cameraSpace);
+            vertexToLight = normalize(viewMat * vec4(lightPositions[i], 1) - position_cameraSpace);
         // Directional Light
         else if (lightTypes[i] == 1)
-            vertexToLight = normalize(view * vec4(-lightPositions[i], 0));
+            vertexToLight = normalize(viewMat * vec4(-lightPositions[i], 0));
         else
             continue;
 
-        if (transparency < 1.0)
-            color = diffuse_color;
-        else
-        {
+//        if (transparency < 1.0)
+//            color = diffuse_color;
+//        else
+//        {
             // Add diffuse component
             float diffuseIntensity = max(0.0, dot(vertexToLight, norm_camSpace));
             color += max(vec3(0), lightColors[i] * diffuse_color * diffuseIntensity);
@@ -70,11 +70,12 @@ void main()
                 float specIntensity = pow(max(0.0, dot(eyeDirection, lightReflection)), shininess);
                 color += max (vec3(0), lightColors[i] * specular_color * specIntensity);
             }
-        }
+//        }
     }
     color = clamp(color + allWhite, 0.0, 1.0) * allBlack;
 
     vec3 texColor = texture(tex, texc).rgb;
     texColor = clamp(texColor + vec3(1-useTexture), vec3(0.0), vec3(1.0));
     fragColor = vec4(color * texColor, transparency);
+
 }

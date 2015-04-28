@@ -114,7 +114,8 @@ SOURCES += \
     engine/common/ray.cpp \
     engine/sound/audio.cpp \
     engine/common/wavreader.cpp \
-    game/entities/soundtester.cpp
+    game/entities/soundtester.cpp \
+    engine/objects/lightparser.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -170,7 +171,8 @@ HEADERS += \
     engine/common/ray.h \
     engine/sound/audio.h \
     engine/common/wavreader.h \
-    game/entities/soundtester.h
+    game/entities/soundtester.h \
+    engine/objects/lightparser.h
 
 
 FORMS += engine/ui/mainwindow.ui
@@ -191,6 +193,9 @@ RESOURCES += \
 macx {
     LEAP_DIR = $$PWD/lib/leap
     LIBS += -L$$LEAP_DIR/ -lLeap
+
+    DEFINES += LEAP
+    message("configuring for leap");
 
     INCLUDEPATH +=  $$LEAP_DIR/include \
                     engine/leap

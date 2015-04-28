@@ -30,6 +30,9 @@
     <qresource prefix="/objects">
         <file alias="test.obj">res/objects/test.obj</file>
         <file alias="testsmall.obj">res/objects/testsmall.obj</file>
+        <file alias="level_one.obj">res/objects/level_one.obj</file>
+        <file alias="TestLights.obj">res/objects/TestLights.obj</file>
+        <file alias="island_lights.obj">res/objects/island_lights.obj</file>
     </qresource>
     <qresource prefix="/audio">
         <file alias="kickDrumMod.wav">res/audio/kickDrumMod.wav</file>

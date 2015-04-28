@@ -7,6 +7,8 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include "obj.h"
+#include "mesh.h"
 
 #define GLM_FORCE_RADIANS
 #include <gtc/type_ptr.hpp>
@@ -34,6 +36,7 @@ Graphics::Graphics()
     m_dcube = new Cube(10);
     m_dcyl = new Cylinder(50);
     m_dsphere = new Sphere(50);
+    m_lsphere = new Sphere(50);
     m_dfullscreen_quad = new Shape(-1);
 
     m_cubeMap = new CubeMap();
@@ -78,6 +81,7 @@ Graphics::~Graphics()
     delete m_dcube;
     delete m_dcyl;
     delete m_dsphere;
+    delete m_lsphere;
     delete m_dfullscreen_quad;
 
     // skybox
@@ -92,7 +96,7 @@ void Graphics::init()
     GLuint defaultShader, sparseShader, cubeShader, geomShader, lightShader, compositeShader, fogShader;
 
     defaultShader = Graphics::loadShaders(
-                ":/shaders/default.vert",
+                ":/shaders/geomPass.vert",
                 ":/shaders/default.frag");
 
     m_defaultLocs["projection"] = glGetUniformLocation(defaultShader, "projection");
@@ -212,7 +216,8 @@ void Graphics::init()
     m_dcube->init(m_currentShader);
     m_dcyl->init(m_currentShader);
     m_dsphere->init(m_currentShader);
-    m_dfullscreen_quad->init(fogShader);
+    m_lsphere->init(m_shaders["lightShader"]);
+    m_dfullscreen_quad->init(m_shaders["fogShader"]);
 //    m_rayQuad->init(m_rayShader);
 
     loadTexturesFromDirectory();
@@ -346,6 +351,9 @@ void Graphics::setCamera(Camera *camera, int w, int h)
 
 GLuint Graphics::setGraphicsMode(GraphicsMode gm)
 {
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+
     switch(gm)
     {
     case DEFAULT:
@@ -464,6 +472,26 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
     }
     }
     return m_currentShader;
+}
+
+GLuint Graphics::getShader(GraphicsMode m){
+    switch(m)
+    {
+    case DEFAULT:
+        return m_shaders["defaultShader"];
+    case SPARSE:
+        return m_shaders["sparseShader"];
+    case GEOMETRY:
+        return m_shaders["geomShader"];
+    case LIGHT:
+        return m_shaders["lightShader"];
+    case COMPOSITE:
+        return m_shaders["compositeShader"];
+    case FOG:
+        return m_shaders["fogShader"];
+    default:
+        return m_currentShader;
+    }
 }
 
 
@@ -644,22 +672,13 @@ void Graphics::addLight(const Light &light)
     os << light.id;
     std::string indexString = "[" + os.str() + "]"; // e.g. [0], [1], etc.
 
-//    glUniform1i(glGetUniformLocation(m_shaders["defaultShader"], ("lightTypes" + indexString).c_str()), light.type);
-//    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightPositions" + indexString).c_str()), 1,
-//            glm::value_ptr(light.posDir));
-//    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightColors" + indexString).c_str()), 1,
-//                glm::value_ptr(light.color));
-//    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightAttenuations" + indexString).c_str()), 1,
-//            glm::value_ptr(light.function));
-
-    glUniform1i(glGetUniformLocation(m_shaders["lightShader"], ("lightTypes" + indexString).c_str()), light.type);
-    glUniform3fv(glGetUniformLocation(m_shaders["lightShader"], ("lightPositions" + indexString).c_str()), 1,
+    glUniform1i(glGetUniformLocation(m_shaders["defaultShader"], ("lightTypes" + indexString).c_str()), light.type);
+    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightPositions" + indexString).c_str()), 1,
             glm::value_ptr(light.posDir));
-    glUniform3fv(glGetUniformLocation(m_shaders["lightShader"], ("lightColors" + indexString).c_str()), 1,
+    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightColors" + indexString).c_str()), 1,
                 glm::value_ptr(light.color));
-    glUniform3fv(glGetUniformLocation(m_shaders["lightShader"], ("lightAttenuations" + indexString).c_str()), 1,
+    glUniform3fv(glGetUniformLocation(m_shaders["defaultShader"], ("lightAttenuations" + indexString).c_str()), 1,
             glm::value_ptr(light.function));
-
 }
 
 
@@ -738,6 +757,8 @@ void Graphics::drawSphere(glm::mat4 trans, GLenum mode)
 {
     if (m_currentShader == m_shaders["geomShader"])
         m_dsphere->transformAndRender(m_currentShader, trans, mode);
+    else if (m_currentShader == m_shaders["lightShader"])
+        m_lsphere->transformAndRender(m_currentShader, trans, mode);
     else
         m_sphere->transformAndRender(m_currentShader, trans, mode);
 }
@@ -748,6 +769,34 @@ void Graphics::drawParticles(glm::vec3 source, float fuzziness)
     m_pe->setFuzziness(fuzziness);
     m_pe->drawParticlesVAO(m_currentShader, source);
 }
+
+
+void Graphics::drawMesh(Mesh *mesh, glm::mat4 trans, GLenum mode)
+{
+    setColor(1, 1, 1, .7, 0);
+
+    glUniformMatrix4fv(glGetUniformLocation(m_currentShader, "model"),
+                       1, GL_FALSE, glm::value_ptr(trans));
+    mesh->onDraw(mode);
+}
+
+
+void Graphics::drawObject(OBJ *obj, glm::mat4 trans)
+{
+    setColor(.28f, .81f, .8f, 1.1f, 0);
+    obj->draw(trans, m_currentShader);
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Set up the first frame buffer for rendering into and bind geom shader
@@ -819,6 +868,7 @@ void Graphics::drawLightShapes(glm::vec3 eyePos, GLuint lightShader, QList<Light
         glUniform3f( glGetUniformLocation(lightShader, "lightPosition"), light->posDir.x, light->posDir.y, light->posDir.z);
         glUniform3f( glGetUniformLocation(lightShader, "lightAttenuation"), light->function.x, light->function.y, light->function.z);
         glUniform3f( glGetUniformLocation(lightShader, "lightColor"), light->color.x, light->color.y, light->color.z);
+        glUniform1f( glGetUniformLocation(lightShader, "lightRadius"), light->radius );
 
         bool inLight = isInLight(light, eyePos);
 

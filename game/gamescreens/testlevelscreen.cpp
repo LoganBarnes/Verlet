@@ -18,18 +18,27 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     : Screen(parent)
 {
     m_parentApp->setMouseDecoupled(true);
+    m_parentApp->setLeapRightClick(GRAB);
+    m_parentApp->setLeapLeftClick(PINCH);
 //    m_parentApp->setMouseDecoupleKey(Qt::Key_Shift);
 
     GLuint shader = m_parentApp->getShader(GEOMETRY);
+//    GLuint shader = m_parentApp->getShader(DEFAULT);
     QList<Triangle *> tris;
 
     m_oh = new ObjectHandler();
-    m_level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris);
+    m_level = m_oh->getObject(":/objects/level_one.obj", shader, &tris);
+
+
+    // make an object handler for the lights and parse them in from an obj
+    // save into a list of lights and send to the world
+    LightParser lightParser;
+    QList<Light*> lights = lightParser.getLights(":/objects/island_lights.obj");
 
     ActionCamera *cam;
     cam = new ActionCamera();
-    glm::vec3 playerPos = glm::vec3(0, 10, 0);
-//    glm::vec3 playerPos = glm::vec3(-7, 12, 18);
+    glm::vec3 playerPos = glm::vec3(0, 11, 13);
+//        glm::vec3 playerPos = glm::vec3(0, 10, 0);
     cam->setCenter(playerPos);
 
     GamePlayer *player = new GamePlayer(cam, playerPos);
@@ -39,6 +48,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     vm = new VerletManager(cam, shader);
 
     m_world = new GameWorld();
+    m_world->setLights(lights);
     m_world->addManager(gcm);
     m_world->addManager(vm);
     m_world->addObject(m_level);
@@ -46,10 +56,10 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_world->addToMesh(tris);
     m_world->setGravity(glm::vec3(0,-10,0));
 
-//    SoundTester *st = new SoundTester(glm::vec3());
-//    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
-//    st->playSound();
-//    m_world->addMovableEntity(st);
+    SoundTester *st = new SoundTester(glm::vec3());
+    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
+    st->playSound();
+    m_world->addMovableEntity(st);
 
     setCamera(cam);
 
@@ -98,7 +108,8 @@ void TestLevelScreen::onRender(Graphics *g)
     m_world->onDraw(g);
 
     //for dragging
-    if(dragMode){
+    if(dragMode)
+    {
         g->setColor(1, 1, 1, 1, 0);
         glm::mat4 trans = glm::translate(glm::mat4(), draggedVerlet->getPoint(draggedPoint));
         trans *= glm::scale(glm::mat4(), glm::vec3(.2,.2,.2));
@@ -171,7 +182,7 @@ void TestLevelScreen::onKeyPressed(QKeyEvent *e)
 
 void TestLevelScreen::onKeyReleased(QKeyEvent *e )
 {
-    if (e->key() == Qt::Key_L)
+    if (e->key() == Qt::Key_P)
         m_parentApp->useLeapMotion(!m_parentApp->isUsingLeapMotion());
 
     //testing verlet functions

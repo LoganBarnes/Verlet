@@ -82,7 +82,7 @@ void GameMenu::onResize(int w, int h)
 
 void GameMenu::onKeyReleased(QKeyEvent *e)
 {
-    if (e->key() == Qt::Key_L)
+    if (e->key() == Qt::Key_P)
     {
         m_parentApp->useLeapMotion(!m_parentApp->isUsingLeapMotion());
         m_parentApp->leapEnableKeyTapGesture();

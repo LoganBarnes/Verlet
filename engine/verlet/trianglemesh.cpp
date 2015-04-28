@@ -232,10 +232,6 @@ void TriangleMesh::updateBuffer()
 
 void TriangleMesh::onDraw(Graphics *g)
 {
-    g->setColor(1, 1, 1, .7, 0);
-
-    glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"),
-                       1, GL_FALSE, glm::value_ptr(glm::mat4()));
-    m_mesh->onDraw(GL_TRIANGLES);
+    g->drawMesh(m_mesh, glm::mat4());
 }
 

@@ -5,50 +5,6 @@ using namespace std;
 
 GameWorld::GameWorld()
 {
-    // light struct
-    Light *light;
-
-    for (int i = 0; i < 10; i++)
-    {
-        float angle = i*.2f*glm::pi<float>();
-
-        light = new Light();
-        light->id = i;                  // index into array in shader
-        light->type = POINT;            // can be POINT or DIRECTIONAL for now
-
-        // Fancy fun mode
-//        if(i==0)
-//            light->color = glm::vec3(2.0, 1.0, 0.0);
-//        else if(i==1)
-//            light->color = glm::vec3(0.0, 1.0, 2.0);
-//        else if(i==1)
-//            light->color = glm::vec3(2.0, 0.0, 1.0);
-//        else if(i==2)
-//            light->color = glm::vec3(2.0, 0.0, 0.0);
-//        else if(i==3)
-//            light->color = glm::vec3(0.0, 2.0, 1.0);
-//        else if(i==4)
-//            light->color = glm::vec3(2.0, 2.0, 0.0);
-//        else if(i==5)
-//            light->color = glm::vec3(1.0, 1.0, 1.0);
-//        else if(i==6)
-//            light->color = glm::vec3(2.0, 0.0, 2.0);
-//        else if(i==7)
-//            light->color = glm::vec3(0.0, 1.0, 0.0);
-//        else if(i==8)
-//            light->color = glm::vec3(1.0, 0.0, 2.0);
-//        else if(i==9)
-//            light->color = glm::vec3(1.0, 0.0, 1.0);
-
-        light->color = glm::vec3(1.0, 1.0, 2.f);  // rgb color
-
-        light->posDir = glm::vec3(cos(angle)*10.0, 2.0, sin(angle)*10.0);// position or direction depending on light type
-        light->radius = 20.f;
-        light->function = glm::vec3(1.0, .1, .01);
-
-        m_tempLights.append(light);
-    }
-
     mode = 0;
     usingFog = false;
 }
@@ -56,7 +12,7 @@ GameWorld::GameWorld()
 
 GameWorld::~GameWorld()
 {
-    foreach (Light *l, m_tempLights)
+    foreach (Light *l, m_lights)
         delete l;
 }
 
@@ -90,7 +46,12 @@ void GameWorld::onKeyPressed(QKeyEvent *e)
         else
             usingFog = true;
     }
-
+    if(e->key()==50){
+        if(useDeferredLighting)
+            useDeferredLighting = false;
+        else
+            useDeferredLighting = true;
+    }
     World::onKeyPressed(e);
 }
 
@@ -169,12 +130,13 @@ void GameWorld::onDraw(Graphics *g){
 
     if(useDeferredLighting){
 
+        g->setGraphicsMode(GEOMETRY);
 
         // first pass:
-        GLuint firstPassShader = g->setupFirstPass();
-        World::onDraw(g, 1, firstPassShader);
-        drawShapes(g,1,firstPassShader);        //render all geometry
-        m_player->onDrawOpaque(g, 1, firstPassShader);
+        g->setupFirstPass();
+        World::onDraw(g);
+//        drawShapes(g,1,firstPassShader);        //render all geometry
+        m_player->onDrawOpaque(g);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glUseProgram(0);
 
@@ -183,7 +145,7 @@ void GameWorld::onDraw(Graphics *g){
         glm::vec4 pos = m_player->getCamEye();
         glUniform3f(glGetUniformLocation(secondPassShader, "eyePos"),pos.x, pos.y, pos.z);
 
-        g->drawLightShapes(glm::vec3(pos.x,pos.y,pos.z), secondPassShader, m_tempLights);
+        g->drawLightShapes(glm::vec3(pos.x,pos.y,pos.z), secondPassShader, m_lights);
         glDisable(GL_BLEND);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glUseProgram(0);
@@ -205,4 +167,13 @@ void GameWorld::onDraw(Graphics *g){
         glUseProgram(0);
 
     }
+
+    else{
+        g->setGraphicsMode(DEFAULT);
+        foreach(Light* l, m_lights)
+            g->addLight(*l);
+        World::onDraw(g);
+    }
+
+
 }

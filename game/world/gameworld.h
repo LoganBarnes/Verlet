@@ -16,8 +16,6 @@ public:
     void drawShapes(Graphics* g, int pass, GLuint shader);
     void onKeyPressed(QKeyEvent *e);
 
-    QList<Light*> m_tempLights;
-
 private:
     int mode;
     bool usingFog;

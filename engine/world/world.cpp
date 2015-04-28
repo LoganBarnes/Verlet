@@ -141,7 +141,7 @@ ObjectsInfo *World::getObjectInfo()
     return info;
 }
 
-void World::onDraw(Graphics *g, int pass, GLuint shader)
+void World::onDraw(Graphics *g)
 //void World::onDraw(Graphics *g)
 {
     foreach(Manager *m, m_managers)
@@ -154,13 +154,13 @@ void World::onDraw(Graphics *g, int pass, GLuint shader)
 //    g->setGraphicsMode(DEFAULT);
 
     foreach(Entity *e, m_staticEntities)
-        e->onDrawOpaque(g, pass, shader);
+        e->onDrawOpaque(g);
 
     foreach(Entity *e, m_movableEntities)
-        e->onDrawOpaque(g, pass, shader);
+        e->onDrawOpaque(g);
 
     foreach(OBJ *obj, m_objs)
-        obj->draw(glm::mat4(), g);
+        g->drawObject(obj, glm::mat4());
 
     foreach(Entity *e, m_staticEntities)
         e->onDrawTransparent(g);
@@ -192,6 +192,10 @@ void World::setGravity(glm::vec3 gravity)
     m_gravity = gravity;
 }
 
+void World::setLights(QList<Light*> l){
+    m_lights = l;
+}
+
 // mouse events
 void World::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY)
 {
@@ -204,7 +208,7 @@ void World::onKeyPressed(QKeyEvent *e)
     m_player->onKeyPressed(e);
 
     // toggle deferred lighting
-    if(e->key()==76){
+    if(e->key() == Qt::Key_L){
         if(useDeferredLighting)
             useDeferredLighting = false;
         else
