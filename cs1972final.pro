@@ -24,6 +24,8 @@ macx {
     QMAKE_CXXFLAGS += -Wno-c++11-extensions
 }
 
+QMAKE_CXXFLAGS += -isystem "lib/glm"
+
 
 INCLUDEPATH +=  lib/glm engine game shaders \
                 engine/common \
