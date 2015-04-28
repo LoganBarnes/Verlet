@@ -27,7 +27,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     QList<Triangle *> tris;
 
     m_oh = new ObjectHandler();
-    m_level = m_oh->getObject(":/objects/level_one.obj", shader, &tris);
+    m_level = m_oh->getObject(":/objects/LargeLevel.obj", shader, &tris);
 
 
     // make an object handler for the lights and parse them in from an obj

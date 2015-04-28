@@ -43,9 +43,9 @@ void main(){
         d = length(vertexToLight);
         vertexToLight = normalize(vertexToLight);
 //        atten = 1.0/(lightAttenuation.x*d*d + lightAttenuation.y*d*d*d + lightAttenuation.z*d*d*d*d);
-//        atten = 1.0;
+        atten = 1.0;
 //          atten = 1.0/(lightAttenuation.x*d + lightAttenuation.y*d*d + lightAttenuation.z*d*d*d);
-         atten = 1.0/(lightAttenuation.x + lightAttenuation.y*d + lightAttenuation.z*d*d);
+//         atten = 1.0/(lightAttenuation.x + lightAttenuation.y*d + lightAttenuation.z*d*d);
     }
     // Directional Light
     else if (lightType == 1){
