@@ -25,6 +25,8 @@ macx {
     QMAKE_CXXFLAGS += -Wno-c++11-extensions
 }
 
+QMAKE_CXXFLAGS += -isystem "lib/glm"
+
 INCLUDEPATH +=  lib/glm engine game shaders \
                 engine/common \
                 engine/ui \
@@ -114,7 +116,8 @@ SOURCES += \
     engine/common/wavreader.cpp \
     game/entities/soundtester.cpp \
     engine/objects/half.cpp \
-    engine/verlet/grass.cpp
+    engine/verlet/grass.cpp \
+    engine/objects/lightparser.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -172,7 +175,8 @@ HEADERS += \
     engine/common/wavreader.h \
     game/entities/soundtester.h \
     engine/objects/half.h \
-    engine/verlet/grass.h
+    engine/verlet/grass.h \
+    engine/objects/lightparser.h
 
 
 FORMS += engine/ui/mainwindow.ui
@@ -193,6 +197,9 @@ RESOURCES += \
 macx {
     LEAP_DIR = $$PWD/lib/leap
     LIBS += -L$$LEAP_DIR/ -lLeap
+
+    DEFINES += LEAP
+    message("configuring for leap");
 
     INCLUDEPATH +=  $$LEAP_DIR/include \
                     engine/leap

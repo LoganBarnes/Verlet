@@ -15,9 +15,12 @@
 #include "facecube.h"
 #include "particleemitter.h"
 
+class OBJ;
+class Mesh;
+
 enum GraphicsMode
 {
-    DEFAULT, SPARSE, CUBEMAP, DRAW2D
+    DEFAULT, SPARSE, CUBEMAP, DRAW2D, GEOMETRY, LIGHT, COMPOSITE, FOG
 };
 
 enum ShapeType
@@ -50,6 +53,7 @@ struct Light
     glm::vec3 color;
     glm::vec3 posDir;   // position for point, direction for directional
     glm::vec3 function; // Attenuation function
+    float radius;
 };
 
 struct ObjectsInfo
@@ -96,12 +100,24 @@ public:
     void drawCylinder(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawSphere(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawParticles(glm::vec3 source, float fuzziness);
+    void drawFullScreenQuad(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
+    void drawMesh(Mesh *mesh, glm::mat4 trans, GLenum mode = GL_TRIANGLES);
+    void drawObject(OBJ *obj, glm::mat4 trans);
 
     void particlesReset();
     void particlesSetForce(glm::vec3 force);
 
     static GLuint loadShaders(const char *vertex_file_path, const char *fragment_file_path);
 
+    void loadDeferredLightFBOs(int width, int height);
+    GLuint setupFirstPass();
+    GLuint setupSecondPass();
+    GLuint setupFinalPass();
+    GLuint setupFogPass(bool fog);
+    GLuint getShader(GraphicsMode m);
+
+    void drawLightShapes(glm::vec3 eyePos, GLuint lightShader, QList<Light*> lights);
+    bool isInLight(Light* l, glm::vec3 pos);
 
     void drawLine(const glm::vec3 &a, const glm::vec3 &b);
 
@@ -117,14 +133,15 @@ private:
     QHash<QString, GLint> m_defaultLocs;
     QHash<QString, GLint> m_sparseLocs;
     QHash<QString, GLint> m_cubeLocs;
+    QHash<QString, GLint> m_geomLocs;
+    QHash<QString, GLint> m_lightLocs;
+    QHash<QString, GLint> m_compositeLocs;
 
-    QHash<QString, GLint> m_textures;
+    QHash<QString, GLuint> m_textures;
+    QHash<QString, GLuint> m_shaders;
+    QHash<QString, GLint> m_fbos;
 
     GLuint m_currentShader;
-    GLuint m_defaultShader;
-    GLuint m_sparseShader;
-    GLuint m_cubeShader;
-
     CubeMap *m_cubeMap;
 
     glm::mat4 m_currProj;
@@ -137,8 +154,21 @@ private:
     Shape *m_cyl;
     Shape *m_sphere;
 
+    // deferred
+    Shape *m_dquad;
+    Shape *m_dcone;
+    Shape *m_dcube;
+    Shape *m_dcyl;
+    Shape *m_dsphere;
+
+    Shape *m_lsphere;
+
+    Shape* m_fullscreen_quad;
+    Shape* m_dfullscreen_quad;
+
     bool m_useCubeMap;
     bool m_usingAtlas;
+    bool m_usingFog;
 
     int m_w, m_h;
 

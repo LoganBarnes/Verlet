@@ -7,7 +7,7 @@
 
 enum CollisionType
 {
-    PLANE, EDGE, VERTEX
+    PLANE, EDGE, VERTEX, NO_COLLISITON, NUM_COL_TYPES
 };
 
 struct TriCollision

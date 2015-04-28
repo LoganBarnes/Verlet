@@ -27,6 +27,10 @@ Player::~Player()
 {
 }
 
+glm::vec4 Player::getCamEye(){
+    return m_camera->getEye();
+}
+
 
 void Player::setEyeHeight(float height)
 {

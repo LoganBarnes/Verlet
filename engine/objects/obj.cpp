@@ -7,6 +7,8 @@
 #include "graphics.h"
 #include "half.h"
 
+#include "debugprinting.h"
+
 #define GLM_FORCE_RADIANS
 #include <gtc/type_ptr.hpp>
 
@@ -53,13 +55,13 @@ GLuint OBJ::getShader()
     return m_shader;
 }
 
-void OBJ::draw(Graphics *g, glm::mat4 trans) const
+void OBJ::draw(glm::mat4 trans, GLuint shader) const
 {
-    g->setTexture(m_texture);
-    g->setColor(m_color.r, m_color.g, m_color.b, 1, m_color.w);
+//    g->setTexture(m_texture);
+//    g->setColor(m_color.r, m_color.g, m_color.b, 1, m_color.w);
 
     glBindVertexArray(m_vaoID);
-    glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"), 1, GL_FALSE, glm::value_ptr(trans));
+    glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(trans));
     glDrawArrays(GL_TRIANGLES, 0, m_numVerts);
     glBindVertexArray(0);
 }

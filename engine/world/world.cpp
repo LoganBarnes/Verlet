@@ -4,6 +4,7 @@
 
 //#include "debugprinting.h"
 
+
 World::World()
 {
     m_staticEntities.clear();
@@ -15,6 +16,7 @@ World::World()
 
     m_player = NULL;
     m_gravity = glm::vec3();
+    useDeferredLighting = true;
 }
 
 World::~World()
@@ -146,15 +148,16 @@ ObjectsInfo *World::getObjectInfo()
 }
 
 void World::onDraw(Graphics *g)
+//void World::onDraw(Graphics *g)
 {
     foreach(Manager *m, m_managers)
         if (m->isDrawable())
         {
-            g->setGraphicsMode(m->getGraphicsMode());
+//            g->setGraphicsMode(m->getGraphicsMode());
             m->onDraw(g);
         }
 
-    g->setGraphicsMode(DEFAULT);
+//    g->setGraphicsMode(DEFAULT);
 
     foreach(Entity *e, m_staticEntities)
         e->onDrawOpaque(g);
@@ -163,7 +166,7 @@ void World::onDraw(Graphics *g)
         e->onDrawOpaque(g);
 
     foreach(OBJ *obj, m_objs)
-        obj->draw(g, glm::mat4());
+        g->drawObject(obj, glm::mat4());
 
     foreach(Entity *e, m_staticEntities)
         e->onDrawTransparent(g);
@@ -193,6 +196,10 @@ void World::setPlayer(Player *player)
 void World::setGravity(glm::vec3 gravity)
 {
     m_gravity = gravity;
+}
+
+void World::setLights(QList<Light*> l){
+    m_lights = l;
 }
 
 // mouse events
@@ -237,6 +244,14 @@ void World::onKeyPressed(QKeyEvent *e)
     foreach (Manager *manager, m_managers)
         manager->onKeyPressed(e);
     m_player->onKeyPressed(e);
+
+    // toggle deferred lighting
+    if(e->key() == Qt::Key_L){
+        if(useDeferredLighting)
+            useDeferredLighting = false;
+        else
+            useDeferredLighting = true;
+    }
 }
 
 void World::onKeyReleased(QKeyEvent *e)

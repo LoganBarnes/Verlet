@@ -4,6 +4,7 @@
 #include "gamemenu.h"
 
 #include <iostream>
+using namespace std;
 
 View::View(QGLFormat format, QWidget *parent)
     : QGLWidget(format, parent),
@@ -72,7 +73,7 @@ void View::initializeGL()
     // Start a timer that will try to get 60 frames per second (the actual
     // frame rate depends on the operating system and other running programs)
     time.start();
-    timer.start(1000 / 60);
+    timer.start(/*1000 / 60*/);
 
     // Center the mouse, which is explained more in mouseMoveEvent() below.
     // This needs to be done here because the mouse may be initially outside
@@ -88,31 +89,34 @@ void View::paintGL()
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    QString title = "CS1972 Final    (FPS: " + QString::number((int) fps) + ")";
+    emit changeTitle(title);
+
     // TODO: call your game rendering code here
     m_app->onRender();
 
-    if (m_fpsInit)
-    {
-        totalfps += fps;
-        counter++;
+//    if (m_fpsInit)
+//    {
+//        totalfps += fps;
+//        counter++;
 
-        if (counter >= freq)
-        {
-            float avg = (totalfps / counter);
-            std::cout << "Avg fps: " << avg << std::endl;
+//        if (counter >= freq)
+//        {
+//            float avg = (totalfps / counter);
+//            std::cout << "Avg fps: " << avg << std::endl;
 
-            if (avg < 20.f)
-                std::cout << "ERMAHGERD YE GEME ES SLEEEWWWWWW (fps: " << fps << ")" << std::endl;
-            else if (avg < 30.f)
-                std::cout << "Ya done messed up dawg. Get it together. (fps: " << fps << ")" << std::endl;
+//            if (avg < 20.f)
+//                std::cout << "ERMAHGERD YE GEME ES SLEEEWWWWWW (fps: " << fps << ")" << std::endl;
+//            else if (avg < 30.f)
+//                std::cout << "Ya done messed up dawg. Get it together. (fps: " << fps << ")" << std::endl;
 
-            totalfps = 0.f;
-            counter = 0;
-        }
+//            totalfps = 0.f;
+//            counter = 0;
+//        }
 
-    }
-    else if (fps > 30.f)
-        m_fpsInit = true;
+//    }
+//    else if (fps > 30.f)
+//        m_fpsInit = true;
 
 //    // Can't use Core profile with this
 //    glUseProgram(0);
@@ -126,6 +130,11 @@ void View::resizeGL(int w, int h)
     glViewport(0, 0, w, h);
     m_app->onResize(w, h);
     QCursor::setPos(mapToGlobal(QPoint(width() / 2, height() / 2)));
+
+//    cout<<"view dimensions: "<<width()<<" "<<height()<<endl;
+
+    // Update the fbos
+    m_app->resetFBOs(w,h);
 }
 
 void View::mousePressEvent(QMouseEvent *event)

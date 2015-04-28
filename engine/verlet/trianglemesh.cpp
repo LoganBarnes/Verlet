@@ -6,6 +6,8 @@
 #define GLM_FORCE_RADIANS
 #include <gtc/type_ptr.hpp>
 
+#include "debugprinting.h"
+
 //******************************CONSTRUCTING**********************************//
 TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
       const glm::vec3& start, VerletManager* vm, GLuint shader)
@@ -179,7 +181,7 @@ bool TriangleMesh::checkShearValid(Link* s){
     bool c = points.contains(segments[0]->pointB);
     bool d = points.contains(segments[1]->pointB);
 
-    if(!(a==b==c==d==true)){
+    if(!((a && b) && (c && d))){
         //std::cout<<"*invalid shear: non-matching"<<std::endl;
         //std::cout<<"indices:"<<s->pointA<<","<<s->pointB<<","<<s->pointC<<std::endl;
         //std::cout<<"edges:"<<segments[0]->pointA<<","<<segments[0]->pointB<<std::endl;
@@ -497,9 +499,6 @@ void TriangleMesh::updateBuffer()
 
 void TriangleMesh::onDraw(Graphics *g)
 {
-    g->setColor(.5f,.5f,1.f,1.f,0.f);
-    glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"),
-                       1, GL_FALSE, glm::value_ptr(glm::mat4()));
-    m_mesh->onDraw(GL_TRIANGLES);
+    g->drawMesh(m_mesh, glm::mat4());
 }
 

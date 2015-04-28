@@ -16,8 +16,12 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     : Screen(parent)
 {
     m_parentApp->setMouseDecoupled(true);
+    m_parentApp->setLeapRightClick(GRAB);
+    m_parentApp->setLeapLeftClick(PINCH);
+//    m_parentApp->setMouseDecoupleKey(Qt::Key_Shift);
 
-    GLuint shader = m_parentApp->getShader(DEFAULT);
+    GLuint shader = m_parentApp->getShader(GEOMETRY);
+//    GLuint shader = m_parentApp->getShader(DEFAULT);
     QList<Triangle *> tris;
 
     m_oh = new ObjectHandler();
@@ -25,37 +29,44 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     //m_level = m_oh->getObject(":/objects/01.obj", shader, &tris);
     //m_level->setTexture("01.png");
     m_level->setTexture("grass.png");
+//    m_level = m_oh->getObject(":/objects/level_one.obj", shader, &tris);
 
+
+    // make an object handler for the lights and parse them in from an obj
+    // save into a list of lights and send to the world
+    LightParser lightParser;
+    QList<Light*> lights = lightParser.getLights(":/objects/island_lights.obj");
 
     ActionCamera *cam;
     cam = new ActionCamera();
-    glm::vec3 playerPos = glm::vec3(0, 3, 0);
-//    glm::vec3 playerPos = glm::vec3(-7, 12, 18);
+    glm::vec3 playerPos = glm::vec3(0, 11, 13);
+//        glm::vec3 playerPos = glm::vec3(0, 10, 0);
     cam->setCenter(playerPos);
 
     GamePlayer *player = new GamePlayer(cam, playerPos);
     player->useSound(m_parentApp->getAudioObject());
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
-    VerletManager *vm = new VerletManager(cam, m_parentApp->getShader(DEFAULT));
+    VerletManager *vm = new VerletManager(cam, shader);
 
-    Grass* grass = new Grass(vm, shader);
-    grass->createPatch(glm::vec2(0,0),6,m_level);
-    vm->addVerlet(grass);
+//    Grass* grass = new Grass(vm, shader);
+//    grass->createPatch(glm::vec2(0,0),6,m_level);
+//    vm->addVerlet(grass);
 
     m_world = new GameWorld();
+    m_world->setLights(lights);
     m_world->addManager(gcm);
-    m_world->setPlayer(player);
-    m_world->addObject(m_level);
-    m_world->addToMesh(tris);
     m_world->addManager(vm);
+    m_world->addObject(m_level);
+    m_world->setPlayer(player);
+    m_world->addToMesh(tris);
     m_world->setGravity(glm::vec3(0,-10,0));
 
     // uncomment to play sound at the origin
-//    SoundTester *st = new SoundTester(glm::vec3());
-//    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
-//    st->playSound();
-//    m_world->addMovableEntity(st);
+    SoundTester *st = new SoundTester(glm::vec3());
+    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
+    st->playSound();
+    m_world->addMovableEntity(st);
 
     setCamera(cam);
 
@@ -85,20 +96,7 @@ void TestLevelScreen::onRender(Graphics *g)
     g->setWorldColor(.2f,.2f,.2f);
     g->setColor(1,1,1,1,0);
 
-    Light light;
-    light.id = 0;
-    light.type = DIRECTIONAL;
-    light.posDir = glm::vec3(-1);
-    light.color = glm::vec3(1);
-    g->addLight(light);
-
-    light.id = 1;
-    light.type = DIRECTIONAL;
-    light.posDir = glm::vec3(1,-1,1);
-    light.color = glm::vec3(.2f);
-    g->addLight(light);
-
-//    g->setTexture("grass.png", 5.f, 5.f);
+    g->setTexture("grass.png", 5.f, 5.f);
 
     m_world->onDraw(g);
 
@@ -162,7 +160,7 @@ void TestLevelScreen::onKeyPressed(QKeyEvent *e)
 
 void TestLevelScreen::onKeyReleased(QKeyEvent *e )
 {
-    if (e->key() == Qt::Key_L)
+    if (e->key() == Qt::Key_P)
         m_parentApp->useLeapMotion(!m_parentApp->isUsingLeapMotion());
 
     m_world->onKeyReleased(e);

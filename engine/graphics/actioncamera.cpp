@@ -11,7 +11,6 @@ ActionCamera::~ActionCamera()
 {
 }
 
-
 float ActionCamera::getOffset()
 {
     return m_offset;
@@ -49,7 +48,7 @@ void ActionCamera::setOffset(float offset)
 
 void ActionCamera::moveRelativeToLook(glm::vec3 dir)
 {
-    moveAlongU(dir.x);
-    moveAlongUp(dir.y);
-    moveAlongLook(dir.z);
+    moveAlongU(dir.x/10.0);
+    moveAlongUp(dir.y/10.0);
+    moveAlongLook(dir.z/10.0);
 }

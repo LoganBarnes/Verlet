@@ -9,6 +9,7 @@
 
 class Manager;
 class OBJ;
+class VerletManager;
 
 class World
 {
@@ -31,11 +32,14 @@ public:
     void setToDeleteMovable(MovableEntity *me);
 
     virtual void onTick(float secs, float mouseX = 0.f, float mouseY = 0.f);
+
     virtual void onDraw(Graphics *g);
+//    virtual void onDraw(Graphics *g);
 
     void addManager(Manager *m);
     void setGravity(glm::vec3 gravity);
     void setPlayer(Player *player);
+    void setLights(QList<Light*> l);
     Player *getPlayer();
 
     ObjectsInfo *getObjectInfo();
@@ -65,6 +69,9 @@ protected:
 
     QList<Manager *> m_managers;
     glm::vec3 m_gravity;
+    bool useDeferredLighting;
+
+    QList<Light*> m_lights;
 
 };
 

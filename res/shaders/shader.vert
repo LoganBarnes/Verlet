@@ -8,6 +8,7 @@ in vec2 texCoord; // UV texture coordinates
 out vec4 position_cameraSpace;
 out vec4 normal_cameraSpace;
 out vec2 texc;
+out mat4 viewMat;
 
 // Transformation matrices
 uniform mat4 projection;
@@ -19,10 +20,10 @@ uniform vec2 repeatUV = vec2(1.0);
 void main(){
 
     texc = texCoord * repeatUV;
+    viewMat = view;
 
     position_cameraSpace = view * model * vec4(position, 1.0);
     normal_cameraSpace = vec4(normalize(mat3(transpose(inverse(view * model))) * normal), 0.0);
 
     gl_Position = projection * position_cameraSpace;
-
 }

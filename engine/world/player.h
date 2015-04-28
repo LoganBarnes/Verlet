@@ -41,6 +41,8 @@ public:
     virtual void handleCollision(Collision *col);
 
     void useSound(Audio *audio);
+    glm::vec4 getCamEye();
+
 
 protected:
     ActionCamera *m_camera;

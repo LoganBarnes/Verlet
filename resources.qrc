@@ -6,6 +6,14 @@
         <file alias="cubemap.frag">res/shaders/cubemap.frag</file>
         <file alias="sparse.vert">res/shaders/sparse.vert</file>
         <file alias="sparse.frag">res/shaders/sparse.frag</file>
+        <file alias="geomPass.frag">res/shaders/geomPass.frag</file>
+        <file alias="geomPass.vert">res/shaders/geomPass.vert</file>
+        <file alias="lightPass.frag">res/shaders/lightPass.frag</file>
+        <file alias="lightPass.vert">res/shaders/lightPass.vert</file>
+        <file alias="fog.frag">res/shaders/fog.frag</file>
+        <file alias="fog.vert">res/shaders/fog.vert</file>
+        <file alias="finalPass.frag">res/shaders/finalPass.frag</file>
+        <file alias="finalPass.vert">res/shaders/finalPass.vert</file>
     </qresource>
     <qresource prefix="/images">
         <file alias="play.png">res/images/play.png</file>
@@ -22,6 +30,9 @@
     <qresource prefix="/objects">
         <file alias="test.obj">res/objects/test.obj</file>
         <file alias="testsmall.obj">res/objects/testsmall.obj</file>
+        <file alias="level_one.obj">res/objects/level_one.obj</file>
+        <file alias="TestLights.obj">res/objects/TestLights.obj</file>
+        <file alias="island_lights.obj">res/objects/island_lights.obj</file>
     </qresource>
     <qresource prefix="/audio">
         <file alias="kickDrumMod.wav">res/audio/kickDrumMod.wav</file>

@@ -3,6 +3,7 @@
 
 #include "screen.h"
 #include "audio.h"
+#include "lightparser.h"
 
 class GameWorld;
 class ObjectHandler;

@@ -2,6 +2,8 @@
 #define GAMEWORLD_H
 
 #include "world.h"
+#include "obj.h"
+#include "verletmanager.h"
 
 class GameWorld : public World
 {
@@ -10,6 +12,13 @@ public:
     virtual ~GameWorld();
 
     Triangle *intersectWorld(glm::vec3 p, glm::vec3 d, float *t);
+    virtual void onDraw(Graphics *g);
+    void drawShapes(Graphics* g, int pass, GLuint shader);
+    void onKeyPressed(QKeyEvent *e);
+
+private:
+    int mode;
+    bool usingFog;
 
 };
 

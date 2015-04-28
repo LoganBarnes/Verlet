@@ -1,7 +1,12 @@
 #include "application.h"
 #include "audio.h"
 
+#include "debugprinting.h"
+
 Application::Application()
+    : m_leapLeftClick(NO_CLICK),
+      m_leapRightClick(NO_CLICK),
+      m_currClick(false)
 {
 
 #ifdef LEAP
@@ -48,6 +53,11 @@ void Application::init(Screen *initScreen)
     m_a->initAudio();
 }
 
+// Have the graphics object initialize fbos for lighting
+void Application::resetFBOs(int width, int height){
+    m_g->loadDeferredLightFBOs(width, height);
+}
+
 void Application::addScreen(Screen *s)
 {
     if (m_currentScreen)
@@ -82,7 +92,6 @@ bool Application::isUsingLeapMotion()
 #else
     return false;
 #endif
-
 }
 
 void Application::useLeapMotion(bool useLeap)
@@ -107,6 +116,16 @@ void Application::useLeapMotion(bool useLeap)
         }
 #endif
     }
+}
+
+void Application::setLeapLeftClick(LeapGesture lg)
+{
+    m_leapLeftClick = lg;
+}
+
+void Application::setLeapRightClick(LeapGesture lg)
+{
+    m_leapRightClick = lg;
 }
 
 void Application::leapEnableKeyTapGesture()
@@ -155,32 +174,7 @@ void Application::handleLeapMouseEvents()
         m_prevPos = glm::clamp(m_prevPos, -1.f, 1.f);
     }
 
-//    if (frame.fingers().extended().count() == 0)
-//    {
-//        if (!m_mouseDown)
-//        {
-//            QMouseEvent qme(QEvent::MouseButtonPress,
-//                            QPoint(0,0),
-//                            Qt::LeftButton,
-//                            Qt::NoButton,
-//                            Qt::NoModifier);
-//            this->onMousePressed(&qme);
-//        }
-//        m_mouseDown = true;
-//    }
-//    else
-//    {
-//        if (m_mouseDown)
-//        {
-//            QMouseEvent qme(QEvent::MouseButtonRelease,
-//                            QPoint(0,0),
-//                            Qt::LeftButton,
-//                            Qt::NoButton,
-//                            Qt::NoModifier);
-//            this->onMouseReleased(&qme);
-//        }
-//        m_mouseDown = false;
-//    }
+    checkLeapClick(frame);
 
     float deltaX = 0, deltaY = 0;
 
@@ -226,6 +220,116 @@ void Application::handleLeapMouseEvents()
 
     m_previousLeapFrame = frame;
 }
+
+void Application::checkLeapClick(Leap::Frame &frame)
+{
+    bool leftClick = false;
+    bool rightClick = false;
+
+    Leap::Hand rightHand = frame.hands().rightmost();
+    float grab = rightHand.grabStrength();
+    float pinch = rightHand.pinchStrength();
+
+//    cout << "grab: " << grab << endl;
+//    cout << "pinch: " << pinch << endl;
+
+    switch (m_leapLeftClick)
+    {
+    case PINCH:
+        if (grab < .7f && pinch > .9f)
+            leftClick = true;
+        break;
+    case GRAB:
+        if (grab > .9f)
+            leftClick = true;
+        break;
+    case NO_CLICK:
+    default:
+        break;
+    }
+
+    switch (m_leapRightClick)
+    {
+    case PINCH:
+        if (grab < .7f && pinch > .9f)
+            rightClick = true;
+        break;
+    case GRAB:
+        if (grab > .9f)
+            rightClick = true;
+        break;
+    case NO_CLICK:
+    default:
+        break;
+    }
+
+    if (leftClick)
+    {
+        if (m_mouseDown && !m_currClick)
+        {
+            QMouseEvent qme(QEvent::MouseButtonRelease,
+                            QPoint(0,0),
+                            Qt::RightButton,
+                            Qt::NoButton,
+                            Qt::NoModifier);
+            this->onMouseReleased(&qme);
+        }
+        if (!m_mouseDown)
+        {
+            QMouseEvent qme(QEvent::MouseButtonPress,
+                            QPoint(0,0),
+                            Qt::LeftButton,
+                            Qt::NoButton,
+                            Qt::NoModifier);
+            this->onMousePressed(&qme);
+        }
+    }
+    else if (rightClick)
+    {
+        if (m_mouseDown && m_currClick)
+        {
+            QMouseEvent qme(QEvent::MouseButtonRelease,
+                            QPoint(0,0),
+                            Qt::LeftButton,
+                            Qt::NoButton,
+                            Qt::NoModifier);
+            this->onMouseReleased(&qme);
+        }
+        if (!m_mouseDown)
+        {
+            QMouseEvent qme(QEvent::MouseButtonPress,
+                            QPoint(0,0),
+                            Qt::RightButton,
+                            Qt::NoButton,
+                            Qt::NoModifier);
+            this->onMousePressed(&qme);
+        }
+    }
+    else
+    {
+        if (m_mouseDown)
+        {
+            if (m_currClick)
+            {
+                QMouseEvent qme(QEvent::MouseButtonRelease,
+                                QPoint(0,0),
+                                Qt::LeftButton,
+                                Qt::NoButton,
+                                Qt::NoModifier);
+                this->onMouseReleased(&qme);
+            }
+            else
+            {
+                QMouseEvent qme(QEvent::MouseButtonRelease,
+                                QPoint(0,0),
+                                Qt::RightButton,
+                                Qt::NoButton,
+                                Qt::NoModifier);
+                this->onMouseReleased(&qme);
+            }
+        }
+    }
+}
 #endif
 
 void Application::onRender()
@@ -235,7 +339,7 @@ void Application::onRender()
         if (m_g->cubeMapIsActive())
             m_g->drawCubeMap(m_currentScreen->getCamera());
 
-        m_g->setGraphicsMode(DEFAULT);
+//        m_g->setGraphicsMode(DEFAULT);
         m_g->setWorldColor(0.f, 0.f, 0.f);
         m_g->setColor(0.f, 0.f, 0.f, 1.f, 0.f);
 
@@ -253,6 +357,10 @@ void Application::setUseCubeMap(bool use)
 void Application::onMousePressed(QMouseEvent *e)
 {
     m_mouseDown = true;
+    if (e->button() == Qt::LeftButton)
+        m_currClick = true;
+    else
+        m_currClick = false;
 
     if (m_currentScreen)
         m_currentScreen->onMousePressed(e);

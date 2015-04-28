@@ -2,3 +2,15 @@
 
 It's a game. Play it.
 
+WASD + space to move
+Right mouse button + drag to change camera angle 
+
+Lighting/ fog:
+1 to toggle fog
+
+Verlet:
+Left mouse button + drag to move selected point << This looks really cool, do it 
+
+If you have headphones, there is sound!
+
+Can't guarantee you won't fall through the world or that WASD might not work too well. 

@@ -63,7 +63,6 @@ void GameMenu::onMousePressed(QMouseEvent *e)
     {
         m_parentApp->setMouseDecoupled(false);
         m_parentApp->addScreen(new TestLevelScreen(m_parentApp));
-//        m_parentApp->addScreen(new GameScreen(m_parentApp));
     }
 }
 
@@ -83,7 +82,7 @@ void GameMenu::onResize(int w, int h)
 
 void GameMenu::onKeyReleased(QKeyEvent *e)
 {
-    if (e->key() == Qt::Key_L)
+    if (e->key() == Qt::Key_P)
     {
         m_parentApp->useLeapMotion(!m_parentApp->isUsingLeapMotion());
         m_parentApp->leapEnableKeyTapGesture();

@@ -5,7 +5,7 @@
 #include <vector>
 #include "link.h"
 #include <QHash>
-
+#include "graphics.h"
 class VerletManager;
 class Graphics;
 class MovableEntity;

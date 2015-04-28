@@ -15,7 +15,6 @@ public:
     void setOffset(float offset);
     void setLook(glm::vec4 look);
     void setOffsetHeight(float height);
-
     void moveRelativeToLook(glm::vec3 dir);
 
 private:
