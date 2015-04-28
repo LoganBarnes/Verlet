@@ -3,6 +3,7 @@
 // Responsible for the lighting calculations on diffuse and specular light
 
 in vec2 uv;
+in vec3 worldPos;
 
 layout(location=0) out vec4 out0;
 layout(location=1) out vec4 out1;
@@ -17,6 +18,7 @@ uniform int lightType;         // 0 for point, 1 for directional
 uniform vec3 lightPosition;    // pos for point lights dir for direction
 uniform vec3 lightAttenuation; // Constant, linear, and quadratic term
 uniform vec3 lightColor;
+uniform float lightRadius;
 
 uniform vec2 viewport;
 uniform int mode;
@@ -40,7 +42,10 @@ void main(){
         vertexToLight = vec4(lightPosition,1.0) - vec4(position_worldSpace.xyz,1.0);
         d = length(vertexToLight);
         vertexToLight = normalize(vertexToLight);
-        atten = 1.0/(lightAttenuation.x*d*d + lightAttenuation.y*d*d*d + lightAttenuation.z*d*d*d*d);
+//        atten = 1.0/(lightAttenuation.x*d*d + lightAttenuation.y*d*d*d + lightAttenuation.z*d*d*d*d);
+//        atten = 1.0;
+//          atten = 1.0/(lightAttenuation.x*d + lightAttenuation.y*d*d + lightAttenuation.z*d*d*d);
+         atten = 1.0/(lightAttenuation.x + lightAttenuation.y*d + lightAttenuation.z*d*d);
     }
     // Directional Light
     else if (lightType == 1){
@@ -60,10 +65,31 @@ void main(){
         specLight += max (vec3(0), lightColor * specIntensity);
     }
 
-    diffLight = clamp(atten*diffLight, 0.0, 1.0);
-    specLight = clamp(atten*specLight, 0.0, 1.0);
+    // if in one of the empty spaces, calculate lighting based on ss distance to light
+//    if(!(position_worldSpace.w > .99 && position_worldSpace.w < 1.1)){
+
+//        // still  have the relative coordinates of the center and this fragment in the light sphere
+
+//        // use worldPos and light pos to calculate some diffuse lighting
+
+////        float distanceFromLight = length(worldPos - lightPosition);
+
+////        float interpVal = 0.0;
+////        if(distanceFromLight<lightRadius){
+////            interpVal = 1.0 - (distanceFromLight/lightRadius);
+////        }
+
+
+//        // attenuate light color
+////        diffLight = atten*lightColor;
+//    }
+
+//    else{
+        diffLight = clamp(atten*diffLight, 0.0, 1.0);
+        specLight = clamp(atten*specLight, 0.0, 1.0);
+//    }
 
     out0 = vec4(diffLight, 1);
-    out1 = vec4(diffLight, 1);
+    out1 = vec4(specLight, 1);
 
 }

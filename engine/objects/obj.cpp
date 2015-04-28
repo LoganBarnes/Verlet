@@ -39,7 +39,8 @@ void OBJ::draw(glm::mat4 trans, Graphics*g) const
 //    }
 //    else
 //        g->setColor(0, .5, 0, 1, 0);
-    g->setColor(.05f, .05f, .05f, .7f, 0);
+    g->setColor(.28f, .81f, .8f, 1.1f, 0);
+
 
     glBindVertexArray(m_vaoID);
     glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"), 1, GL_FALSE, glm::value_ptr(trans));

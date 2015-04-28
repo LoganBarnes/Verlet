@@ -192,6 +192,10 @@ void World::setGravity(glm::vec3 gravity)
     m_gravity = gravity;
 }
 
+void World::setLights(QList<Light*> l){
+    m_lights = l;
+}
+
 // mouse events
 void World::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY)
 {
