@@ -133,10 +133,10 @@ void GameWorld::onDraw(Graphics *g){
         g->setGraphicsMode(GEOMETRY);
 
         // first pass:
-        GLuint firstPassShader = g->setupFirstPass();
-        World::onDraw(g, 1, firstPassShader);
+        g->setupFirstPass();
+        World::onDraw(g);
 //        drawShapes(g,1,firstPassShader);        //render all geometry
-        m_player->onDrawOpaque(g, 1, firstPassShader);
+        m_player->onDrawOpaque(g);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glUseProgram(0);
 
@@ -169,10 +169,10 @@ void GameWorld::onDraw(Graphics *g){
     }
 
     else{
-        GLuint defaultShader = g->setGraphicsMode(DEFAULT);
+        g->setGraphicsMode(DEFAULT);
         foreach(Light* l, m_lights)
             g->addLight(*l);
-        World::onDraw(g, 0, defaultShader);
+        World::onDraw(g);
     }
 
 

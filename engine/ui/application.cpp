@@ -1,8 +1,6 @@
 #include "application.h"
 #include "audio.h"
 
-#include "Leap.h"
-
 #include "debugprinting.h"
 
 Application::Application()
@@ -222,24 +220,6 @@ void Application::handleLeapMouseEvents()
 
     m_previousLeapFrame = frame;
 }
-#endif
-
-void Application::onRender()
-{
-    if (m_currentScreen)
-    {
-        if (m_g->cubeMapIsActive())
-            m_g->drawCubeMap(m_currentScreen->getCamera());
-
-//        m_g->setGraphicsMode(DEFAULT);
-        m_g->setWorldColor(0.f, 0.f, 0.f);
-        m_g->setColor(0.f, 0.f, 0.f, 1.f, 0.f);
-
-        m_g->setCamera(m_currentScreen->getCamera(), m_width, m_height);
-        m_currentScreen->onRender(m_g);
-
-    }
-}
 
 void Application::checkLeapClick(Leap::Frame &frame)
 {
@@ -348,6 +328,24 @@ void Application::checkLeapClick(Leap::Frame &frame)
                 this->onMouseReleased(&qme);
             }
         }
+    }
+}
+#endif
+
+void Application::onRender()
+{
+    if (m_currentScreen)
+    {
+        if (m_g->cubeMapIsActive())
+            m_g->drawCubeMap(m_currentScreen->getCamera());
+
+//        m_g->setGraphicsMode(DEFAULT);
+        m_g->setWorldColor(0.f, 0.f, 0.f);
+        m_g->setColor(0.f, 0.f, 0.f, 1.f, 0.f);
+
+        m_g->setCamera(m_currentScreen->getCamera(), m_width, m_height);
+        m_currentScreen->onRender(m_g);
+
     }
 }
 

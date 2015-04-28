@@ -32,7 +32,7 @@ public:
 
     virtual void onTick(float secs, float mouseX = 0.f, float mouseY = 0.f);
 
-    virtual void onDraw(Graphics *g, int pass, GLuint shader);
+    virtual void onDraw(Graphics *g);
 //    virtual void onDraw(Graphics *g);
 
     void addManager(Manager *m);

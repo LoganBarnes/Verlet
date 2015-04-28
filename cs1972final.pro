@@ -192,6 +192,9 @@ macx {
     LEAP_DIR = $$PWD/lib/leap
     LIBS += -L$$LEAP_DIR/ -lLeap
 
+    DEFINES += LEAP
+    message("configuring for leap");
+
     INCLUDEPATH +=  $$LEAP_DIR/include \
                     engine/leap
 

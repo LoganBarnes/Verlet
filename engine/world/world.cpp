@@ -141,7 +141,7 @@ ObjectsInfo *World::getObjectInfo()
     return info;
 }
 
-void World::onDraw(Graphics *g, int pass, GLuint shader)
+void World::onDraw(Graphics *g)
 //void World::onDraw(Graphics *g)
 {
     foreach(Manager *m, m_managers)
@@ -154,10 +154,10 @@ void World::onDraw(Graphics *g, int pass, GLuint shader)
 //    g->setGraphicsMode(DEFAULT);
 
     foreach(Entity *e, m_staticEntities)
-        e->onDrawOpaque(g, pass, shader);
+        e->onDrawOpaque(g);
 
     foreach(Entity *e, m_movableEntities)
-        e->onDrawOpaque(g, pass, shader);
+        e->onDrawOpaque(g);
 
     foreach(OBJ *obj, m_objs)
         g->drawObject(obj, glm::mat4());

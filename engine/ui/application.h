@@ -2,8 +2,8 @@
 #define APPLICATION_H
 
 #include "screen.h"
-#if defined(__APPLE__) || defined(__MACOSX)
-#define LEAP
+
+#ifdef LEAP
 #include "Leap.h"
 #endif
 
