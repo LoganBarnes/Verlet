@@ -1,13 +1,13 @@
 #version 410 core
 
 //in vec3 color;
+in mat4 viewMat;
+in vec4 worldPos;
+in vec4 worldNormal;
+
 in vec4 position_cameraSpace;
 in vec4 normal_cameraSpace;
 in vec2 texc;
-
-in vec4 worldPos;
-in vec4 worldNormal;
-in mat4 viewMat;
 
 out vec4 fragColor;
 
