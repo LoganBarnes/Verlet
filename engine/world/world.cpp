@@ -1,6 +1,7 @@
 #include "world.h"
 #include "manager.h"
 #include "obj.h"
+
 //#include "debugprinting.h"
 
 
@@ -82,6 +83,11 @@ QList<StaticEntity *> World::getStaticEntities()
 {
     return m_staticEntities;
 }
+
+QList<OBJ* > World::getObjs(){
+    return m_objs;
+}
+
 
 QList<Triangle *> World::getMesh()
 {
@@ -197,14 +203,46 @@ void World::setLights(QList<Light*> l){
 }
 
 // mouse events
+void World::onMousePressed(QMouseEvent *e)
+{
+    foreach (Manager *manager, m_managers)
+        manager->onMousePressed(e);
+    m_player->onMousePressed(e);
+}
+
 void World::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY)
 {
+    foreach (Manager *manager, m_managers)
+        manager->onMouseMoved(e, deltaX, deltaY);
     m_player->onMouseMoved(e, deltaX, deltaY);
+}
+
+void World::onMouseReleased(QMouseEvent *e)
+{
+    foreach (Manager *manager, m_managers)
+        manager->onMouseReleased(e);
+    m_player->onMouseReleased(e);
+}
+
+void World::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY)
+{
+    foreach (Manager *manager, m_managers)
+        manager->onMouseDragged(e, deltaX, deltaY);
+    m_player->onMouseDragged(e, deltaX, deltaY);
+}
+
+void World::onMouseWheel(QWheelEvent *e)
+{
+    foreach (Manager *manager, m_managers)
+        manager->onMouseWheel(e);
+    m_player->onMouseWheel(e);
 }
 
 // key events
 void World::onKeyPressed(QKeyEvent *e)
 {
+    foreach (Manager *manager, m_managers)
+        manager->onKeyPressed(e);
     m_player->onKeyPressed(e);
 
     // toggle deferred lighting
@@ -218,6 +256,8 @@ void World::onKeyPressed(QKeyEvent *e)
 
 void World::onKeyReleased(QKeyEvent *e)
 {
+    foreach (Manager *manager, m_managers)
+        manager->onKeyReleased(e);
     m_player->onKeyReleased(e);
 }
 

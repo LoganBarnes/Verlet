@@ -7,12 +7,10 @@
 #include "gameplayer.h"
 #include "geometriccollisionmanager.h"
 #include "verletmanager.h"
-#include "ray.h"
 #include "audio.h"
 #include "soundtester.h"
+#include "grass.h"
 
-
-#include "debugprinting.h"
 
 TestLevelScreen::TestLevelScreen(Application *parent)
     : Screen(parent)
@@ -27,7 +25,14 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     QList<Triangle *> tris;
 
     m_oh = new ObjectHandler();
-    m_level = m_oh->getObject(":/objects/LargeLevel.obj", shader, &tris);
+
+//    m_level = m_oh->getObject(":/objects/LargeLevel.obj", shader, &tris);
+
+    m_level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris);
+    //m_level = m_oh->getObject(":/objects/01.obj", shader, &tris);
+    //m_level->setTexture("01.png");
+    m_level->setTexture("grass.png");
+//    m_level = m_oh->getObject(":/objects/level_one.obj", shader, &tris);
 
 
     // make an object handler for the lights and parse them in from an obj
@@ -45,7 +50,11 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     player->useSound(m_parentApp->getAudioObject());
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
-    vm = new VerletManager(cam, shader);
+    VerletManager *vm = new VerletManager(cam, shader);
+
+//    Grass* grass = new Grass(vm, shader);
+//    grass->createPatch(glm::vec2(0,0),6,m_level);
+//    vm->addVerlet(grass);
 
     m_world = new GameWorld();
     m_world->setLights(lights);
@@ -56,6 +65,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_world->addToMesh(tris);
     m_world->setGravity(glm::vec3(0,-10,0));
 
+    // uncomment to play sound at the origin
     SoundTester *st = new SoundTester(glm::vec3());
     st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
     st->playSound();
@@ -80,21 +90,7 @@ TestLevelScreen::~TestLevelScreen()
 // update and render
 void TestLevelScreen::onTick(float secs)
 {
-    vm->setWind(windDirection);
-
     m_world->onTick(secs, m_cursor[3][0], m_cursor[3][1]);
-
-    if(dragMode){
-        glm::vec3 point = draggedVerlet->getPoint(draggedPoint);
-        glm::vec4 n = this->getCamera()->getLook();
-        n*=-1;
-
-        float t = vm->m_ray->hitPlane(point,glm::vec3(n));
-        draggedMouse = vm->m_ray->getPoint(t);
-
-        interpolate = draggedMouse;
-        //interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(0.01, seconds));
-    }
 }
 
 
@@ -106,15 +102,6 @@ void TestLevelScreen::onRender(Graphics *g)
     g->setTexture("grass.png", 5.f, 5.f);
 
     m_world->onDraw(g);
-
-    //for dragging
-    if(dragMode)
-    {
-        g->setColor(1, 1, 1, 1, 0);
-        glm::mat4 trans = glm::translate(glm::mat4(), draggedVerlet->getPoint(draggedPoint));
-        trans *= glm::scale(glm::mat4(), glm::vec3(.2,.2,.2));
-        g->drawSphere(trans);
-    }
 
     g->setAllWhite(true);
     g->drawLine(glm::vec3(0, 0, -5), glm::vec3(0, 15, -5));
@@ -138,9 +125,6 @@ void TestLevelScreen::render2D(Graphics *g)
 
 void TestLevelScreen::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos)
 {
-    if(dragMode)
-        draggedVerlet->setPos(draggedPoint,interpolate);
-
     if (m_parentApp->isUsingLeapMotion())
     {
         deltaX *= 1.5f;
@@ -155,9 +139,6 @@ void TestLevelScreen::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY, g
 
 void TestLevelScreen::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos)
 {
-    if(dragMode)
-        draggedVerlet->setPos(draggedPoint,interpolate);
-
     if (m_parentApp->isUsingLeapMotion())
     {
         deltaX *= 1.5f;
@@ -185,13 +166,6 @@ void TestLevelScreen::onKeyReleased(QKeyEvent *e )
     if (e->key() == Qt::Key_P)
         m_parentApp->useLeapMotion(!m_parentApp->isUsingLeapMotion());
 
-    //testing verlet functions
-    if(e->key() == Qt::Key_F) vm->enableSolve();
-    if(e->key() == Qt::Key_Down) windDirection = glm::vec3(0,0,1);
-    if(e->key() == Qt::Key_Up) windDirection = glm::vec3(0,0,-1);
-    if(e->key() == Qt::Key_Left) windDirection = glm::vec3(-1,0,0);
-    if(e->key() == Qt::Key_Right) windDirection = glm::vec3(1,0,0);
-
     m_world->onKeyReleased(e);
 
 }
@@ -209,25 +183,18 @@ void TestLevelScreen::onResize(int w, int h)
 
 void TestLevelScreen::onMousePressed(QMouseEvent *e)
 {
-    //dragging
-    if(e->button() == Qt::LeftButton&& vm->m_curV>-1){
-        dragMode = true;
-        draggedPoint = vm->m_curI;
-        draggedVerlet = vm->getVerlet(vm->m_curV);
-        interpolate = draggedVerlet->getPoint(draggedPoint);
-    }
-
     if (e->button() == Qt::RightButton)
         m_parentApp->setMouseDecoupled(false);
+
+    m_world->onMousePressed(e);
 }
 
 void TestLevelScreen::onMouseReleased(QMouseEvent *e)
 {
-    if(e->button() == Qt::LeftButton)
-        dragMode = false;
-
     if (e->button() == Qt::RightButton)
         m_parentApp->setMouseDecoupled(true);
+
+    m_world->onMouseReleased(e);
 }
 
 // unused in game

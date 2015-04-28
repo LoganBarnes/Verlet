@@ -25,6 +25,9 @@ public:
     bool containsXZ(glm::vec3 point);
     float getHeight(glm::vec3 point);
 
+    //Adjusts min/ max if any of triangle's points lie outside of it- for creating hit box around mesh
+    void adjustHitbox(glm::vec3& min, glm::vec3& max);
+
     glm::vec3 vertices[3];
     glm::vec3 normal;
 

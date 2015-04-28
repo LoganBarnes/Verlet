@@ -91,6 +91,8 @@ QList<TriCollision* > GeometricCollisionManager::detectTriangleCollisions(
             best.t = origT;
             d = glm::normalize(d);
             best.dir = d;
+            best.tMinus = 0.f;
+            best.type = NO_COLLISITON;
 
             // put Ellipsoid and ray into sphere space
             glm::vec3 r = cs->getDim();

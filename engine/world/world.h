@@ -25,6 +25,7 @@ public:
     bool removeStaticEntity(StaticEntity *se, bool clearMem);
 
     QList<MovableEntity *> getMovableEntities();
+    QList<OBJ* > getObjs();
     QList<StaticEntity *> getStaticEntities();
     QList<Triangle *> getMesh();
 
@@ -44,7 +45,12 @@ public:
     ObjectsInfo *getObjectInfo();
 
     // mouse events
+    virtual void onMousePressed(QMouseEvent *e);
     virtual void onMouseMoved(QMouseEvent *e, float deltaX, float deltaY);
+    virtual void onMouseReleased(QMouseEvent *e);
+
+    virtual void onMouseDragged(QMouseEvent *e, float deltaX, float deltaY);
+    virtual void onMouseWheel(QWheelEvent *e);
 
     // key events
     virtual void onKeyPressed(QKeyEvent *e);

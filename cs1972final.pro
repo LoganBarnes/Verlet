@@ -21,9 +21,11 @@ macx {
     if( exists( $$MAC_SDK) ) {
         QMAKE_MAC_SDK = macosx10.9
     }
+
     QMAKE_CXXFLAGS += -Wno-c++11-extensions
 }
 
+QMAKE_CXXFLAGS += -isystem "lib/glm"
 
 INCLUDEPATH +=  lib/glm engine game shaders \
                 engine/common \
@@ -113,6 +115,8 @@ SOURCES += \
     engine/sound/audio.cpp \
     engine/common/wavreader.cpp \
     game/entities/soundtester.cpp \
+    engine/objects/half.cpp \
+    engine/verlet/grass.cpp \
     engine/objects/lightparser.cpp
 
 HEADERS += \
@@ -170,6 +174,8 @@ HEADERS += \
     engine/sound/audio.h \
     engine/common/wavreader.h \
     game/entities/soundtester.h \
+    engine/objects/half.h \
+    engine/verlet/grass.h \
     engine/objects/lightparser.h
 
 

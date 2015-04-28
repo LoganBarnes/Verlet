@@ -4,6 +4,8 @@
 #include <QTextStream>
 #include <QStringList>
 #include "triangle.h"
+#include "graphics.h"
+#include "half.h"
 
 #include "debugprinting.h"
 
@@ -15,6 +17,9 @@ OBJ::OBJ(GLuint shader)
     m_shader = shader;
     m_vaoID = 0;
     m_vboID = 0;
+
+    m_texture = "";
+    m_color = glm::vec4(1, 1, 1, 0); // w is shininess (no transparency for objs)
 }
 
 OBJ::~OBJ()
@@ -25,6 +30,26 @@ OBJ::~OBJ()
         glDeleteBuffers(1, &m_vboID);
 }
 
+//Verlet collision information
+bool OBJ::pointOnTop(glm::vec3 &surfacePt){
+    return top->placeOnSurface(surfacePt);
+}
+
+bool OBJ::pointOnSurface(glm::vec3 &surfacePt){
+    return top->placeOnSurface(surfacePt);
+    //if(top->pointOnSurface(surfacePt))
+    //    return true;
+    //else
+    //    return bot->pointOnSurface(surfacePt);
+}
+
+bool OBJ::findY(const glm::vec2& coor, float& y, bool surface){
+    if(surface)
+        return top->findY(coor,y);
+    else
+        return bot->findY(coor,y);
+}
+
 GLuint OBJ::getShader()
 {
     return m_shader;
@@ -32,6 +57,9 @@ GLuint OBJ::getShader()
 
 void OBJ::draw(glm::mat4 trans, GLuint shader) const
 {
+//    g->setTexture(m_texture);
+//    g->setColor(m_color.r, m_color.g, m_color.b, 1, m_color.w);
+
     glBindVertexArray(m_vaoID);
     glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(trans));
     glDrawArrays(GL_TRIANGLES, 0, m_numVerts);
@@ -87,6 +115,9 @@ bool OBJ::read(const QString &path, QList<Triangle *> *tris)
         }
     } while (!line.isNull());
 
+    //Create respresentations of mesh in top and bottom half for verlet collision
+    top = new Half(*tris,true);
+    bot = new Half(*tris,false);
     createVBO();
 
     return true;

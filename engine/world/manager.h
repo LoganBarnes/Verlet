@@ -2,6 +2,8 @@
 #define MANAGER_H
 
 #include "graphics.h"
+#include <QMouseEvent>
+#include <QKeyEvent>
 
 class World;
 class Graphics;
@@ -18,6 +20,18 @@ public:
 
     virtual void manage(World *world, float onTickSecs, float mouseX, float mouseY) = 0;
     virtual void onDraw(Graphics *) {}
+
+    // mouse events
+    virtual void onMousePressed(QMouseEvent *) {}
+    virtual void onMouseMoved(QMouseEvent *, float, float) {}
+    virtual void onMouseReleased(QMouseEvent *) {}
+
+    virtual void onMouseDragged(QMouseEvent *, float, float) {}
+    virtual void onMouseWheel(QWheelEvent *) {}
+
+    // key events
+    virtual void onKeyPressed(QKeyEvent *) {}
+    virtual void onKeyReleased(QKeyEvent *) {}
 
 private:
     GraphicsMode m_gm;

@@ -2,7 +2,7 @@
 #include "verletmanager.h"
 #include "graphics.h"
 #include "movableentity.h"
-
+#include "obj.h"
 #define GLM_FORCE_RADIANS
 #include <gtx/norm.hpp>
 
@@ -55,22 +55,10 @@ Link* Verlet::findLink(int a, int b){
     return links.at(0);
 }
 
-void Verlet::removeLink(int id){
-    QList<Link*> list = link_map[id];
-    //clears list of links index is mapped to in 'link_map'
-    QList<Link*> at;
-    link_map[id]=at;
-    //erase all links in 'links'
-    foreach(Link* l, list){
-        links.erase(std::remove(links.begin(), links.end(), l), links.end());
-        delete l;
-    }
-}
-
 void Verlet::removeLink(Link* l){
     //remove link from 'link_map' of a and b
-    removeFromHash(l->pointA,l,link_map);
-    removeFromHash(l->pointB,l,link_map);
+    link_map[l->pointA].removeOne(l);
+    link_map[l->pointB].removeOne(l);
     //remove link from 'links'
     links.erase(std::remove(links.begin(), links.end(), l), links.end());
     delete l;
@@ -78,30 +66,9 @@ void Verlet::removeLink(Link* l){
 
 void Verlet::replaceLink(Link* key, Link* oldLink, Link* newLink,
                                QHash<Link*, QList<Link*> >& hash){
-    removeFromHash(key,oldLink,hash);
+    hash[key].removeOne(oldLink);
     hash[key]+=newLink;
 }
-
-/*
-void Verlet::replaceLink(int key, Link* oldLink, Link* newLink,
-                               QHash<int, QList<Link*> >& hash){
-    removeFromHash(key,oldLink,hash);
-    hash[key]+=newLink;
-}
-*/
-
-void Verlet::removeFromHash(int key, Link *toRemove, QHash<int, QList<Link *> > &hash){
-    QList<Link*> list = hash[key];
-    list.removeOne(toRemove);
-    hash[key]=list;
-}
-
-void Verlet::removeFromHash(Link* key, Link *toRemove, QHash<Link*, QList<Link *> > &hash){
-    QList<Link*> list = hash[key];
-    list.removeOne(toRemove);
-    hash[key]=list;
-}
-
 //***************************for tearing*****************************//
 Link* Verlet::closestLink(int id, const glm::vec3& point){
     //Find all points id is connected to
@@ -114,9 +81,9 @@ Link* Verlet::closestLink(int id, const glm::vec3& point){
             indices.push_back(l->pointB);
     }
     //Find which of these points is closest to 'point'
-    float nearest = 10000;
+    float nearest = 100000000;
     int closest = id;
-    for(unsigned int i = 0; i<indices.size(); i++){
+    for(uint i = 0; i<indices.size(); i++){
         int index = indices.at(i);
         float distance = glm::length2(_pos[index]-point);
         if(distance<nearest){
@@ -139,23 +106,13 @@ void Verlet::verlet(float seconds){
         glm::vec3& prevPos = _prevPos[i];
         //apply gravity
         glm::vec3& acc = _acc[i]+=_manager->gravity;
-         //update positions
-        pos += (pos-prevPos)+acc*seconds*seconds;
+         //update positions- .99 so system stablizes faster
+        pos += .99f*(pos-prevPos)+acc*seconds*seconds;
         prevPos = temp;
         //reset
         _acc[i]=glm::vec3(0,0,0);
         _normal[i]=glm::vec3(0,0,0);
     }
-}
-
-void Verlet::applyForce(const glm::vec3& force){
-    for(int i=0; i<numPoints; i++)
-            _acc[i] += force;
-}
-
-void Verlet::resetForce(){
-    for(int i=0; i<numPoints; i++)
-            _acc[i] = glm::vec3(0,0,0);
 }
 
 void Verlet::boxConstraint(const glm::vec3& _boxMin,
@@ -197,6 +154,53 @@ void Verlet::onDraw(Graphics *g){
 }
 
 void Verlet::onTick(float ){}
+
+//***************************Updating triangles*****************************//
+
+void Verlet::applyWind(Tri* t){
+    //wind has full effect to perpendicular cloth, none on parallel cloth
+    glm::vec3 windDirection = _manager->wind;
+    float windScalar =  glm::dot(windDirection, t->normal);
+
+    if(windScalar<0)
+        windScalar*=-1;
+    t->windForce = windScalar;
+
+    glm::vec3 windForce = windDirection*windScalar*_manager->windPow;
+
+    _acc[t->a] += windForce;
+    _acc[t->b] += windForce;
+    _acc[t->c] += windForce;
+}
+
+
+void Verlet::calculate(Tri* t){
+    t->vertices[0]=_pos[t->a];
+    t->vertices[1]=_pos[t->b];
+    t->vertices[2]=_pos[t->c];
+
+    t->normal =  glm::cross((t->vertices[1] - t->vertices[0]), (t->vertices[2] - t->vertices[0]));
+    t->normal = glm::normalize(t->normal);
+
+    //Uncomment for per-vertex normals- not currently being used
+    /*
+    _normal[t->a]+=t->normal*_scalar[t->a];
+    _normal[t->b]+=t->normal*_scalar[t->b];
+    _normal[t->c]+=t->normal*_scalar[t->c];
+    */
+}
+//***************************Collisions*****************************//
+
+void Verlet::collideSurface(OBJ* obj){
+    for(int i = 0; i < numPoints; i++){
+        glm::vec3 flatPoint = _pos[i];
+        glm::vec3 prev = _prevPos[i];
+        float difference = glm::length2(prev-flatPoint); //only perform check if velocity is high
+        if(difference>.000001){
+            obj->pointOnSurface(_pos[i]);
+        }
+    }
+}
 
 glm::vec3 Verlet::collide(MovableEntity *e)
 {

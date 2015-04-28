@@ -18,6 +18,8 @@ public:
     void setCameraPos();
     glm::vec3 getEyePos();
 
+    Camera *getCamera() { return m_camera; }
+
 //    void decreaseHealth(int amount);
 //    int getHealth();
 
@@ -25,7 +27,12 @@ public:
     void setMaxOffset(float maxOffset) { m_maxOffset = maxOffset; }
 
     // mouse events
-    virtual void onMouseMoved(QMouseEvent *, float deltaX, float deltaY);
+    virtual void onMousePressed(QMouseEvent *e);
+    virtual void onMouseMoved(QMouseEvent *e, float deltaX, float deltaY);
+    virtual void onMouseReleased(QMouseEvent *e);
+
+    virtual void onMouseDragged(QMouseEvent *e, float deltaX, float deltaY);
+    virtual void onMouseWheel(QWheelEvent *e);
 
     // key events
     virtual void onKeyPressed(QKeyEvent *e);
@@ -47,6 +54,8 @@ protected:
 
 private:
     float m_eyeHeight;
+
+    float m_yaw, m_pitch;
 
 };
 

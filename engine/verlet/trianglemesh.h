@@ -7,32 +7,6 @@ class Mesh;
 class VerletManager;
 typedef unsigned int GLuint;
 
-struct Tri
-{
-    int a, b, c;
-    glm::vec3 vertices[3];
-    Link* edges[3];
-    glm::vec3 normal;
-    float windForce; //value between 0 + 1 representing wind influence
-
-    Tri(){}
-    Tri(int _a, int _b, int _c){
-        a = _a; b = _b; c= _c;
-    }
-
-    bool operator == (const Tri &t)
-        const {return (a==t.a&&b==t.b&&c==t.c);}
-
-    void replaceLink(Link* orig, Link*& l){
-        if(edges[0]==orig)
-            edges[0]=l;
-        if(edges[1]==orig)
-            edges[1]=l;
-        if(edges[2]==orig)
-            edges[2]=l;
-    }
-};
-
 class TriangleMesh: public Verlet
 {
 public:
@@ -43,12 +17,6 @@ public:
     void onTick(float seconds);
     virtual void onDraw(Graphics *g);
     virtual void updateBuffer();
-
-    //Called per tick to update triangle vertices + normal based
-    //on movement of verlet's points
-    void calculate(Tri* t);
-    //@param wind: normalized vector representing wind direction
-    void applyWind(Tri* t);
 private:
     float _scalar[NUM]; //for triangleMesh: 1/numTriangles, for averaging
 
@@ -60,8 +28,24 @@ private:
     QHash<int, int> numTri; //how many triangles each index is part of
 
     //Shear
-    Link* createShearLink(int a, int b, int c, Link* seg1 = NULL, Link* seg2 = NULL);
+    Link* createShear(int a, int b, int c, Link* seg1 = NULL, Link* seg2 = NULL);
     void removeShear(Link* l);
+
+    //Tear
+    //Call this to tear a link- duplicates it, then checks surrounding points
+    //for tears to merge
+    void tearLink(Link* l);
+    //Helper: checks whether index is connected to any (other) broken links
+    bool checkTorn(int index);
+    //Called from tearLink if there are tears to merge- inserts a point so they
+    //can be separated
+    void insertPoint(int index, Tri* t1, Link* l1,Tri* t2, Link* l2);
+    //Helper: copies all data from index into a new point at returned index
+    int duplicatePoint(int index);
+    //Helper: finds all links + triangles adjoining l1 and attached to index
+    void findConnecting(int index, Tri*& t1, Link*& l1,QList<Tri*>& triangles,
+                         QList<Link*>& links, QList<int>& points);
+    bool checkShearValid(Link* s);
 
     //For tearing
     //which shear constraints end at index: reassign if point is duplicated

@@ -4,9 +4,12 @@
 #include <GL/glew.h>
 #include <glm.hpp>
 #include <QList>
-#include "graphics.h"
+#include <QString>
 
 class Triangle;
+class Graphics;
+class Half;
+
 // A simple parser that reads and writes Wavefront .obj files
 class OBJ
 {
@@ -42,8 +45,19 @@ public:
     bool read(const QString &path, QList<Triangle *> *tris);
     bool write(const QString &path) const;
 
+    void setTexture(QString tex) { m_texture = tex; }
+    void setColor(glm::vec4 color) { m_color = color; }
+
     GLuint getShader();
 
+    //VERLET COLLISION TESTING
+    Half* top;
+    Half* bot;
+    //Adjust a point within a Half's hitbox to be outside of the mesh
+    bool pointOnTop(glm::vec3 &surfacePt);
+    bool pointOnSurface(glm::vec3 &surfacePt);
+    //Returns y on mesh corresponding w/ given point on x-z plane. Defaults to top half
+    bool findY(const glm::vec2& coor, float& y, bool surface = true);
 protected:
     virtual void createVBO();
     GLuint m_shader;
@@ -55,6 +69,9 @@ private:
     GLuint m_vaoID;
     GLuint m_vboID;
     int m_numVerts;
+
+    QString m_texture;
+    glm::vec4 m_color;
 
 };
 

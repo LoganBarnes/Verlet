@@ -9,6 +9,41 @@
 class VerletManager;
 class Graphics;
 class MovableEntity;
+class OBJ;
+
+struct Tri
+{
+    int a, b, c;
+    glm::vec3 vertices[3];
+    Link* edges[3];
+    glm::vec3 normal;
+    float windForce; //value between 0 + 1 representing wind influence
+
+    Tri(){}
+    Tri(int _a, int _b, int _c){
+        a = _a; b = _b; c= _c;
+    }
+
+    bool operator == (const Tri &t)
+        const {return (a==t.a&&b==t.b&&c==t.c);}
+
+    void replaceLink(Link* orig, Link*& l){
+        if(edges[0]==orig)
+            edges[0]=l;
+        if(edges[1]==orig)
+            edges[1]=l;
+        if(edges[2]==orig)
+            edges[2]=l;
+    }
+    void replaceIndex(int index, int index2){
+        if(a==index)
+            a=index2;
+        else if(b==index)
+            b=index2;
+        else
+            c=index2;
+    }
+};
 
 class Verlet
 {
@@ -19,7 +54,7 @@ public:
     VerletManager* _manager;
     //between 0 and 1: how much cloth is influenced by collisions
     float sphereInfluence = 1;
-    float rayTraceSize = .4f;
+    float rayTraceSize = .13f;
 
     int getSize(){return numPoints;}
     glm::vec3 getPoint(const int& id){return _pos[id];}
@@ -30,9 +65,6 @@ public:
     void setPos(int index, const glm::vec3& pos);
 
     //Per update, called in VerletManager's onTick:
-    //Set acceleration of points
-    void applyForce(const glm::vec3& force);
-    void resetForce();
     //Update pos + prevPos
     void verlet(float seconds);
     //Solve individual constraints
@@ -44,17 +76,20 @@ public:
     virtual void onDraw(Graphics *g);
     virtual void updateBuffer() {}
     glm::vec3 collide(MovableEntity *e);
+    virtual void collideSurface(OBJ* obj);
 
-    //Map from indices to links, for tearing
-    QHash<int, QList<Link*> > link_map;
-    void removeLink(Link* l);
-    void removeLink(int id);
-    Link* findLink(int a, int b);
     virtual Link* closestLink(int id, const glm::vec3& point);
     virtual void tearLink(Link* l);
+    QHash<int, QList<Link*> > link_map;
 
     glm::vec3 *getPosArray() { return _pos; }
     glm::vec3 *getNormArray() { return _normal; }
+
+    //Called per tick to update triangle vertices + normal based
+    //on movement of verlet's points
+    void calculate(Tri* t);
+    //@param wind: normalized vector representing wind direction
+    void applyWind(Tri* t);
 protected:
     //Creates new point (at index numPoints) w/ given position
     void createPoint(const glm::vec3& pos);
@@ -79,13 +114,11 @@ protected:
     std::vector<Pin> pins;
     std::vector<Link*> links;
 
-    //Helpers for manipulating values in hash
+    //Utility for editing links (tearing)
+    void removeLink(Link* l);
+    Link* findLink(int a, int b);
     void replaceLink(Link* key, Link* oldLink, Link* newLink,
                      QHash<Link*, QList<Link*> >& hash);
-    //void replaceLink(int key, Link* oldLink, Link* newLink,
-    //                 QHash<int, QList<Link*> >& hash);
-    void removeFromHash(int key, Link* toRemove, QHash<int, QList<Link*> >& hash);
-    void removeFromHash(Link* key, Link* toRemove, QHash<Link*, QList<Link*> >& hash);
 };
 
 #endif // VERLET_H

@@ -3,12 +3,13 @@
 
 #include "manager.h"
 #include <glm.hpp>
-#include "link.h"
-#include "verlet.h"
-#include "rope.h"
 
+class MovableEntity;
+class Verlet;
+class OBJ;
 class Ellipsoid;
 class Ray;
+class Link;
 
 class VerletManager: public Manager
 {
@@ -23,9 +24,19 @@ public:
     void setWind(const glm::vec3& w){wind = w;}
 
     virtual void manage(World *world, float onTickSecs, float mouseX, float mouseY);
-    virtual void onDraw(Graphics *g);
-    glm::vec3 collideTerrain(MovableEntity* e);
+    void onDraw(Graphics *g);
     void rayTrace(float x, float y);
+
+    glm::vec3 collideTerrain(MovableEntity* e);
+    void collideSurface(OBJ* obj);
+
+    virtual void onMousePressed(QMouseEvent *e);
+    virtual void onMouseMoved(QMouseEvent *e, float deltaX, float deltaY);
+    virtual void onMouseReleased(QMouseEvent *e);
+    virtual void onMouseDragged(QMouseEvent *e, float deltaX, float deltaY);
+
+    virtual void onKeyPressed(QKeyEvent *e);
+    virtual void onKeyReleased(QKeyEvent *e);
 
     //Settings
     glm::vec3 gravity = glm::vec3(0,-3,0);
@@ -35,9 +46,6 @@ public:
     //Whether constraints are solved
     bool solve = true;
 
-    int m_curV;
-    int m_curI;
-    Ray *m_ray;
 private:
     //Verlet objects manager maintains
     std::vector<Verlet*> verlets;
@@ -46,12 +54,9 @@ private:
     glm::vec3 _boxMin = glm::vec3(-15,15,-15);
     glm::vec3 _boxMax = glm::vec3(15,50,15);
     //How many times constraints are solved
-    int _numSolves = 3;
+    int _numSolves = 2;
 
     //Helpers for onTick, to cycle through each step
-    //Store acceleration for all points
-    void accumulateForces();
-    void resetForces();
     //Updates positions of all points w/ velocity + acc
     void verlet(float seconds);
     //Adjusts positions to satisfy listed constraints
@@ -59,6 +64,37 @@ private:
     void constraints();
     // updates any vbos if necessary
     void updateBuffer();
+
+    //testing dragging
+    bool m_dragMode; //true if player selects point + holds LMB
+
+    //Selected attributes- don't change once dragMode is enabled
+    int m_draggedPoint;
+    Verlet* m_draggedVerlet;
+
+    //For moving the selected point
+    //World-space pt: where cursor's ray intersects w/ draggedPoint's plane
+    glm::vec3 m_draggedMouse;
+
+    //from draggedPoint to draggedMouse
+    glm::vec3 m_interpolate;
+
+    //testing wind
+    glm::vec3 m_windDirection;
+
+    //testing tearing
+    bool m_tearMode;
+    //World-space pt: where cursor's ray intersects w/ tear's plane
+    int m_tear_ptA;
+    int m_tear_ptB;
+    Verlet* m_tearVerlet;
+    Link* m_tearLink;
+    int rayTrace(float x, float y, std::vector<int> points, Verlet* v);
+
+
+    int m_curV;
+    int m_curI;
+    Ray *m_ray;
 };
 
 #endif // VERLETMANAGER_H

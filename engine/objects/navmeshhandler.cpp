@@ -53,7 +53,7 @@ QList<Triangle*> *NavMeshHandler::getTriangleList()
     return &m_mesh;
 }
 
-void NavMeshHandler::draw(glm::mat4 /*trans*/)
+void NavMeshHandler::draw(glm::mat4 )
 {
 //    m_obj->draw(trans);
 }
@@ -238,7 +238,7 @@ void NavMeshHandler::findPath()
     visited.insert(m_start);
     prev[m_start] = PathNode();
 
-    int curr, neighbor;
+    int curr = -1, neighbor;
     while (!queue.isEmpty())
     {
         curr = queue.takeFirst();
@@ -269,7 +269,7 @@ void NavMeshHandler::findPath()
         }
     }
 
-    if (curr != m_end)
+    if (curr == -1 || curr != m_end)
         return;
 
     PathNode node = PathNode(curr);
