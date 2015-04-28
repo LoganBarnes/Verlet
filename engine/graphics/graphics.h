@@ -15,6 +15,9 @@
 #include "facecube.h"
 #include "particleemitter.h"
 
+class OBJ;
+class Mesh;
+
 enum GraphicsMode
 {
     DEFAULT, SPARSE, CUBEMAP, DRAW2D, GEOMETRY, LIGHT, COMPOSITE, FOG
@@ -98,6 +101,8 @@ public:
     void drawSphere(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
     void drawParticles(glm::vec3 source, float fuzziness);
     void drawFullScreenQuad(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
+    void drawMesh(Mesh *mesh, glm::mat4 trans, GLenum mode = GL_TRIANGLES);
+    void drawObject(OBJ *obj, glm::mat4 trans);
 
     void particlesReset();
     void particlesSetForce(glm::vec3 force);

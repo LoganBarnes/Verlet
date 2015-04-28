@@ -108,7 +108,8 @@ void TestLevelScreen::onRender(Graphics *g)
     m_world->onDraw(g);
 
     //for dragging
-    if(dragMode){
+    if(dragMode)
+    {
         g->setColor(1, 1, 1, 1, 0);
         glm::mat4 trans = glm::translate(glm::mat4(), draggedVerlet->getPoint(draggedPoint));
         trans *= glm::scale(glm::mat4(), glm::vec3(.2,.2,.2));

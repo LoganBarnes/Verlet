@@ -160,7 +160,7 @@ void World::onDraw(Graphics *g, int pass, GLuint shader)
         e->onDrawOpaque(g, pass, shader);
 
     foreach(OBJ *obj, m_objs)
-        obj->draw(glm::mat4(), g);
+        g->drawObject(obj, glm::mat4());
 
     foreach(Entity *e, m_staticEntities)
         e->onDrawTransparent(g);

@@ -30,20 +30,10 @@ GLuint OBJ::getShader()
     return m_shader;
 }
 
-void OBJ::draw(glm::mat4 trans, Graphics*g) const
+void OBJ::draw(glm::mat4 trans, GLuint shader) const
 {
-
-//    if(pass==1){
-//        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
-//        glUniform4f(glGetUniformLocation(shader, "materialColor"), .05, .05, .05, .7);
-//    }
-//    else
-//        g->setColor(0, .5, 0, 1, 0);
-    g->setColor(.28f, .81f, .8f, 1.1f, 0);
-
-
     glBindVertexArray(m_vaoID);
-    glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"), 1, GL_FALSE, glm::value_ptr(trans));
+    glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(trans));
     glDrawArrays(GL_TRIANGLES, 0, m_numVerts);
     glBindVertexArray(0);
 }

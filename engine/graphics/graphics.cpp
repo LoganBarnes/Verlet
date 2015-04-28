@@ -7,6 +7,8 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include "obj.h"
+#include "mesh.h"
 
 #define GLM_FORCE_RADIANS
 #include <gtc/type_ptr.hpp>
@@ -349,6 +351,9 @@ void Graphics::setCamera(Camera *camera, int w, int h)
 
 GLuint Graphics::setGraphicsMode(GraphicsMode gm)
 {
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+
     switch(gm)
     {
     case DEFAULT:
@@ -764,6 +769,34 @@ void Graphics::drawParticles(glm::vec3 source, float fuzziness)
     m_pe->setFuzziness(fuzziness);
     m_pe->drawParticlesVAO(m_currentShader, source);
 }
+
+
+void Graphics::drawMesh(Mesh *mesh, glm::mat4 trans, GLenum mode)
+{
+    setColor(1, 1, 1, .7, 0);
+
+    glUniformMatrix4fv(glGetUniformLocation(m_currentShader, "model"),
+                       1, GL_FALSE, glm::value_ptr(trans));
+    mesh->onDraw(mode);
+}
+
+
+void Graphics::drawObject(OBJ *obj, glm::mat4 trans)
+{
+    setColor(.28f, .81f, .8f, 1.1f, 0);
+    obj->draw(trans, m_currentShader);
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Set up the first frame buffer for rendering into and bind geom shader
