@@ -153,7 +153,7 @@ void TestLevelScreen::resetWorld()
     m_world->addObject(m_oh->getObject(":/objects/Level1c.obj", shader, &tris3));
     m_world->addObject(m_oh->getObject(":/objects/Level1d.obj", shader, &tris4));
     m_world->addObject(m_oh->getObject(":/objects/Level1e.obj", shader, &tris5));
-    m_world->addObject(m_oh->getObject(":/objects/Level1f.obj", shader, &tris6));
+    m_world->addObject(m_oh->getObject(":/objects/Level1g.obj", shader, &tris6));
 
     m_world->setPlayer(player);
     m_world->addToMesh(tris);
