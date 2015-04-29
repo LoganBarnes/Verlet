@@ -35,10 +35,12 @@ bool OBJ::pointOnTop(glm::vec3 &surfacePt){
 
 bool OBJ::pointOnSurface(glm::vec3 &surfacePt){
     return top->placeOnSurface(surfacePt);
-    //if(top->pointOnSurface(surfacePt))
-    //    return true;
-    //else
-    //    return bot->pointOnSurface(surfacePt);
+    /*
+    if(top->placeOnSurface(surfacePt))
+        return true;
+    else
+        return bot->placeOnSurface(surfacePt);
+        */
 }
 
 bool OBJ::findY(const glm::vec2& coor, float& y, bool surface){

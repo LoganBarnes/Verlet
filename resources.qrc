@@ -21,6 +21,7 @@
     </qresource>
     <qresource prefix="/objects">
         <file alias="test.obj">res/objects/test.obj</file>
+        <file alias="flat.obj">res/objects/flat.obj</file>
         <file alias="testsmall.obj">res/objects/testsmall.obj</file>
     </qresource>
     <qresource prefix="/audio">

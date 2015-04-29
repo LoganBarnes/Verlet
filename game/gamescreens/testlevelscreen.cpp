@@ -21,10 +21,10 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     QList<Triangle *> tris;
 
     m_oh = new ObjectHandler();
-    m_level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris);
+    m_level = m_oh->getObject(":/objects/flat.obj", shader, &tris);
     //m_level = m_oh->getObject(":/objects/01.obj", shader, &tris);
-    //m_level->setTexture("01.png");
-    m_level->setTexture("grass.png");
+    m_level->setTexture("level.png");
+    //m_level->setTexture("grass.png");
 
 
     ActionCamera *cam;
