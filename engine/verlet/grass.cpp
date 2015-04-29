@@ -75,14 +75,6 @@ void Grass::createPatch(const glm::vec2& center, float radius, OBJ* obj){
         if(onSurface) //grass extending over edge of platform isn't created
             createStrand3(glm::vec3(x,y,z), segments, length);
     }
-    /*
-    createPoint(glm::vec3(0,0,0));
-    createPoint(glm::vec3(1,0,0));
-    createPoint(glm::vec3(0,0,1));
-
-    Tri* test = new Tri(0,2,1);
-    _triangles.push_back(test);
-    */
     m_mesh->initTriangles(m_shader, _triangles, getPosArray());
 }
 

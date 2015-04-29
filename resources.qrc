@@ -18,6 +18,7 @@
     <qresource prefix="/images">
         <file alias="play.png">res/images/play.png</file>
         <file alias="grass.png">res/images/grass.png</file>
+        <file alias="one.png">res/images/one.png</file>
     </qresource>
     <qresource prefix="/cubemap">
         <file alias="posx.jpg">res/cubemap/posx.jpg</file>

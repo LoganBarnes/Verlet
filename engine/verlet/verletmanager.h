@@ -81,6 +81,11 @@ private:
 
     //testing wind
     glm::vec3 m_windDirection;
+    glm::vec3 m_windStartPos;
+    glm::vec3 m_windEndPos;
+    bool m_windEnd;
+    bool m_windStart;
+    bool m_windComplete;
 
     //testing tearing
     bool m_tearMode;

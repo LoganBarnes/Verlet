@@ -167,6 +167,7 @@ void Verlet::applyWind(Tri* t){
     t->windForce = windScalar;
 
     glm::vec3 windForce = windDirection*windScalar*_manager->windPow;
+    windForce += t->random*.1;
 
     _acc[t->a] += windForce;
     _acc[t->b] += windForce;
@@ -181,6 +182,8 @@ void Verlet::calculate(Tri* t){
 
     t->normal =  glm::cross((t->vertices[1] - t->vertices[0]), (t->vertices[2] - t->vertices[0]));
     t->normal = glm::normalize(t->normal);
+
+    t->random = .1 * (rand() % 10);
 
     //Uncomment for per-vertex normals- not currently being used
     /*
