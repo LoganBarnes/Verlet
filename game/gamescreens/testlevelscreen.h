@@ -42,7 +42,7 @@ private:
     void render2D(Graphics *g);
     void adjustDeltasForLeap(float *deltaX, float *deltaY);
 
-    void resetWorld();
+    void resetWorld(glm::vec3 playerPos);
 
     GameWorld *m_world;
     ObjectHandler *m_oh;
@@ -54,6 +54,7 @@ private:
     bool m_drawCursor;
     glm::vec2 m_deltas;
 
+    int _island;
 };
 
 #endif // TESTLEVELSCREEN_H

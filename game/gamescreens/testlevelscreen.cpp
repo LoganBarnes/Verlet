@@ -47,7 +47,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
     st->playSound();
 
-    resetWorld();
+    resetWorld(glm::vec3(0, 10, 0));
 
 }
 
@@ -59,7 +59,7 @@ TestLevelScreen::~TestLevelScreen()
 }
 
 
-void TestLevelScreen::resetWorld()
+void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 {
     if (m_world)
     {
@@ -87,7 +87,6 @@ void TestLevelScreen::resetWorld()
 
     ActionCamera *cam;
     cam = new ActionCamera();
-        glm::vec3 playerPos = glm::vec3(0, 10, 0);
     cam->setCenter(playerPos);
 
     GamePlayer *player = new GamePlayer(cam, playerPos);
@@ -193,17 +192,28 @@ void TestLevelScreen::onTick(float secs)
     m_world->onTick(secs, m_cursor[3][0], m_cursor[3][1]);
 
     if (m_world->getPlayer()->getPosition().y < -50)
-        resetWorld();
+    {
+        Half *h = m_resetHalves.value(m_resetIndex);
+        glm::vec2 c = h->getCenter();
+        resetWorld(glm::vec3(c.x, h->getYLimits().y + 5.f, c.y));
+    }
 
+    glm::vec3 pos = m_world->getPlayer()->getPosition();
     for (int i = 0; i < m_resetHalves.size(); i++)
     {
-        glm::vec3 pos = m_world->getPlayer()->getPosition();
-        if (m_resetHalves.value(i)->inHitBox())
+        if (m_resetHalves.value(i)->inHitBox(pos))
         {
             m_resetIndex = i;
             break;
         }
     }
+
+//    QList<OBJ*> objs = m_world->getObjs();
+//    for(int i = 0; i<objs.length(); i++){
+//        OBJ* o = objs[i];
+//        if(o->top->inHitBox(m_world->getPlayer()->getPosition()))
+//            _island = i;
+//    }
 }
 
 
