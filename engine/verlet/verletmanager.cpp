@@ -130,15 +130,6 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
 {
     setWind(m_windDirection);
 
-    if(solve){
-        verlet(onTickSecs);
-        for(int i=0; i<_numSolves; i++)
-            constraints();
-        for(unsigned int i=0; i<verlets.size(); i++)
-            verlets.at(i)->onTick(onTickSecs);
-        updateBuffer();
-    }
-
     QList<MovableEntity *> mes = world->getMovableEntities();
     QList<OBJ* > obj = world->getObjs();
 
@@ -159,8 +150,8 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     delete col;
 
     //Collide verlet against terrain
-    foreach(OBJ* o, obj)
-        this->collideSurface(o);
+//    foreach(OBJ* o, obj)
+//        this->collideSurface(o);
 
     rayTrace(mouseX, mouseY);
 
@@ -218,6 +209,15 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
             m_tear_ptB = -1;
             m_tearLink = NULL;
         }
+    }
+
+    if(solve){
+        verlet(onTickSecs);
+        for(int i=0; i<_numSolves; i++)
+            constraints();
+        for(unsigned int i=0; i<verlets.size(); i++)
+            verlets.at(i)->onTick(onTickSecs);
+        updateBuffer();
     }
 }
 
