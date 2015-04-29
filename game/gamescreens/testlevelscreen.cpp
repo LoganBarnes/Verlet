@@ -95,7 +95,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     VerletManager *vm = new VerletManager(cam);
 
     Grass* grass = new Grass(vm, shader);
-    //grass->createPatch(glm::vec2(0,0),6,level);
+    grass->createPatch(glm::vec2(0,0),6,level);
     vm->addVerlet(grass);
 
     // stairs
