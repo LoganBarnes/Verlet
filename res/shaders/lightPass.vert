@@ -10,8 +10,8 @@ uniform mat4 model;
 
 uniform bool inLight;
 
-out vec2 uv;
-out vec3 worldPos;
+//layout (location = 0) out vec2 uv;
+//layout (location = 0) out vec3 camPos;
 
 void main()
 {

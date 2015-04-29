@@ -1,13 +1,16 @@
 #version 410 core
 
-in vec3 position; 	//position of vertex in obj space
-in vec3 normal; 	//normal of vertex in obj space
-in vec2 texCoord;       // UV texture coordinates
+layout (location = 0) in vec3 position; //position of vertex in obj space
+layout (location = 1) in vec3 normal; 	//normal of vertex in obj space
+layout (location = 2) in vec2 texCoord; // UV texture coordinates
 
 // Transformation matrices
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
+uniform mat3 invModel = mat3(1,0,0,
+                             0,1,0,
+                             0,0,1);
 
 uniform float shininess; 		//alpha channel in normal
 
@@ -32,7 +35,7 @@ void main()
 
     //save and output position and normals in world space for lighting 
     worldPos = model * vec4(position, 1.0); 
-    worldNormal = vec4(normalize(mat3(transpose(inverse(model))) * normal),shininess);
+    worldNormal = vec4(normalize(invModel * normal),shininess);
     
     gl_Position = projection * view * worldPos;
 }

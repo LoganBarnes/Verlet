@@ -1,7 +1,7 @@
 #version 410 core
 
-in vec4 worldPos;
-in vec4 worldNormal;
+layout(location=0) in vec4 camPos;
+layout(location=1) in vec4 camNormal;
 
 //in vec4 position_cameraSpace;
 //in vec4 normal_cameraSpace;
@@ -18,7 +18,7 @@ uniform vec4 materialColor;         // keeps diffuse color and monochromatic spe
 
 void main(){
 
-    out0 = worldPos;
-    out1 = worldNormal;
+    out0 = camPos;
+    out1 = camNormal;
     out2 = materialColor;
 }

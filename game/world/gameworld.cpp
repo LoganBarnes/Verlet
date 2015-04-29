@@ -1,7 +1,7 @@
 #include "gameworld.h"
 #include <glm/gtc/constants.hpp>
-#include <iostream>
-using namespace std;
+
+//#include "debugprinting.h"
 
 GameWorld::GameWorld()
 {
