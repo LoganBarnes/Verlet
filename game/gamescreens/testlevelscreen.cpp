@@ -10,6 +10,7 @@
 #include "audio.h"
 #include "soundtester.h"
 #include "grass.h"
+#include "trianglemesh.h"
 
 #include "debugprinting.h"
 
@@ -24,22 +25,23 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     GLuint shader = m_parentApp->getShader(GEOMETRY);
 //    GLuint shader = m_parentApp->getShader(DEFAULT);
     QList<Triangle *> tris;
+    QList<Triangle *> tris2;
+    QList<Triangle *> tris3;
+    QList<Triangle *> tris4;
+    QList<Triangle *> tris5;
+    QList<Triangle *> tris6;
 
     m_oh = new ObjectHandler();
 
-//    m_level = m_oh->getObject(":/objects/LargeLevel.obj", shader, &tris);
+    m_level = m_oh->getObject(":/objects/Level1a.obj", shader, &tris);
 
-    m_level = m_oh->getObject(":/objects/LevelRiver.obj", shader, &tris);
-    //m_level = m_oh->getObject(":/objects/01.obj", shader, &tris);
     //m_level->setTexture("01.png");
     m_level->setTexture("grass.png");
-//    m_level = m_oh->getObject(":/objects/level_one.obj", shader, &tris);
-
 
     // make an object handler for the lights and parse them in from an obj
     // save into a list of lights and send to the world
     LightParser lightParser;
-    QList<Light*> lights = lightParser.getLights(":/objects/RiverLights.obj");
+    QList<Light*> lights = lightParser.getLights(":/objects/Level1Lights.obj");
 
 //    cout << "length: " << lights.size() << endl;
 //    foreach (Light *l, lights) {
@@ -61,13 +63,67 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     grass->createPatch(glm::vec2(0,0),6,m_level);
     vm->addVerlet(grass);
 
+    // stairs
+
+    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,75), .3, glm::vec3(-5,1,0), vm, shader);
+    tri2->createPin(0);
+    tri2->createPin(11);
+    vm->addVerlet(tri2);
+
+    TriangleMesh* tri3 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-27,0,4), vm, shader);
+    tri3->createPin(0);
+    tri3->createPin(11);
+    vm->addVerlet(tri3);
+
+    TriangleMesh* tri4 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-32,4,4), vm, shader);
+    tri4->createPin(0);
+    tri4->createPin(11);
+    vm->addVerlet(tri4);
+
+    TriangleMesh* tri5 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-37,8,4), vm, shader);
+    tri5->createPin(0);
+    tri5->createPin(11);
+    vm->addVerlet(tri5);
+
+    TriangleMesh* tri6 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-42,12,4), vm, shader);
+    tri6->createPin(0);
+    tri6->createPin(11);
+    vm->addVerlet(tri6);
+
+    TriangleMesh* tri7 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-47,16,4), vm, shader);
+    tri7->createPin(0);
+    tri7->createPin(11);
+    vm->addVerlet(tri7);
+
+    TriangleMesh* tri8 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-52,19,4), vm, shader);
+    tri8->createPin(0);
+    tri8->createPin(11);
+    vm->addVerlet(tri8);
+
+    TriangleMesh* tri9 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-60,19,4), vm, shader);
+    tri9->createPin(0);
+    tri9->createPin(11);
+    vm->addVerlet(tri9);
+
     m_world = new GameWorld();
     m_world->setLights(lights);
     m_world->addManager(gcm);
     m_world->addManager(vm);
     m_world->addObject(m_level);
+    m_world->addObject(m_oh->getObject(":/objects/Level1b.obj", shader, &tris2));
+    m_world->addObject(m_oh->getObject(":/objects/Level1c.obj", shader, &tris3));
+    m_world->addObject(m_oh->getObject(":/objects/Level1d.obj", shader, &tris4));
+    m_world->addObject(m_oh->getObject(":/objects/Level1e.obj", shader, &tris5));
+    m_world->addObject(m_oh->getObject(":/objects/Level1f.obj", shader, &tris6));
+
     m_world->setPlayer(player);
     m_world->addToMesh(tris);
+    m_world->addToMesh(tris2);
+    m_world->addToMesh(tris3);
+    m_world->addToMesh(tris4);
+    m_world->addToMesh(tris5);
+    m_world->addToMesh(tris6);
+
     m_world->setGravity(glm::vec3(0,-10,0));
 
     // uncomment to play sound at the origin

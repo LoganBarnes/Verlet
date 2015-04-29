@@ -24,10 +24,10 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
       m_tearVerlet(NULL),
       m_tearLink(NULL)
 {
-    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,52), .3, glm::vec3(0,10,0), this, shader);
-    tri2->createPin(0);
-    tri2->createPin(11);
-    addVerlet(tri2);
+//    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,52), .3, glm::vec3(0,10,0), this, shader);
+//    tri2->createPin(0);
+//    tri2->createPin(11);
+//    addVerlet(tri2);
 
 //    Net* n2 = new Net(glm::vec2(50,50), glm::vec3(-10,10,10),
 //                     glm::vec3(0,0,.3), glm::vec3(.3,0,0), this, shader);
@@ -140,8 +140,9 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
         col->t = onTickSecs;
         me->handleCollision(col);
         //check if player (bottom of sphere) intersects w/ ground - assumes radius of 1
-        glm::vec3 pos = me->getPosition()-glm::vec3(0,1,0);
+
         foreach(OBJ* o, obj){
+            glm::vec3 pos = me->getPosition()-glm::vec3(0,1,0);
             o->pointOnTop(pos);
             pos+=glm::vec3(0,1,0);
             me->setPosition(pos);

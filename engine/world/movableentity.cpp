@@ -5,6 +5,9 @@
 //using namespace std;
 //#include <glm/ext.hpp>
 
+#include <iostream>
+using namespace std;
+
 MovableEntity::MovableEntity(glm::vec3 pos)
     : Entity(pos),
       m_updatePosOnTick(true),
@@ -52,6 +55,7 @@ void MovableEntity::onTick(float secs)
     m_tempSolid = false;
 
     m_vel += (m_force * secs / m_mass) + m_impulse * 1.f / m_mass;
+
     if (m_updatePosOnTick)
         setPosition(getPosition() + m_vel * secs);
     m_destination = getPosition() + m_vel * secs;
