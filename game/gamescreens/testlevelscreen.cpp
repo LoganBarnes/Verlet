@@ -31,12 +31,16 @@ TestLevelScreen::TestLevelScreen(Application *parent)
 
     OBJ *level = m_oh->getObject(":/objects/Level1a.obj", shader, &tris);
     m_resetHalves.append(level->top);
-
-    m_oh->getObject(":/objects/Level1b.obj", shader, &tris);
+    level = m_oh->getObject(":/objects/Level1b.obj", shader, &tris);
+    m_resetHalves.append(level->top);
     m_oh->getObject(":/objects/Level1c.obj", shader, &tris);
+    m_resetHalves.append(level->top);
     m_oh->getObject(":/objects/Level1d.obj", shader, &tris);
+    m_resetHalves.append(level->top);
     m_oh->getObject(":/objects/Level1e.obj", shader, &tris);
+    m_resetHalves.append(level->top);
     m_oh->getObject(":/objects/Level1f.obj", shader, &tris);
+    m_resetHalves.append(level->top);
 
     // uncomment to play sound at the origin
     SoundTester *st = new SoundTester(glm::vec3());
@@ -62,12 +66,6 @@ void TestLevelScreen::resetWorld()
         delete m_world;
         m_world = NULL;
     }
-//    if (m_oh)
-//    {
-//        delete m_oh;
-//        m_oh = NULL;
-//    }
-//    m_oh = new ObjectHandler();
 
     GLuint shader = m_parentApp->getShader(GEOMETRY);
 //    GLuint shader = m_parentApp->getShader(DEFAULT);
@@ -86,11 +84,6 @@ void TestLevelScreen::resetWorld()
     // save into a list of lights and send to the world
     LightParser lightParser;
     QList<Light*> lights = lightParser.getLights(":/objects/Level1Lights.obj");
-
-//    cout << "length: " << lights.size() << endl;
-//    foreach (Light *l, lights) {
-//        cout << l->id << endl;
-//    }
 
     ActionCamera *cam;
     cam = new ActionCamera();
@@ -181,7 +174,7 @@ void TestLevelScreen::resetWorld()
     m_world->addToMesh(tris5);
     m_world->addToMesh(tris6);
 
-    m_world->setGravity(glm::vec3(0,-5,0));
+    m_world->setGravity(glm::vec3(0,-10,0));
 
     setCamera(cam);
 
@@ -201,6 +194,16 @@ void TestLevelScreen::onTick(float secs)
 
     if (m_world->getPlayer()->getPosition().y < -50)
         resetWorld();
+
+    for (int i = 0; i < m_resetHalves.size(); i++)
+    {
+        glm::vec3 pos = m_world->getPlayer()->getPosition();
+        if (m_resetHalves.value(i)->inHitBox())
+        {
+            m_resetIndex = i;
+            break;
+        }
+    }
 }
 
 

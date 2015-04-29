@@ -18,14 +18,14 @@ VerletManager::VerletManager(Camera *cam)
       m_dragMode(false),
       m_draggedPoint(0),
       m_draggedVerlet(NULL),
+      m_windEnd(false),
+      m_windStart(false),
+      m_windComplete(false),
       m_tearMode(false),
       m_tear_ptA(-1),
       m_tear_ptB(-1),
       m_tearVerlet(NULL),
-      m_tearLink(NULL),
-      m_windStart(false),
-      m_windEnd(false),
-      m_windComplete(false)
+      m_tearLink(NULL)
 {
     m_ray = new Ray(cam);
     m_curV = -1;
