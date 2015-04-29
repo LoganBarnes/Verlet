@@ -13,7 +13,7 @@
 
 //#include "debugprinting.h"
 
-VerletManager::VerletManager(Camera *cam, GLuint shader)
+VerletManager::VerletManager(Camera *cam)
     : Manager(DEFAULT),
       m_dragMode(false),
       m_draggedPoint(0),
@@ -24,19 +24,6 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
       m_tearVerlet(NULL),
       m_tearLink(NULL)
 {
-//    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,52), .3, glm::vec3(0,10,0), this, shader);
-//    tri2->createPin(0);
-//    tri2->createPin(11);
-//    addVerlet(tri2);
-
-//    Net* n2 = new Net(glm::vec2(50,50), glm::vec3(-10,10,10),
-//                     glm::vec3(0,0,.3), glm::vec3(.3,0,0), this, shader);
-//    for(int i=0;i<10;i++)
-//        n2->createPin(i*5);
-//    for(int i=0;i<10;i++)
-//        n2->createPin((49*50)+i*5);
-//    addVerlet(n2);
-
     m_ray = new Ray(cam);
     m_curV = -1;
     m_curI = -1;

@@ -14,7 +14,7 @@ struct Link;
 class VerletManager: public Manager
 {
 public:
-    VerletManager(Camera *cam, GLuint shader);
+    VerletManager(Camera *cam);
     ~VerletManager();
 
     void addVerlet(Verlet* v);

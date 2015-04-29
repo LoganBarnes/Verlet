@@ -57,7 +57,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     player->useSound(m_parentApp->getAudioObject());
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
-    VerletManager *vm = new VerletManager(cam, shader);
+    VerletManager *vm = new VerletManager(cam);
 
     Grass* grass = new Grass(vm, shader);
     grass->createPatch(glm::vec2(0,0),6,m_level);
