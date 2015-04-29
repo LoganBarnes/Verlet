@@ -51,7 +51,11 @@ void Player::onTick(float secs)
     if (m_wsad & 0b0001)
         force.x += 1;
     if (m_jump && m_canJump)
-        force.y += 20.f;
+    {
+        glm::vec3 v = getVelocity();
+        v.y = 4.f;
+        setVelocity(v);
+    }
 
     glm::vec4 look = m_camera->getLook();
 
@@ -59,10 +63,10 @@ void Player::onTick(float secs)
     thrust += glm::normalize(glm::vec3(-look.z, 0.f, look.x)) * force.x;
     if (glm::length2(thrust) > 0.00001)
         thrust = glm::normalize(thrust) * forceAmt;
-    thrust.y = force.y;
+    thrust.y = 0;
 
     glm::vec3 vel = (thrust - m_vel);
-    vel.y = thrust.y;
+    vel.y = 0;
     applyImpulse(vel);
     MovableEntity::onTick(secs);
 

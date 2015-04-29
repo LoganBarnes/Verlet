@@ -120,6 +120,10 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     QList<MovableEntity *> mes = world->getMovableEntities();
     QList<OBJ* > obj = world->getObjs();
 
+    //Collide verlet against terrain
+//    foreach(OBJ* o, obj)
+//        this->collideSurface(o);
+
     Collision *col = new Collision();
     foreach (MovableEntity *me, mes)
     {
@@ -136,10 +140,6 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
         }
     }
     delete col;
-
-    //Collide verlet against terrain
-//    foreach(OBJ* o, obj)
-//        this->collideSurface(o);
 
     rayTrace(mouseX, mouseY);
 

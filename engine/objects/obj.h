@@ -50,7 +50,7 @@ public:
 
     GLuint getShader();
 
-    //VERLET COLLISION TESTING
+    //VERLET COLLISION
     Half* top;
     Half* bot;
     //Adjust a point within a Half's hitbox to be outside of the mesh

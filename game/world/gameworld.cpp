@@ -173,6 +173,20 @@ void GameWorld::onDraw(Graphics *g){
         foreach(Light* l, m_lights)
             g->addLight(*l);
         World::onDraw(g);
+
+//        glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(2.f));
+//        glm::mat4 posMat = glm::mat4();
+
+//        g->setAllWhite(true);
+//        g->setTransparentMode(true);
+//        g->setColor(1, 1, 1, .2, 0);
+//        foreach (Light *l, m_lights)
+//        {
+//            posMat[3] = glm::vec4(l->posDir, 1);
+//            g->drawSphere(posMat * trans);
+//        }
+//        g->setAllWhite(false);
+//        g->setTransparentMode(false);
     }
 
 

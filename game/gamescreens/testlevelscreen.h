@@ -41,9 +41,10 @@ private:
     void render2D(Graphics *g);
     void adjustDeltasForLeap(float *deltaX, float *deltaY);
 
+    void resetWorld();
+
     GameWorld *m_world;
     ObjectHandler *m_oh;
-    OBJ *m_level;
 
     glm::mat4 m_cursor;
     bool m_drawCursor;

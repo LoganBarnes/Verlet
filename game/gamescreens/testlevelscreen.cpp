@@ -15,12 +15,39 @@
 #include "debugprinting.h"
 
 TestLevelScreen::TestLevelScreen(Application *parent)
-    : ScreenH(parent)
+    : ScreenH(parent),
+      m_world(NULL),
+      m_oh(NULL)
 {
     m_parentApp->setMouseDecoupled(true);
     m_parentApp->setLeapRightClick(GRAB);
     m_parentApp->setLeapLeftClick(PINCH);
-//    m_parentApp->setMouseDecoupleKey(Qt::Key_Shift);
+
+    resetWorld();
+
+}
+
+
+TestLevelScreen::~TestLevelScreen()
+{
+    delete m_world;
+    delete m_oh; // m_level is deleted here
+}
+
+
+void TestLevelScreen::resetWorld()
+{
+    if (m_world)
+    {
+        delete m_world;
+        m_world = NULL;
+    }
+    if (m_oh)
+    {
+        delete m_oh;
+        m_oh = NULL;
+    }
+    m_oh = new ObjectHandler();
 
     GLuint shader = m_parentApp->getShader(GEOMETRY);
 //    GLuint shader = m_parentApp->getShader(DEFAULT);
@@ -31,12 +58,10 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     QList<Triangle *> tris5;
     QList<Triangle *> tris6;
 
-    m_oh = new ObjectHandler();
-
-    m_level = m_oh->getObject(":/objects/Level1a.obj", shader, &tris);
+    OBJ *level = m_oh->getObject(":/objects/Level1a.obj", shader, &tris);
 
     //m_level->setTexture("01.png");
-    m_level->setTexture("grass.png");
+    level->setTexture("grass.png");
 
     // make an object handler for the lights and parse them in from an obj
     // save into a list of lights and send to the world
@@ -60,7 +85,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     VerletManager *vm = new VerletManager(cam);
 
     Grass* grass = new Grass(vm, shader);
-    grass->createPatch(glm::vec2(0,0),6,m_level);
+    grass->createPatch(glm::vec2(0,0),6,level);
     vm->addVerlet(grass);
 
     // stairs
@@ -109,7 +134,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_world->setLights(lights);
     m_world->addManager(gcm);
     m_world->addManager(vm);
-    m_world->addObject(m_level);
+    m_world->addObject(level);
     m_world->addObject(m_oh->getObject(":/objects/Level1b.obj", shader, &tris2));
     m_world->addObject(m_oh->getObject(":/objects/Level1c.obj", shader, &tris3));
     m_world->addObject(m_oh->getObject(":/objects/Level1d.obj", shader, &tris4));
@@ -139,19 +164,17 @@ TestLevelScreen::TestLevelScreen(Application *parent)
 
     m_drawCursor = true;
     m_deltas = glm::vec2(0);
-}
 
-
-TestLevelScreen::~TestLevelScreen()
-{
-    delete m_world;
-    delete m_oh; // m_level is deleted here
+    onResize(m_parentApp->getWidth(), m_parentApp->getHeight());
 }
 
 // update and render
 void TestLevelScreen::onTick(float secs)
 {
     m_world->onTick(secs, m_cursor[3][0], m_cursor[3][1]);
+
+    if (m_world->getPlayer()->getPosition().y < -50)
+        resetWorld();
 }
 
 
