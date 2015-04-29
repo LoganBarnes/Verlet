@@ -41,7 +41,7 @@ void main()
     if (!gl_FrontFacing)
         norm_camSpace = -normal_cameraSpace;
 
-    vec3 diffCol = diffuse_color + worldNormal.xyz * .1;
+    vec3 diffCol = diffuse_color + norm_camSpace.xyz * .1;
 //    vec3 diffCol = diffuse_color;
     vec3 color = world_color * diffCol; // Add ambient component
 

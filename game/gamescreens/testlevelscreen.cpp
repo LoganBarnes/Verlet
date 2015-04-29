@@ -11,6 +11,7 @@
 #include "soundtester.h"
 #include "grass.h"
 
+#include "debugprinting.h"
 
 TestLevelScreen::TestLevelScreen(Application *parent)
     : ScreenH(parent)
@@ -39,6 +40,11 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     // save into a list of lights and send to the world
     LightParser lightParser;
     QList<Light*> lights = lightParser.getLights(":/objects/RiverLights.obj");
+
+//    cout << "length: " << lights.size() << endl;
+//    foreach (Light *l, lights) {
+//        cout << l->id << endl;
+//    }
 
     ActionCamera *cam;
     cam = new ActionCamera();

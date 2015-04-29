@@ -15,8 +15,8 @@ uniform mat3 invModel = mat3(1,0,0,
 uniform float shininess; 		//alpha channel in normal
 
 out mat4 viewMat;
-out vec4 worldPos;
-out vec4 worldNormal;
+out vec4 position_worldSpace;
+out vec4 normal_worldSpace;
 
 out vec4 position_cameraSpace;
 out vec4 normal_cameraSpace;
@@ -34,8 +34,8 @@ void main()
     normal_cameraSpace = vec4(normalize(mat3(transpose(inverse(view * model))) * normal), 0.0);
 
     //save and output position and normals in world space for lighting 
-    worldPos = model * vec4(position, 1.0); 
-    worldNormal = vec4(normalize(invModel * normal),shininess);
+    position_worldSpace = model * vec4(position, 1.0);
+    normal_worldSpace = vec4(normalize(invModel * normal),shininess);
     
-    gl_Position = projection * view * worldPos;
+    gl_Position = projection * position_cameraSpace;
 }
