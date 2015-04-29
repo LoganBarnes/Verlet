@@ -33,13 +33,13 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_resetHalves.append(level->top);
     level = m_oh->getObject(":/objects/Level1b.obj", shader, &tris);
     m_resetHalves.append(level->top);
-    m_oh->getObject(":/objects/Level1c.obj", shader, &tris);
+    level = m_oh->getObject(":/objects/Level1c.obj", shader, &tris);
     m_resetHalves.append(level->top);
-    m_oh->getObject(":/objects/Level1d.obj", shader, &tris);
+    level = m_oh->getObject(":/objects/Level1d.obj", shader, &tris);
     m_resetHalves.append(level->top);
-    m_oh->getObject(":/objects/Level1e.obj", shader, &tris);
+    level = m_oh->getObject(":/objects/Level1e.obj", shader, &tris);
     m_resetHalves.append(level->top);
-    m_oh->getObject(":/objects/Level1f.obj", shader, &tris);
+    level = m_oh->getObject(":/objects/Level1f.obj", shader, &tris);
     m_resetHalves.append(level->top);
 
     resetWorld(glm::vec3(0, 10, 0));
@@ -259,13 +259,6 @@ void TestLevelScreen::onTick(float secs)
             break;
         }
     }
-
-//    QList<OBJ*> objs = m_world->getObjs();
-//    for(int i = 0; i<objs.length(); i++){
-//        OBJ* o = objs[i];
-//        if(o->top->inHitBox(m_world->getPlayer()->getPosition()))
-//            _island = i;
-//    }
 }
 
 
@@ -292,7 +285,8 @@ void TestLevelScreen::render2D(Graphics *g)
     if (m_drawCursor)
     {
         g->setTexture("");
-        g->setAllWhite(true);
+        g->setColor(1, 0, 0, 1, 0);
+//        g->setAllWhite(true);
         g->drawSphere(m_cursor);
         g->setAllWhite(false);
     }

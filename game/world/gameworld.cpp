@@ -136,6 +136,16 @@ void GameWorld::onDraw(Graphics *g){
         g->setupFirstPass();
         World::onDraw(g);
 //        drawShapes(g,1,firstPassShader);        //render all geometry
+        glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(.5f));
+        glm::mat4 posMat = glm::mat4();
+
+        g->setColor(1, 1, 1, 1  , 0);
+        foreach (Light *l, m_lights)
+        {
+            posMat[3] = glm::vec4(l->posDir, 1);
+            g->drawSphere(posMat * trans);
+        }
+
         m_player->onDrawOpaque(g);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glUseProgram(0);
@@ -174,18 +184,18 @@ void GameWorld::onDraw(Graphics *g){
             g->addLight(*l);
         World::onDraw(g);
 
-//        glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(2.f));
-//        glm::mat4 posMat = glm::mat4();
+        glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(.5f));
+        glm::mat4 posMat = glm::mat4();
 
-//        g->setAllWhite(true);
+        g->setAllWhite(true);
 //        g->setTransparentMode(true);
-//        g->setColor(1, 1, 1, .2, 0);
-//        foreach (Light *l, m_lights)
-//        {
-//            posMat[3] = glm::vec4(l->posDir, 1);
-//            g->drawSphere(posMat * trans);
-//        }
-//        g->setAllWhite(false);
+        g->setColor(1, 1, 1, .2, 0);
+        foreach (Light *l, m_lights)
+        {
+            posMat[3] = glm::vec4(l->posDir, 1);
+            g->drawSphere(posMat * trans);
+        }
+        g->setAllWhite(false);
 //        g->setTransparentMode(false);
     }
 
