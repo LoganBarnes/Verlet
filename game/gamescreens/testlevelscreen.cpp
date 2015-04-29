@@ -11,13 +11,15 @@
 #include "soundtester.h"
 #include "grass.h"
 #include "trianglemesh.h"
+#include "half.h"
 
 #include "debugprinting.h"
 
 TestLevelScreen::TestLevelScreen(Application *parent)
     : ScreenH(parent),
       m_world(NULL),
-      m_oh(NULL)
+      m_oh(NULL),
+      _island(0)
 {
     m_parentApp->setMouseDecoupled(true);
     m_parentApp->setLeapRightClick(GRAB);
@@ -161,7 +163,7 @@ void TestLevelScreen::resetWorld()
     m_world->addToMesh(tris5);
     m_world->addToMesh(tris6);
 
-    m_world->setGravity(glm::vec3(0,-5,0));
+    m_world->setGravity(glm::vec3(0,.005,0));
 
     // uncomment to play sound at the origin
     SoundTester *st = new SoundTester(glm::vec3());
@@ -187,6 +189,13 @@ void TestLevelScreen::onTick(float secs)
 
     if (m_world->getPlayer()->getPosition().y < -50)
         resetWorld();
+
+    QList<OBJ*> objs = m_world->getObjs();
+    for(int i = 0; i<objs.length(); i++){
+        OBJ* o = objs[i];
+        if(o->top->inHitBox(m_world->getPlayer()->getPosition()))
+            _island = i;
+    }
 }
 
 

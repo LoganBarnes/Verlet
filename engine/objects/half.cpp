@@ -42,6 +42,13 @@ void Half::calcHitbox(const glm::vec3& min, const glm::vec3& max){
 }
 
 //*******************Finding points on the surface***********************//
+bool Half::inHitBox(const glm::vec3& pos){
+    if(pos.x>center.x-radius&&pos.x<center.x+radius&&
+            pos.z>center.y-radius&&pos.z<center.y+radius)
+        return true;
+    return false;
+}
+
 bool Half::placeOnSurface(glm::vec3 &surfacePt){
     if(!(surfacePt.y>yLimits.x && surfacePt.y<yLimits.y))
         return false;

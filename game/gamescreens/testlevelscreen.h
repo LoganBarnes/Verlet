@@ -50,6 +50,7 @@ private:
     bool m_drawCursor;
     glm::vec2 m_deltas;
 
+    int _island;
 };
 
 #endif // TESTLEVELSCREEN_H
