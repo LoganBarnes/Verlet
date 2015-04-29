@@ -60,8 +60,7 @@ void TestLevelScreen::resetWorld()
 
     OBJ *level = m_oh->getObject(":/objects/Level1a.obj", shader, &tris);
 
-    //m_level->setTexture("01.png");
-    level->setTexture("grass.png");
+    level->setTexture("one.png");
 
     // make an object handler for the lights and parse them in from an obj
     // save into a list of lights and send to the world
@@ -89,8 +88,7 @@ void TestLevelScreen::resetWorld()
     vm->addVerlet(grass);
 
     // stairs
-
-    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,75), .3, glm::vec3(-5,1,0), vm, shader);
+    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,75), .3, glm::vec3(-5,0,-2), vm, shader,2);
     tri2->createPin(0);
     tri2->createPin(11);
     vm->addVerlet(tri2);
@@ -130,7 +128,21 @@ void TestLevelScreen::resetWorld()
     tri9->createPin(11);
     vm->addVerlet(tri9);
 
+    TriangleMesh* tri10 = new TriangleMesh(glm::vec2(12,50), .3, glm::vec3(-74,18,-2), vm, shader,2,true);
+    tri10->createPin(0);
+    tri10->createPin(11);
+    tri10->createPin(588);
+    tri10->createPin(599);
+    vm->addVerlet(tri10);
+
+    TriangleMesh* tri11 = new TriangleMesh(glm::vec2(15,45), .3, glm::vec3(-88,-8,-2.2), vm, shader,2,true);
+    tri11->createPin(0);
+    tri11->createPin(14);
+    vm->addVerlet(tri11);
+
+
     m_world = new GameWorld();
+
     m_world->setLights(lights);
     m_world->addManager(gcm);
     m_world->addManager(vm);
@@ -149,7 +161,7 @@ void TestLevelScreen::resetWorld()
     m_world->addToMesh(tris5);
     m_world->addToMesh(tris6);
 
-    m_world->setGravity(glm::vec3(0,-10,0));
+    m_world->setGravity(glm::vec3(0,-5,0));
 
     // uncomment to play sound at the origin
     SoundTester *st = new SoundTester(glm::vec3());
