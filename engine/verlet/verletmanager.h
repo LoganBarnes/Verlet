@@ -9,7 +9,7 @@ class Verlet;
 class OBJ;
 class Ellipsoid;
 class Ray;
-class Link;
+struct Link;
 
 class VerletManager: public Manager
 {

@@ -2,7 +2,10 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include "gamemenu.h"
+
+#ifdef LINUX
 #include <GL/glxew.h>
+#endif
 
 #include <iostream>
 using namespace std;
