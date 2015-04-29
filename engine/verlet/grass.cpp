@@ -8,9 +8,9 @@
 
 Grass::Grass(VerletManager* vm, GLuint shader):
     Verlet(vm),
-    m_shader(shader),
     baseColor(glm::vec3(.5,.8,.7)),
-    normalMix(glm::vec3(.05,.1,.05))
+    normalMix(glm::vec3(.05,.1,.05)),
+    m_shader(shader)
 {
     m_mesh = new Mesh();
 }
@@ -44,7 +44,7 @@ void Grass::onDraw(Graphics *g)
     m_mesh->onDraw(GL_TRIANGLES);
 }
 
-void Grass::collideSurface(OBJ* obj){}
+void Grass::collideSurface(OBJ*){}
 
 //********************************CREATING*************************************//
 void Grass::createPatch(const glm::vec2& center, float radius, OBJ* obj){

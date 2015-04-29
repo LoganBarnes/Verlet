@@ -192,7 +192,7 @@ void Verlet::calculate(Tri* t){
 //***************************Collisions*****************************//
 
 void Verlet::collideSurface(OBJ* obj){
-    for(unsigned int i = 0; i<numPoints; i++){
+    for(int i = 0; i<numPoints; i++){
         glm::vec3 flatPoint = _pos[i];
         glm::vec3 prev = _prevPos[i];
         float difference = glm::length2(prev-flatPoint); //only perform check if velocity is high
