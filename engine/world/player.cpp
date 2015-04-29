@@ -39,6 +39,7 @@ void Player::setEyeHeight(float height)
 
 void Player::onTick(float secs)
 {
+
     float forceAmt = 8.f;
     glm::vec3 force = glm::vec3();
     if (m_wsad & 0b1000)
@@ -50,7 +51,7 @@ void Player::onTick(float secs)
     if (m_wsad & 0b0001)
         force.x += 1;
     if (m_jump && m_canJump)
-        force.y += 15.f;
+        force.y += 20.f;
 
     glm::vec4 look = m_camera->getLook();
 

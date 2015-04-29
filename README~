@@ -1,0 +1,32 @@
+
+
+COMPILED USING QT 5.2.0!!!
+
+README
+
+vhwu
+Collisions: aside from the case when the player is colliding geometrically + verlet is frozen, collisions are working- verletManager’s collideTerrain() 
+Tearing: not really part of the requirements, but also implemented this week- triangleMesh’s tearLink()
+
+vvignale
+Lighting: all three shaders are set up and fully functional (light pass, geometry pass, final pass)
+Fog: fog shader
+Can see them being called in GameWorld, onDraw()
+Graphics: renderLightShape() - renders the lights
+
+ltbarnes
+GPU verlet integration: in progress
+Everything is in the sound/audio.cpp 
+common/wavreader
+PosPan sound
+Distance attenuation
+Stereo support
+
+Bugs:
+Tearing causes crashing occasionally  
+
+Hours spent:
+vvignale: 15
+ltbarnes: 20
+vhwu: 20
+

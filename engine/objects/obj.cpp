@@ -57,8 +57,6 @@ GLuint OBJ::getShader()
 
 void OBJ::draw(glm::mat4 trans, GLuint shader) const
 {
-//    g->setTexture(m_texture);
-//    g->setColor(m_color.r, m_color.g, m_color.b, 1, m_color.w);
 
     glBindVertexArray(m_vaoID);
     glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(trans));

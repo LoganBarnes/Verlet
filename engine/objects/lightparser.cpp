@@ -43,28 +43,6 @@ QList<Light*> LightParser::getLights(const QString &path){
 
         lights.append(light);
     }
-
-    for(int i=0; i<1; i++){
-
-        light = new Light();
-        light->id = counter++;
-
-        light->type = POINT;            // can be POINT or DIRECTIONAL for now
-
-        light->color = glm::vec3(100, 100, 100);  // rgb color
-
-        light->posDir = glm::vec3(0,0,100);
-
-        light->radius = 60.f;
-        light->function = glm::vec3(1.0, 1.5, 1.5);
-
-        lights.append(light);
-    }
-
-
-
-
-
     return lights;
 }
 

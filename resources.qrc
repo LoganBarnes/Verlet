@@ -31,11 +31,16 @@
         <file alias="test.obj">res/objects/test.obj</file>
         <file alias="testsmall.obj">res/objects/testsmall.obj</file>
         <file alias="level_one.obj">res/objects/level_one.obj</file>
-        <file alias="TestLights.obj">res/objects/TestLights.obj</file>
         <file alias="island_lights.obj">res/objects/island_lights.obj</file>
-        <file alias="LargeLevel.obj">res/objects/LargeLevel.obj</file>
         <file alias="LevelRiver.obj">res/objects/LevelRiver.obj</file>
         <file alias="RiverLights.obj">res/objects/RiverLights.obj</file>
+        <file alias="Level1a.obj">res/objects/Level1a.obj</file>
+        <file alias="Level1b.obj">res/objects/Level1b.obj</file>
+        <file alias="Level1c.obj">res/objects/Level1c.obj</file>
+        <file alias="Level1d.obj">res/objects/Level1d.obj</file>
+        <file alias="Level1e.obj">res/objects/Level1e.obj</file>
+        <file alias="Level1f.obj">res/objects/Level1f.obj</file>
+        <file alias="Level1Lights.obj">res/objects/justLights.obj</file>
     </qresource>
     <qresource prefix="/audio">
         <file alias="kickDrumMod.wav">res/audio/kickDrumMod.wav</file>
