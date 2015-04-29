@@ -18,6 +18,7 @@ struct Tri
     Link* edges[3];
     glm::vec3 normal;
     float windForce; //value between 0 + 1 representing wind influence
+    float random; //to give noise to wind
 
     Tri(){}
     Tri(int _a, int _b, int _c){
@@ -89,7 +90,7 @@ public:
     //on movement of verlet's points
     void calculate(Tri* t);
     //@param wind: normalized vector representing wind direction
-    void applyWind(Tri* t);
+    virtual void applyWind(Tri* t);
 protected:
     //Creates new point (at index numPoints) w/ given position
     void createPoint(const glm::vec3& pos);
