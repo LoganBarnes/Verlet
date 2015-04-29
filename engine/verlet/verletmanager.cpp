@@ -18,14 +18,14 @@ VerletManager::VerletManager(Camera *cam)
       m_dragMode(false),
       m_draggedPoint(0),
       m_draggedVerlet(NULL),
+      m_windEnd(false),
+      m_windStart(false),
+      m_windComplete(false),
       m_tearMode(false),
       m_tear_ptA(-1),
       m_tear_ptB(-1),
       m_tearVerlet(NULL),
-      m_tearLink(NULL),
-      m_windStart(false),
-      m_windEnd(false),
-      m_windComplete(false)
+      m_tearLink(NULL)
 {
     m_ray = new Ray(cam);
     m_curV = -1;
@@ -158,9 +158,9 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     Collision *col = new Collision();
     foreach (MovableEntity *me, mes)
     {
-        col->mtv = collideTerrain(me);
+        col->mtv = collideTerrain(me) * .5f;
         col->t = onTickSecs;
-        me->handleCollision(col);
+        me->handleCollision(col, !solve);
         //check if player (bottom of sphere) intersects w/ ground - assumes radius of 1
 
         foreach(OBJ* o, obj){

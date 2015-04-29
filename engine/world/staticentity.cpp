@@ -12,7 +12,7 @@ StaticEntity::~StaticEntity()
 }
 
 
-void StaticEntity::handleCollision(Collision *col)
+void StaticEntity::handleCollision(Collision *col, bool)
 {
     if (!col->c2->isReactable())
         return;

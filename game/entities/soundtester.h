@@ -10,7 +10,7 @@ public:
     virtual ~SoundTester();
 
     virtual void onTick(float secs);
-    virtual void handleCollision(Collision *col);
+    virtual void handleCollision(Collision *col, bool resetVel);
 };
 
 #endif // SOUNDTESTER_H

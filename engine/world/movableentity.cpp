@@ -68,7 +68,7 @@ void MovableEntity::onTick(float secs)
 //        m_audio->setSource(m_soundID, m_soundFile, getPosition(), getVelocity(), m_loopAudio);
 }
 
-void MovableEntity::handleCollision(Collision *col)
+void MovableEntity::handleCollision(Collision *col, bool)
 {
     if (!col->c1->isReactable() || !col->c2->isReactable())
         return;

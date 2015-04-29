@@ -45,6 +45,8 @@ public:
     bool read(const QString &path, QList<Triangle *> *tris);
     bool write(const QString &path) const;
 
+    void makeTriList(QList<Triangle *> *tris);
+
     void setTexture(QString tex) { m_texture = tex; }
     void setColor(glm::vec4 color) { m_color = color; }
 

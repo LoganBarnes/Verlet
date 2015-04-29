@@ -13,19 +13,41 @@
 #include "trianglemesh.h"
 #include "half.h"
 
-#include "debugprinting.h"
+//#include "debugprinting.h"
 
 TestLevelScreen::TestLevelScreen(Application *parent)
     : ScreenH(parent),
       m_world(NULL),
       m_oh(NULL),
-      _island(0)
+      m_resetIndex(0)
 {
     m_parentApp->setMouseDecoupled(true);
     m_parentApp->setLeapRightClick(GRAB);
     m_parentApp->setLeapLeftClick(PINCH);
 
-    resetWorld();
+    GLuint shader = m_parentApp->getShader(GEOMETRY);
+    m_oh = new ObjectHandler();
+    QList<Triangle *> tris;
+
+    OBJ *level = m_oh->getObject(":/objects/Level1a.obj", shader, &tris);
+    m_resetHalves.append(level->top);
+    level = m_oh->getObject(":/objects/Level1b.obj", shader, &tris);
+    m_resetHalves.append(level->top);
+    m_oh->getObject(":/objects/Level1c.obj", shader, &tris);
+    m_resetHalves.append(level->top);
+    m_oh->getObject(":/objects/Level1d.obj", shader, &tris);
+    m_resetHalves.append(level->top);
+    m_oh->getObject(":/objects/Level1e.obj", shader, &tris);
+    m_resetHalves.append(level->top);
+    m_oh->getObject(":/objects/Level1f.obj", shader, &tris);
+    m_resetHalves.append(level->top);
+
+    // uncomment to play sound at the origin
+    SoundTester *st = new SoundTester(glm::vec3());
+    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
+    st->playSound();
+
+    resetWorld(glm::vec3(0, 10, 0));
 
 }
 
@@ -37,19 +59,13 @@ TestLevelScreen::~TestLevelScreen()
 }
 
 
-void TestLevelScreen::resetWorld()
+void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 {
     if (m_world)
     {
         delete m_world;
         m_world = NULL;
     }
-    if (m_oh)
-    {
-        delete m_oh;
-        m_oh = NULL;
-    }
-    m_oh = new ObjectHandler();
 
     GLuint shader = m_parentApp->getShader(GEOMETRY);
 //    GLuint shader = m_parentApp->getShader(DEFAULT);
@@ -69,14 +85,8 @@ void TestLevelScreen::resetWorld()
     LightParser lightParser;
     QList<Light*> lights = lightParser.getLights(":/objects/Level1Lights.obj");
 
-//    cout << "length: " << lights.size() << endl;
-//    foreach (Light *l, lights) {
-//        cout << l->id << endl;
-//    }
-
     ActionCamera *cam;
     cam = new ActionCamera();
-        glm::vec3 playerPos = glm::vec3(0, 10, 0);
     cam->setCenter(playerPos);
 
     GamePlayer *player = new GamePlayer(cam, playerPos);
@@ -163,13 +173,7 @@ void TestLevelScreen::resetWorld()
     m_world->addToMesh(tris5);
     m_world->addToMesh(tris6);
 
-    m_world->setGravity(glm::vec3(0,.005,0));
-
-    // uncomment to play sound at the origin
-    SoundTester *st = new SoundTester(glm::vec3());
-    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
-    st->playSound();
-    m_world->addMovableEntity(st);
+    m_world->setGravity(glm::vec3(0,-10,0));
 
     setCamera(cam);
 
@@ -188,14 +192,28 @@ void TestLevelScreen::onTick(float secs)
     m_world->onTick(secs, m_cursor[3][0], m_cursor[3][1]);
 
     if (m_world->getPlayer()->getPosition().y < -50)
-        resetWorld();
-
-    QList<OBJ*> objs = m_world->getObjs();
-    for(int i = 0; i<objs.length(); i++){
-        OBJ* o = objs[i];
-        if(o->top->inHitBox(m_world->getPlayer()->getPosition()))
-            _island = i;
+    {
+        Half *h = m_resetHalves.value(m_resetIndex);
+        glm::vec2 c = h->getCenter();
+        resetWorld(glm::vec3(c.x, h->getYLimits().y + 5.f, c.y));
     }
+
+    glm::vec3 pos = m_world->getPlayer()->getPosition();
+    for (int i = 0; i < m_resetHalves.size(); i++)
+    {
+        if (m_resetHalves.value(i)->inHitBox(pos))
+        {
+            m_resetIndex = i;
+            break;
+        }
+    }
+
+//    QList<OBJ*> objs = m_world->getObjs();
+//    for(int i = 0; i<objs.length(); i++){
+//        OBJ* o = objs[i];
+//        if(o->top->inHitBox(m_world->getPlayer()->getPosition()))
+//            _island = i;
+//    }
 }
 
 

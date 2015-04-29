@@ -76,7 +76,7 @@ public:
     virtual void onTick(float seconds);
     virtual void onDraw(Graphics *g);
     virtual void updateBuffer() {}
-    glm::vec3 collide(MovableEntity *e);
+    virtual glm::vec3 collide(MovableEntity *e);
     virtual void collideSurface(OBJ* obj);
 
     virtual Link* closestLink(int id, const glm::vec3& point);
