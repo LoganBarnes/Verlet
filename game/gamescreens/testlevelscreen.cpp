@@ -23,7 +23,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_oh = new ObjectHandler();
     m_level = m_oh->getObject(":/objects/flat.obj", shader, &tris);
     //m_level = m_oh->getObject(":/objects/01.obj", shader, &tris);
-    m_level->setTexture("level.png");
+    m_level->setTexture("level_one.png");
     //m_level->setTexture("grass.png");
 
 
@@ -99,8 +99,8 @@ void TestLevelScreen::onRender(Graphics *g)
     g->addLight(light);
 
 //    g->setTexture("grass.png", 5.f, 5.f);
-
     m_world->onDraw(g);
+
 
     g->setAllWhite(true);
     g->drawLine(glm::vec3(0, 0, -5), glm::vec3(0, 15, -5));

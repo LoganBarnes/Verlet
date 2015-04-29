@@ -43,6 +43,8 @@ void Half::calcHitbox(const glm::vec3& min, const glm::vec3& max){
 
 //*******************Finding points on the surface***********************//
 bool Half::placeOnSurface(glm::vec3 &surfacePt){
+    float difference = .3;
+
     if(!(surfacePt.y>yLimits.x && surfacePt.y<yLimits.y))
         return false;
     if(surfacePt.x>center.x+radius||surfacePt.x<center.x-radius)
@@ -63,7 +65,8 @@ bool Half::placeOnSurface(glm::vec3 &surfacePt){
         else if(!top){
             Ray r = Ray(surfacePt,glm::vec3(0,1,0));
             glm::vec3 pointOnSurface = r.getPointonPlane(tri->vertices[0],tri->normal)+glm::vec3(0,-allowance,0);
-            if(surfacePt.y>pointOnSurface.y){
+            if(surfacePt.y>pointOnSurface.y&&yLimits.y-surfacePt.y>.5&&surfacePt.y-pointOnSurface.y<difference){
+            //if(surfacePt.y>pointOnSurface.y){
                 surfacePt = pointOnSurface;
                 return true;
             }

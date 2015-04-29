@@ -21,20 +21,15 @@ VerletManager::VerletManager(Camera *cam, GLuint shader)
       m_tear_ptA(-1),
       m_tear_ptB(-1),
       m_tearVerlet(NULL),
-      m_tearLink(NULL)
+      m_tearLink(NULL),
+      m_windStart(false),
+      m_windEnd(false),
+      m_windComplete(false)
 {
-    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,52), .3, glm::vec3(0,10,0), this, shader);
+    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,32), .3, glm::vec3(0,10,0), this, shader);
     tri2->createPin(0);
     tri2->createPin(11);
     addVerlet(tri2);
-
-    Net* n2 = new Net(glm::vec2(50,50), glm::vec3(-10,10,10),
-                     glm::vec3(0,0,.3), glm::vec3(.3,0,0), this, shader);
-    for(int i=0;i<10;i++)
-        n2->createPin(i*5);
-    for(int i=0;i<10;i++)
-        n2->createPin((49*50)+i*5);
-    addVerlet(n2);
 
     m_ray = new Ray(cam);
     m_curV = -1;
@@ -128,6 +123,34 @@ void VerletManager::constraints(){
 
 void VerletManager::manage(World *world, float onTickSecs, float mouseX, float mouseY)
 {
+    //Wind direction
+    if(m_windStart){
+        Camera* cam = world->getPlayer()->getCamera();
+        glm::vec3 look = glm::vec3(cam->getLook());
+        glm::vec3 direction = -1.0f*look;
+        glm::vec3 source = look + world->getPlayer()->getEyePos();
+
+        float t = m_ray->hitPlane(source,glm::vec3(direction));
+        m_windStartPos = m_ray->getPoint(t);
+        m_windStart = false;
+    }
+    if(m_windEnd){
+        Camera* cam = world->getPlayer()->getCamera();
+        glm::vec3 look = glm::vec3(cam->getLook());
+        glm::vec3 direction = -1.0f*look;
+        glm::vec3 source = look + world->getPlayer()->getEyePos();
+
+        float t = m_ray->hitPlane(source,glm::vec3(direction));
+        m_windEndPos = m_ray->getPoint(t);
+        m_windEnd = false;
+
+    }
+    if(m_windComplete){
+        m_windComplete = false;
+        glm::vec3 d = m_windEndPos-m_windStartPos;
+        d = glm::normalize(d);
+        m_windDirection = d;
+    }
     setWind(m_windDirection);
 
     if(solve){
@@ -252,6 +275,8 @@ void VerletManager::onDraw(Graphics *g){
             */
         }
     }
+
+    //for wind
 }
 
 glm::vec3 VerletManager::collideTerrain(MovableEntity *e)
@@ -302,6 +327,9 @@ void VerletManager::onKeyPressed(QKeyEvent *e)
 {
     if(e->key() == Qt::Key_T)
         m_tearMode=true;
+    //wind
+    if(e->key() == Qt::Key_Shift)
+        m_windStart = true;
 }
 
 void VerletManager::onKeyReleased(QKeyEvent *e)
@@ -310,6 +338,10 @@ void VerletManager::onKeyReleased(QKeyEvent *e)
     {
     case Qt::Key_F:
         enableSolve();
+        break;
+    case Qt::Key_Shift:
+        m_windEnd = true;
+        m_windComplete = true;
         break;
     case Qt::Key_Down:
         m_windDirection = glm::vec3(0,0,1);

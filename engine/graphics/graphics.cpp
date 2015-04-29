@@ -486,7 +486,7 @@ void Graphics::loadTexture(const QString &filename, const QString &key)
     // load file into memory
     QImage image;
     image.load(file.fileName());
-    image = image.mirrored(false, true);
+    image = image.mirrored(false, true);  //false true
     QImage texture = QGLWidget::convertToGLFormat(image);
 
     // generate texture ID
