@@ -6,7 +6,7 @@
 GameWorld::GameWorld()
 {
     mode = 0;
-    usingFog = false;
+    usingFog = true;
 }
 
 
@@ -40,18 +40,18 @@ Triangle* GameWorld::intersectWorld(glm::vec3 p, glm::vec3 d, float *t)
 void GameWorld::onKeyPressed(QKeyEvent *e)
 {
     // temp lighting controls
-    if(e->key()==49){
-        if(usingFog)
-            usingFog = false;
-        else
-            usingFog = true;
-    }
-    if(e->key()==50){
-        if(useDeferredLighting)
-            useDeferredLighting = false;
-        else
-            useDeferredLighting = true;
-    }
+//    if(e->key()==Qt::Key_1){
+//        if(usingFog)
+//            usingFog = false;
+//        else
+//            usingFog = true;
+//    }
+//    if(e->key() == Qt::Key_L){
+//        if(useDeferredLighting)
+//            useDeferredLighting = false;
+//        else
+//            useDeferredLighting = true;
+//    }
     World::onKeyPressed(e);
 }
 

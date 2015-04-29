@@ -349,6 +349,9 @@ void VerletManager::onKeyReleased(QKeyEvent *e)
     case Qt::Key_Right:
         m_windDirection = glm::vec3(0,0,-1);
         break;
+    case Qt::Key_C:
+        m_windDirection = glm::vec3();
+        break;
     case Qt::Key_T:
         m_tearMode = false;
         m_tear_ptA=-1;

@@ -13,7 +13,7 @@
 #include "trianglemesh.h"
 #include "half.h"
 
-//#include "debugprinting.h"
+#include "debugprinting.h"
 
 TestLevelScreen::TestLevelScreen(Application *parent)
     : ScreenH(parent),
@@ -41,11 +41,6 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_resetHalves.append(level->top);
     m_oh->getObject(":/objects/Level1f.obj", shader, &tris);
     m_resetHalves.append(level->top);
-
-    // uncomment to play sound at the origin
-    SoundTester *st = new SoundTester(glm::vec3());
-    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
-    st->playSound();
 
     resetWorld(glm::vec3(0, 10, 0));
 
@@ -84,6 +79,10 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     // save into a list of lights and send to the world
     LightParser lightParser;
     QList<Light*> lights = lightParser.getLights(":/objects/Level1Lights.obj");
+
+//    Light *l = lights.value(0);
+//    lights.clear();
+//    lights.append(l);
 
     ActionCamera *cam;
     cam = new ActionCamera();

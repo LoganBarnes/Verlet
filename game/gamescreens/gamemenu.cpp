@@ -2,6 +2,8 @@
 #include "application.h"
 //#include "gamescreen.h"
 #include "testlevelscreen.h"
+#include "button.h"
+#include "soundtester.h"
 
 #define GLM_FORCE_RADIANS
 #include <gtx/transform.hpp>
@@ -18,11 +20,17 @@ GameMenu::GameMenu(Application *parent)
 
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.05, .05, .05));
     m_cursor[3][2] = -.999f;
+
+    // uncomment to play sound at the origin
+    m_st = new SoundTester(glm::vec3());
+    m_st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
+    m_st->playSound();
 }
 
 GameMenu::~GameMenu()
 {
     delete m_startButton;
+    delete m_st;
 }
 
 // update and render

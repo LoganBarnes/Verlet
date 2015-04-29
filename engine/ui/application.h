@@ -22,7 +22,7 @@ public:
     Application();
     ~Application();
 
-    void init(ScreenH *initScreen);
+    void init();
 
     // set the current screen
     void addScreen(ScreenH *s);

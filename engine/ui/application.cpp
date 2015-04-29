@@ -46,11 +46,11 @@ Application::~Application()
 
 }
 
-void Application::init(ScreenH *initScreen)
+void Application::init()
 {
-    m_currentScreen = initScreen;
     m_g->init();
     m_a->initAudio();
+//    m_a->setListener(glm::vec4(0,0,0,1), glm::vec3(), glm::vec4(0,0,1,0), glm::vec4(0,1,0,0));
 }
 
 // Have the graphics object initialize fbos for lighting
