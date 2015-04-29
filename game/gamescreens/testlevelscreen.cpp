@@ -95,10 +95,11 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     VerletManager *vm = new VerletManager(cam);
 
     Grass* grass = new Grass(vm, shader);
-    grass->createPatch(glm::vec2(0,0),6,level);
+    //grass->createPatch(glm::vec2(0,0),6,level);
     vm->addVerlet(grass);
 
     // stairs
+    /*
     TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,75), .3, glm::vec3(-5,0,-2), vm, shader,2);
     tri2->createPin(0);
     tri2->createPin(11);
@@ -150,6 +151,58 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     tri11->createPin(0);
     tri11->createPin(14);
     vm->addVerlet(tri11);
+    */
+    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(6,30), .6, glm::vec3(-5,0,-2), vm, shader,2);
+    tri2->createPin(0);
+    tri2->createPin(5);
+    vm->addVerlet(tri2);
+
+    TriangleMesh* tri3 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-27,0,4), vm, shader);
+    tri3->createPin(0);
+    tri3->createPin(5);
+    vm->addVerlet(tri3);
+
+    TriangleMesh* tri4 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-32,4,4), vm, shader);
+    tri4->createPin(0);
+    tri4->createPin(5);
+    vm->addVerlet(tri4);
+
+    TriangleMesh* tri5 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-37,8,4), vm, shader);
+    tri5->createPin(0);
+    tri5->createPin(5);
+    vm->addVerlet(tri5);
+
+    TriangleMesh* tri6 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-42,12,4), vm, shader);
+    tri6->createPin(0);
+    tri6->createPin(5);
+    vm->addVerlet(tri6);
+
+    TriangleMesh* tri7 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-47,16,4), vm, shader);
+    tri7->createPin(0);
+    tri7->createPin(5);
+    vm->addVerlet(tri7);
+
+    TriangleMesh* tri8 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-52,19,4), vm, shader);
+    tri8->createPin(0);
+    tri8->createPin(5);
+    vm->addVerlet(tri8);
+
+    TriangleMesh* tri9 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-60,19,4), vm, shader);
+    tri9->createPin(0);
+    tri9->createPin(5);
+    vm->addVerlet(tri9);
+
+    TriangleMesh* tri10 = new TriangleMesh(glm::vec2(6,25), .6, glm::vec3(-74,18,-2), vm, shader,2,true);
+    tri10->createPin(0);
+    tri10->createPin(5);
+    tri10->createPin(144);
+    tri10->createPin(149);
+    vm->addVerlet(tri10);
+
+    TriangleMesh* tri11 = new TriangleMesh(glm::vec2(8,22), .3, glm::vec3(-88,-8,-2.2), vm, shader,2,true);
+    tri11->createPin(0);
+    tri11->createPin(7);
+    vm->addVerlet(tri11);
 
 
     m_world = new GameWorld();
@@ -162,7 +215,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_world->addObject(m_oh->getObject(":/objects/Level1c.obj", shader, &tris3));
     m_world->addObject(m_oh->getObject(":/objects/Level1d.obj", shader, &tris4));
     m_world->addObject(m_oh->getObject(":/objects/Level1e.obj", shader, &tris5));
-    m_world->addObject(m_oh->getObject(":/objects/Level1f.obj", shader, &tris6));
+    m_world->addObject(m_oh->getObject(":/objects/Level1g.obj", shader, &tris6));
 
     m_world->setPlayer(player);
     m_world->addToMesh(tris);

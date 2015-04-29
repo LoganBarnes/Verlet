@@ -41,6 +41,7 @@
         <file alias="Level1d.obj">res/objects/Level1d.obj</file>
         <file alias="Level1e.obj">res/objects/Level1e.obj</file>
         <file alias="Level1f.obj">res/objects/Level1f.obj</file>
+        <file alias="Level1g.obj">res/objects/Level1g.obj</file>
         <file alias="Level1Lights.obj">res/objects/justLights.obj</file>
     </qresource>
     <qresource prefix="/audio">
