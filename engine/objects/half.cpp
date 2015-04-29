@@ -70,8 +70,7 @@ bool Half::placeOnSurface(glm::vec3 &surfacePt){
         }
 
     }
-    else
-        return false;
+    return false;
 }
 
 bool Half::findY(const glm::vec2 &coord, float& y){
@@ -92,7 +91,7 @@ bool Half::findY(const glm::vec2 &coord, float& y){
 //*******************2D projection***********************//
 void Half::createFlat(){
     float height = (top) ? yLimits.y : yLimits.x;
-    for(int i = 0; i<_triangles.size(); i++){
+    for(uint i = 0; i<_triangles.size(); i++){
         Triangle* t = _triangles[i];
         glm::vec3 a = t->vertices[0]; a.y=height;
         glm::vec3 b = t->vertices[1]; b.y=height;
