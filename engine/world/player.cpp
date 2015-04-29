@@ -39,6 +39,7 @@ void Player::setEyeHeight(float height)
 
 void Player::onTick(float secs)
 {
+    glm::vec3 v = getVelocity();
 
     float forceAmt = 8.f;
     glm::vec3 force = glm::vec3();
@@ -52,9 +53,8 @@ void Player::onTick(float secs)
         force.x += 1;
     if (m_jump && m_canJump)
     {
-        glm::vec3 v = getVelocity();
-        v.y = 4.f;
-        setVelocity(v);
+        v.y = 10.f;
+        m_canJump = false;
     }
 
     glm::vec4 look = m_camera->getLook();
@@ -63,11 +63,17 @@ void Player::onTick(float secs)
     thrust += glm::normalize(glm::vec3(-look.z, 0.f, look.x)) * force.x;
     if (glm::length2(thrust) > 0.00001)
         thrust = glm::normalize(thrust) * forceAmt;
-    thrust.y = 0;
+//    thrust.y = force.y;
 
-    glm::vec3 vel = (thrust - m_vel);
-    vel.y = 0;
-    applyImpulse(vel);
+//    glm::vec3 vel = (thrust - m_vel);
+//    vel.y = 0;
+//    applyImpulse(vel);
+
+    v.x = thrust.x;
+    v.z = thrust.z;
+    setVelocity(v);
+//    if (m_canJump)
+//        applyForce(glm::vec3(0, 10, 0) * getMass()); // no gravity on cloth hack
     MovableEntity::onTick(secs);
 
     m_canJump = false;
@@ -177,10 +183,18 @@ void Player::onKeyReleased(QKeyEvent *e)
 }
 
 
-void Player::handleCollision(Collision *col)
+void Player::handleCollision(Collision *col, bool resetVel)
 {
     if (glm::dot(col->impulse, glm::vec3(0, 1, 0)) > .5)
+    {
         m_canJump = true;
+        if (resetVel)
+        {
+            glm::vec3 v = getVelocity();
+            v.y = 0;
+            setVelocity(v);
+        }
+    }
 
 }
 

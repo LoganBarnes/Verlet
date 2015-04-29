@@ -127,9 +127,9 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     Collision *col = new Collision();
     foreach (MovableEntity *me, mes)
     {
-        col->mtv = collideTerrain(me);
+        col->mtv = collideTerrain(me) * .5f;
         col->t = onTickSecs;
-        me->handleCollision(col);
+        me->handleCollision(col, !solve);
         //check if player (bottom of sphere) intersects w/ ground - assumes radius of 1
 
         foreach(OBJ* o, obj){

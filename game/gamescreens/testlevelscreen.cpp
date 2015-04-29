@@ -11,17 +11,37 @@
 #include "soundtester.h"
 #include "grass.h"
 #include "trianglemesh.h"
+#include "half.h"
 
-#include "debugprinting.h"
+//#include "debugprinting.h"
 
 TestLevelScreen::TestLevelScreen(Application *parent)
     : ScreenH(parent),
       m_world(NULL),
-      m_oh(NULL)
+      m_oh(NULL),
+      m_resetIndex(0)
 {
     m_parentApp->setMouseDecoupled(true);
     m_parentApp->setLeapRightClick(GRAB);
     m_parentApp->setLeapLeftClick(PINCH);
+
+    GLuint shader = m_parentApp->getShader(GEOMETRY);
+    m_oh = new ObjectHandler();
+    QList<Triangle *> tris;
+
+    OBJ *level = m_oh->getObject(":/objects/Level1a.obj", shader, &tris);
+    m_resetHalves.append(level->top);
+
+    m_oh->getObject(":/objects/Level1b.obj", shader, &tris);
+    m_oh->getObject(":/objects/Level1c.obj", shader, &tris);
+    m_oh->getObject(":/objects/Level1d.obj", shader, &tris);
+    m_oh->getObject(":/objects/Level1e.obj", shader, &tris);
+    m_oh->getObject(":/objects/Level1f.obj", shader, &tris);
+
+    // uncomment to play sound at the origin
+    SoundTester *st = new SoundTester(glm::vec3());
+    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
+    st->playSound();
 
     resetWorld();
 
@@ -42,12 +62,12 @@ void TestLevelScreen::resetWorld()
         delete m_world;
         m_world = NULL;
     }
-    if (m_oh)
-    {
-        delete m_oh;
-        m_oh = NULL;
-    }
-    m_oh = new ObjectHandler();
+//    if (m_oh)
+//    {
+//        delete m_oh;
+//        m_oh = NULL;
+//    }
+//    m_oh = new ObjectHandler();
 
     GLuint shader = m_parentApp->getShader(GEOMETRY);
 //    GLuint shader = m_parentApp->getShader(DEFAULT);
@@ -150,12 +170,6 @@ void TestLevelScreen::resetWorld()
     m_world->addToMesh(tris6);
 
     m_world->setGravity(glm::vec3(0,-10,0));
-
-    // uncomment to play sound at the origin
-    SoundTester *st = new SoundTester(glm::vec3());
-    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
-    st->playSound();
-    m_world->addMovableEntity(st);
 
     setCamera(cam);
 

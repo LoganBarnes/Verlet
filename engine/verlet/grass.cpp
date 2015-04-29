@@ -2,9 +2,12 @@
 #include "mesh.h"
 #include "graphics.h"
 #include "obj.h"
+#include "movableentity.h"
+#include "verletmanager.h"
 
 #define GLM_FORCE_RADIANS
 #include <gtc/type_ptr.hpp>
+#include <gtx/norm.hpp>
 
 Grass::Grass(VerletManager* vm, GLuint shader):
     Verlet(vm),
@@ -38,8 +41,9 @@ void Grass::updateBuffer()
 
 void Grass::onDraw(Graphics *g)
 {
+    GLuint shader = g->getShader(CURRENT);
     g->setColor(.3f,.7,.5f,1.f,0.f);
-    glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"),
+    glUniformMatrix4fv(glGetUniformLocation(shader, "model"),
                        1, GL_FALSE, glm::value_ptr(glm::mat4()));
     m_mesh->onDraw(GL_TRIANGLES);
 }
@@ -135,4 +139,30 @@ void Grass::createStrand(const glm::vec3 &s, int segments, float length){
     //Secure the two points: 0 below ground level, 1 at ground level
     createPin(index0);
     createPin(index0+1);
+}
+
+
+glm::vec3 Grass::collide(MovableEntity *e)
+{
+    glm::vec3 center = e->getPosition();
+    float radius = 1.f;
+    bool solve = _manager->solve; //determines whether to move points themselves
+
+    for(int i=0; i<numPoints; i++) {
+        glm::vec3 dist =_pos[i]-center; //distance between entity + point
+        float radiusSquared = radius * radius;
+        if(radiusSquared>glm::length2(dist)){  //colliding
+
+            //mtv
+            glm::vec3 unit = glm::normalize(dist);
+            float factor = glm::length(dist)-radius;
+            glm::vec3 extra = unit*factor;
+
+            if(solve)
+                _pos[i]=_pos[i]-(extra*sphereInfluence);
+
+        }
+    }
+
+    return glm::vec3();
 }

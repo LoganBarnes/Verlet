@@ -11,6 +11,7 @@ class OBJ;
 class VerletManager;
 class Verlet;
 struct Link;
+class Half;
 
 class TestLevelScreen : public ScreenH
 {
@@ -45,6 +46,9 @@ private:
 
     GameWorld *m_world;
     ObjectHandler *m_oh;
+
+    QList<Half*> m_resetHalves;
+    int m_resetIndex;
 
     glm::mat4 m_cursor;
     bool m_drawCursor;

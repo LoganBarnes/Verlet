@@ -15,7 +15,6 @@ void SoundTester::onTick(float secs)
     Entity::onTick(secs);
 }
 
-void SoundTester::handleCollision(Collision *)
+void SoundTester::handleCollision(Collision *, bool)
 {
-
 }

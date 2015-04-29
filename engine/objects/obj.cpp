@@ -253,3 +253,11 @@ OBJ::Index OBJ::getIndex(const QString &str) const
     int normal = parts.count() > 2 ? relativeIndex(parts[2].toInt(), normals.size()) : -1;
     return Index(vertex, coord, normal);
 }
+
+void OBJ::makeTriList(QList<Triangle *> *tris)
+{
+    foreach (Tri tri, triangles)
+    {
+        tris->append(new Triangle(vertices[tri.a.vertex], vertices[tri.b.vertex], vertices[tri.c.vertex]));
+    }
+}

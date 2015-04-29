@@ -38,7 +38,7 @@ public:
     virtual void onKeyPressed(QKeyEvent *e);
     virtual void onKeyReleased(QKeyEvent *e);
 
-    virtual void handleCollision(Collision *col);
+    virtual void handleCollision(Collision *col, bool resetVel);
 
     void useSound(Audio *audio);
     glm::vec4 getCamEye();

@@ -12,7 +12,7 @@ public:
     virtual void onTick(float secs);
     virtual void onMouseMoved(QMouseEvent *, float deltaX, float deltaY);
 
-    virtual void handleCollision(Collision *col);
+    virtual void handleCollision(Collision *col, bool resetVel);
 
 //    bool m_usingLeap; // temp hack
 

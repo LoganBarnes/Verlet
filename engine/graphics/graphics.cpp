@@ -383,6 +383,7 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
         break;
     }
     case CUBEMAP:
+    case CURRENT:
     {
         break;
     }
@@ -491,6 +492,7 @@ GLuint Graphics::getShader(GraphicsMode m){
         return m_shaders["compositeShader"];
     case FOG:
         return m_shaders["fogShader"];
+    case CURRENT:
     default:
         return m_currentShader;
     }

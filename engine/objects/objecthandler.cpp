@@ -19,7 +19,10 @@ OBJ *ObjectHandler::getObject(const QString &path, GLuint shader, QList<Triangle
     obj = m_objects.value(path, NULL);
 
     if (obj)
+    {
+        obj->makeTriList(tris);
         return obj;
+    }
 
     obj = new OBJ(shader);
     if (obj->read(path, tris))
