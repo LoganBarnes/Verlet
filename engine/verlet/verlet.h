@@ -55,7 +55,7 @@ public:
     VerletManager* _manager;
     //between 0 and 1: how much cloth is influenced by collisions
     float sphereInfluence = 1;
-    float rayTraceSize = .13f;
+    float rayTraceSize = .3f;
 
     int getSize(){return numPoints;}
     glm::vec3 getPoint(const int& id){return _pos[id];}
