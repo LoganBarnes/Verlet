@@ -3,7 +3,6 @@
 
 #define GLM_FORCE_RADIANS
 #include <gtx/norm.hpp>
-#include <iostream>
 
 Player::Player(ActionCamera *cam, glm::vec3 pos)
     : MovableEntity(pos),

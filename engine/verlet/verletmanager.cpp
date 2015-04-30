@@ -10,6 +10,7 @@
 
 #define GLM_FORCE_RADIANS
 #include <gtc/matrix_transform.hpp>
+#include <gtx/norm.hpp>
 
 //#include "debugprinting.h"
 
@@ -18,9 +19,10 @@ VerletManager::VerletManager(Camera *cam)
       m_dragMode(false),
       m_draggedPoint(0),
       m_draggedVerlet(NULL),
-      m_windEnd(false),
       m_windStart(false),
-      m_windComplete(false),
+      m_windMode(false),
+      m_windMaxPow(2.5),
+      m_windScalar(1),
       m_tearMode(false),
       m_tear_ptA(-1),
       m_tear_ptB(-1),
@@ -128,18 +130,20 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
         m_windStartPos = m_ray->getPointonPlane(source,direction);
         m_windStart = false;
     }
-    if(m_windEnd){
+    if(m_windMode){
         Camera* cam = world->getPlayer()->getCamera();
         glm::vec3 look = glm::vec3(cam->getLook());
         glm::vec3 direction = -1.0f*look;
         glm::vec3 source = look + world->getPlayer()->getEyePos();
 
         m_windEndPos = m_ray->getPointonPlane(source,direction);
-        m_windEnd = false;
-
-        glm::vec3 d = m_windEndPos-m_windStartPos;
-        d = glm::normalize(d);
-        m_windDirection = d;
+        if(m_windStartPos!=m_windEndPos){ //causes nan -> disappearing verlet
+            glm::vec3 d = m_windEndPos-m_windStartPos;
+            float factor = glm::length2(d) * m_windScalar;
+            windPow = (factor>m_windMaxPow) ? m_windMaxPow : factor;
+            d = glm::normalize(d);
+            m_windDirection = d;
+        }
     }
     setWind(m_windDirection);
 
@@ -240,6 +244,16 @@ void VerletManager::onDraw(Graphics *g){
     for(unsigned int i=0; i<verlets.size(); i++)
         verlets.at(i)->onDraw(g);
 
+    //for wind
+    g->setAllWhite(true);
+    if(m_windMode){
+        glm::mat4 trans = glm::translate(glm::mat4(), m_windStartPos);
+        trans *= glm::scale(glm::mat4(), glm::vec3(.2,.2,.2));
+        g->drawSphere(trans);
+        g->drawLineSeg(m_windStartPos,m_windEndPos,.1,4);
+    }
+    g->setAllWhite(false);
+
     //for dragging
     if(m_dragMode){
         g->setColor(1, 1, 1, 1, 0);
@@ -326,7 +340,7 @@ void VerletManager::onKeyPressed(QKeyEvent *e)
     //wind
     if(e->key() == Qt::Key_Shift){
         m_windStart = true;
-        m_windComplete = false;
+        m_windMode = true;
     }
 }
 
@@ -338,8 +352,7 @@ void VerletManager::onKeyReleased(QKeyEvent *e)
         enableSolve();
         break;
     case Qt::Key_Shift:
-        m_windEnd = true;
-        m_windComplete = true;
+        m_windMode = false;
         break;
     case Qt::Key_Down:
         m_windDirection = glm::vec3(1,0,0);

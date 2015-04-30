@@ -83,9 +83,10 @@ private:
     glm::vec3 m_windDirection;
     glm::vec3 m_windStartPos;
     glm::vec3 m_windEndPos;
-    bool m_windEnd;
     bool m_windStart;
-    bool m_windComplete;
+    bool m_windMode;
+    float m_windMaxPow;
+    float m_windScalar; //how much mouse movement changes wind power
 
     //testing tearing
     bool m_tearMode;
