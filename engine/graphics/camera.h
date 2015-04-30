@@ -29,7 +29,6 @@ public:
     void pitch(float degrees);
     void yaw(float degrees);
     void roll(float degrees);
-
 protected:
     void setCameraSpace();
     void setViewMatrix();

@@ -48,6 +48,7 @@ protected:
     ActionCamera *m_camera;
     float m_offset;
     float m_maxOffset;
+    float m_offsetFactor;
 
     int m_wsad;
     bool m_canJump, m_jump;

@@ -73,7 +73,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 
     OBJ *level = m_oh->getObject(":/objects/Level1a.obj", shader, &tris);
 
-    level->setTexture("one.png");
+    //level->setTexture("one.png");
 
     // make an object handler for the lights and parse them in from an obj
     // save into a list of lights and send to the world
@@ -228,6 +228,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_world->setGravity(glm::vec3(0,-10,0));
 
     setCamera(cam);
+    player->setMaxOffset(25);
 
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.02f / cam->getAspectRatio(), .02f, .02f));
     m_cursor[3][2] = -.999f;
@@ -352,7 +353,7 @@ void TestLevelScreen::onResize(int w, int h)
 
 void TestLevelScreen::onMousePressed(QMouseEvent *e)
 {
-    if (e->button() == Qt::RightButton)
+    if (e->button() == Qt::MidButton)   //Qt::RightButton
         m_parentApp->setMouseDecoupled(false);
 
     m_world->onMousePressed(e);
@@ -360,11 +361,13 @@ void TestLevelScreen::onMousePressed(QMouseEvent *e)
 
 void TestLevelScreen::onMouseReleased(QMouseEvent *e)
 {
-    if (e->button() == Qt::RightButton)
+    if (e->button() == Qt::MidButton)  //Qt::RightButton
         m_parentApp->setMouseDecoupled(true);
 
     m_world->onMouseReleased(e);
 }
 
 // unused in game
-void TestLevelScreen::onMouseWheel(QWheelEvent *) {}
+void TestLevelScreen::onMouseWheel(QWheelEvent *e) {
+    m_world->onMouseWheel(e);
+}

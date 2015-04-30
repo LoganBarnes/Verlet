@@ -3,12 +3,14 @@
 
 #define GLM_FORCE_RADIANS
 #include <gtx/norm.hpp>
+#include <iostream>
 
 Player::Player(ActionCamera *cam, glm::vec3 pos)
     : MovableEntity(pos),
       m_camera(cam),
       m_offset(0.f),
       m_maxOffset(15.f),
+      m_offsetFactor(.1),
       m_wsad(0),
       m_canJump(false),
       m_jump(false),
@@ -203,7 +205,14 @@ void Player::onMousePressed(QMouseEvent *) {}
 void Player::onMouseReleased(QMouseEvent *) {}
 
 void Player::onMouseDragged(QMouseEvent *, float, float) {}
-void Player::onMouseWheel(QWheelEvent *) {}
+void Player::onMouseWheel(QWheelEvent *e) {
+    int scroll = e->delta();
+    if((scroll>0)&&(m_offset>0))
+        m_offset*=(1-m_offsetFactor);
+    else if((scroll<0)&&(m_offset<m_maxOffset))
+        m_offset*=(1+m_offsetFactor);
+    m_camera->setOffset(m_offset);
+}
 
 void Player::useSound(Audio *audio)
 {

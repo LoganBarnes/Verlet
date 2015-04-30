@@ -22,9 +22,8 @@ public:
     glm::vec3 getPoint(float t) {
         return t*getDirection()+getSource();}
     float hitPlane(const glm::vec3& point, const glm::vec3& normal);
-    //uses m_source + m_direction
     glm::vec3 getPointonPlane(const glm::vec3& point, const glm::vec3& normal);
-
+    glm::vec3 getPointonPlane(const glm::vec3& point, const glm::vec4& normal);
 private:
     // assumes radius size .5f
     glm::vec4 intersectSphereAtOrigin(glm::vec4 p, glm::vec4 d, float radius);
@@ -32,11 +31,6 @@ private:
 
     glm::vec4 m_p;
     glm::vec4 m_d;
-
-    //Can't figure out how to convert from vec3 to vec4
-    //for simple raycasting onto surface of terrain for verlet collisions
-    glm::vec3 m_source;
-    glm::vec3 m_direction;
 
     Camera *m_camera;
 };

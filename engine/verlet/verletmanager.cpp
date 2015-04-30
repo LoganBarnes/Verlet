@@ -125,8 +125,7 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
         glm::vec3 direction = -1.0f*look;
         glm::vec3 source = look + world->getPlayer()->getEyePos();
 
-        float t = m_ray->hitPlane(source,glm::vec3(direction));
-        m_windStartPos = m_ray->getPoint(t);
+        m_windStartPos = m_ray->getPointonPlane(source,direction);
         m_windStart = false;
     }
     if(m_windEnd){
@@ -135,13 +134,9 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
         glm::vec3 direction = -1.0f*look;
         glm::vec3 source = look + world->getPlayer()->getEyePos();
 
-        float t = m_ray->hitPlane(source,glm::vec3(direction));
-        m_windEndPos = m_ray->getPoint(t);
+        m_windEndPos = m_ray->getPointonPlane(source,direction);
         m_windEnd = false;
 
-    }
-    if(m_windComplete){
-        m_windComplete = false;
         glm::vec3 d = m_windEndPos-m_windStartPos;
         d = glm::normalize(d);
         m_windDirection = d;
@@ -297,6 +292,12 @@ void VerletManager::onMousePressed(QMouseEvent *e)
         m_draggedVerlet = getVerlet(m_curV);
         m_interpolate = m_draggedVerlet->getPoint(m_draggedPoint);
     }
+    //freeze
+    if(e->type() == QEvent::MouseButtonDblClick && e->button() == Qt::LeftButton)
+        enableSolve();
+    //tear
+    if(e->button() == Qt::RightButton)
+        m_tearMode=true;
 }
 
 void VerletManager::onMouseMoved(QMouseEvent *, float, float)
@@ -309,21 +310,24 @@ void VerletManager::onMouseReleased(QMouseEvent *e)
 {
     if(e->button() == Qt::LeftButton)
         m_dragMode = false;
+    if(e->button() == Qt::RightButton){
+        m_tearMode = false;
+        m_tear_ptA=-1;
+        m_tear_ptB=-1;
+        m_tearVerlet=NULL;
+    }
 }
 
 void VerletManager::onMouseDragged(QMouseEvent *, float, float)
-{
-    //if(m_dragMode)
-    //    m_draggedVerlet->setPos(m_draggedPoint, m_interpolate);
-}
+{}
 
 void VerletManager::onKeyPressed(QKeyEvent *e)
 {
-    if(e->key() == Qt::Key_T)
-        m_tearMode=true;
     //wind
-    if(e->key() == Qt::Key_Shift)
+    if(e->key() == Qt::Key_Shift){
         m_windStart = true;
+        m_windComplete = false;
+    }
 }
 
 void VerletManager::onKeyReleased(QKeyEvent *e)
@@ -351,12 +355,6 @@ void VerletManager::onKeyReleased(QKeyEvent *e)
         break;
     case Qt::Key_C:
         m_windDirection = glm::vec3();
-        break;
-    case Qt::Key_T:
-        m_tearMode = false;
-        m_tear_ptA=-1;
-        m_tear_ptB=-1;
-        m_tearVerlet=NULL;
         break;
     default:
         break;
