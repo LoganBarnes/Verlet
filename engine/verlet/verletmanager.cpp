@@ -22,7 +22,7 @@ VerletManager::VerletManager(Camera *cam)
       m_windStart(false),
       m_windMode(false),
       m_windMaxPow(2.5),
-      m_windScalar(1),
+      m_windScalar(.3),
       m_tearMode(false),
       m_tear_ptA(-1),
       m_tear_ptB(-1),
@@ -138,11 +138,12 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
 
         m_windEndPos = m_ray->getPointonPlane(source,direction);
         if(m_windStartPos!=m_windEndPos){ //causes nan -> disappearing verlet
-            glm::vec3 d = m_windEndPos-m_windStartPos;
-            float factor = glm::length2(d) * m_windScalar;
+            glm::vec3 wind = m_windEndPos-m_windStartPos;
+            float factor = glm::length2(wind) * m_windScalar; //how strong wind is
             windPow = (factor>m_windMaxPow) ? m_windMaxPow : factor;
-            d = glm::normalize(d);
-            m_windDirection = d;
+            wind = glm::normalize(wind);
+            wind = glm::vec3(-wind.y,0,wind.z); //direct wind towards/ away, rather than up/down
+            m_windDirection = wind;
         }
     }
     setWind(m_windDirection);
