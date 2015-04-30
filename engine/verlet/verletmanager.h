@@ -39,9 +39,11 @@ public:
     virtual void onKeyReleased(QKeyEvent *e);
 
     //Settings
-    glm::vec3 gravity = glm::vec3(0,-3,0);
+    glm::vec3 gravity = glm::vec3(0,-1.5,0);
     glm::vec3 wind = glm::vec3(0,0,0.5);
-    float windPow = 3;
+    float windPow;
+    float windNoise; //how much random noise (per triangle)
+
 
     //Whether constraints are solved
     bool solve = true;
@@ -81,8 +83,9 @@ private:
 
     //testing wind
     glm::vec3 m_windDirection;
-    glm::vec3 m_windStartPos;
-    glm::vec3 m_windEndPos;
+    glm::vec2 m_windStartPos;
+    glm::vec3 m_windStartVis;
+    glm::vec3 m_windEndVis;
     bool m_windStart;
     bool m_windMode;
     float m_windMaxPow;

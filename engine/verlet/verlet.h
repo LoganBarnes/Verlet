@@ -18,11 +18,12 @@ struct Tri
     Link* edges[3];
     glm::vec3 normal;
     float windForce; //value between 0 + 1 representing wind influence
-    float random; //to give noise to wind
+    int random; //to give noise to wind
 
     Tri(){}
     Tri(int _a, int _b, int _c){
         a = _a; b = _b; c= _c;
+        random = rand() % 10;
     }
 
     bool operator == (const Tri &t)

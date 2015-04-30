@@ -16,13 +16,15 @@
 
 VerletManager::VerletManager(Camera *cam)
     : Manager(DEFAULT),
+      windPow(2),
+      windNoise(.04),
       m_dragMode(false),
       m_draggedPoint(0),
       m_draggedVerlet(NULL),
       m_windStart(false),
       m_windMode(false),
       m_windMaxPow(2.5),
-      m_windScalar(.3),
+      m_windScalar(4),
       m_tearMode(false),
       m_tear_ptA(-1),
       m_tear_ptB(-1),
@@ -122,28 +124,47 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
 {
     //Wind direction
     if(m_windStart){
+        m_windStart = false;
+        m_windStartPos = glm::vec2(mouseX,mouseY);
+
+        //find point in world space for drawing visualization
         Camera* cam = world->getPlayer()->getCamera();
         glm::vec3 look = glm::vec3(cam->getLook());
         glm::vec3 direction = -1.0f*look;
         glm::vec3 source = look + world->getPlayer()->getEyePos();
-
-        m_windStartPos = m_ray->getPointonPlane(source,direction);
-        m_windStart = false;
+        m_windStartVis = m_ray->getPointonPlane(source,direction);
+        m_windEndVis = m_windStartVis;
     }
     if(m_windMode){
-        Camera* cam = world->getPlayer()->getCamera();
-        glm::vec3 look = glm::vec3(cam->getLook());
-        glm::vec3 direction = -1.0f*look;
-        glm::vec3 source = look + world->getPlayer()->getEyePos();
-
-        m_windEndPos = m_ray->getPointonPlane(source,direction);
+        glm::vec2 m_windEndPos = glm::vec2(mouseX,mouseY);
         if(m_windStartPos!=m_windEndPos){ //causes nan -> disappearing verlet
-            glm::vec3 wind = m_windEndPos-m_windStartPos;
-            float factor = glm::length2(wind) * m_windScalar; //how strong wind is
+            glm::vec2 wind = m_windEndPos-m_windStartPos;
+            //Use length of drawn vector to determine wind strength
+            float factor = glm::length2(wind) * m_windScalar;
             windPow = (factor>m_windMaxPow) ? m_windMaxPow : factor;
-            wind = glm::normalize(wind);
-            wind = glm::vec3(-wind.y,0,wind.z); //direct wind towards/ away, rather than up/down
-            m_windDirection = wind;
+
+            //Convert 'wind' (mouse movement in screenspace) to a vector on the xz plane
+            Camera* cam = world->getPlayer()->getCamera();
+            //Vectors are relative to where the camera is facing
+            glm::vec3 right = cam->getRight();
+            glm::vec3 forward = (glm::vec3) cam->getLook();
+            //Cancel out the y components, to that pitch doesn't effect calculations
+            //Since camera looks down at player, vector slopes down when blowing away && up when blowing towards player
+            forward.y = 0;
+            forward = glm::normalize(forward);
+            right.y = 0;
+            right = glm::normalize(right);
+            //Find the x (right) + z (forward) components and add them
+            glm::vec3 forwardComponent = forward*wind.y;
+            glm::vec3 rightComponent = right*wind.x;
+            glm::vec3 composite = forwardComponent+rightComponent;
+            composite = glm::normalize(composite)+this->gravity*-.075f*windPow; //offset gravity
+            m_windDirection = composite;
+
+            glm::vec3 look = glm::vec3(cam->getLook());
+            glm::vec3 direction = -1.0f*look;
+            glm::vec3 source = look + world->getPlayer()->getEyePos();
+            m_windEndVis = m_ray->getPointonPlane(source,direction);
         }
     }
     setWind(m_windDirection);
@@ -248,10 +269,10 @@ void VerletManager::onDraw(Graphics *g){
     //for wind
     g->setAllWhite(true);
     if(m_windMode){
-        glm::mat4 trans = glm::translate(glm::mat4(), m_windStartPos);
+        glm::mat4 trans = glm::translate(glm::mat4(), m_windStartVis);
         trans *= glm::scale(glm::mat4(), glm::vec3(.2,.2,.2));
         g->drawSphere(trans);
-        g->drawLineSeg(m_windStartPos,m_windEndPos,.1,4);
+        g->drawLineSeg(m_windStartVis,m_windEndVis,.1,4);
     }
     g->setAllWhite(false);
 

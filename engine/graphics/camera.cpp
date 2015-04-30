@@ -3,6 +3,7 @@
 #define GLM_FORCE_RADIANS
 #include <gtx/rotate_vector.hpp>
 #include <gtx/vector_angle.hpp>
+#include "math.h"
 
 Camera::Camera()
 {
@@ -54,6 +55,10 @@ glm::vec4 Camera::getLook()
 glm::vec4 Camera::getUp()
 {
     return m_up;
+}
+
+glm::vec3 Camera::getRight(){
+    return glm::cross((glm::vec3)m_look,(glm::vec3)m_up);
 }
 
 glm::vec4 Camera::getEye()
