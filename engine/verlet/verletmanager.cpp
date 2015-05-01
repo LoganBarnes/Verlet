@@ -17,7 +17,6 @@
 VerletManager::VerletManager(Camera *cam)
     : Manager(DEFAULT),
       windPow(2),
-      windNoise(.04),
       m_dragMode(false),
       m_draggedPoint(0),
       m_draggedVerlet(NULL),
@@ -161,13 +160,25 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
             composite = glm::normalize(composite)+this->gravity*-.075f*windPow; //offset gravity
             m_windDirection = composite;
 
+            //Assign wind sign, so that noise can be correctly appleid per triangle in applyWind()
+            windSign = findSign(m_windDirection);
+
             glm::vec3 look = glm::vec3(cam->getLook());
             glm::vec3 direction = -1.0f*look;
             glm::vec3 source = look + world->getPlayer()->getEyePos();
             m_windEndVis = m_ray->getPointonPlane(source,direction);
         }
     }
+/*
+    float r = (.01 * (rand() %100))-0.5f;
+    glm::vec3 test = m_windDirection;
+    test.x+=r;
+    test.z+=r;
+    setWind(test);
+*/
     setWind(m_windDirection);
+
+
 
     QList<MovableEntity *> mes = world->getMovableEntities();
     QList<OBJ* > obj = world->getObjs();

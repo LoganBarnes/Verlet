@@ -159,20 +159,30 @@ void Verlet::onTick(float ){}
 
 void Verlet::applyWind(Tri* t){
     //wind has full effect to perpendicular cloth, none on parallel cloth
+    //glm::vec3 windDirection = _manager->wind;
+    //float r = (.01 * (rand() %100))-0.5f;
+
     glm::vec3 windDirection = _manager->wind;
+    //windDirection.x+=r;
+    //windDirection.z+=r;
+
+
     float windScalar =  glm::dot(windDirection, t->normal);
 
     if(windScalar<0)
         windScalar*=-1;
-    t->windForce = windScalar;
 
-    glm::vec3 windForce = windDirection*windScalar*_manager->windPow;
-    windForce += t->random*_manager->windNoise;
+    glm::vec3 windForce = windDirection*_manager->windPow*windScalar;
+
+    //Apply noise
+    float noise = windNoise;
+    windForce.z += -1*_manager->windSign.z*((t->random*noise)-noise*.5);
+    windForce.x += -1*_manager->windSign.x*((t->random*noise)-noise*.5);
+
     _acc[t->a] += windForce;
     _acc[t->b] += windForce;
     _acc[t->c] += windForce;
 }
-
 
 void Verlet::calculate(Tri* t){
     t->vertices[0]=_pos[t->a];
@@ -181,6 +191,8 @@ void Verlet::calculate(Tri* t){
 
     t->normal =  glm::cross((t->vertices[1] - t->vertices[0]), (t->vertices[2] - t->vertices[0]));
     t->normal = glm::normalize(t->normal);
+
+    t->random = rand() %10;
 
     //Uncomment for per-vertex normals- not currently being used
     /*

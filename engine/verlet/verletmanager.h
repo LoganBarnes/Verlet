@@ -41,6 +41,8 @@ public:
     //Settings
     glm::vec3 gravity = glm::vec3(0,-1.5,0);
     glm::vec3 wind = glm::vec3(0,0,0.5);
+    //multiplier for noise (in applyWind) based on signs of 'wind'
+    glm::vec3 windSign = glm::vec3(1,1,1);
     float windPow;
     float windNoise; //how much random noise (per triangle)
 
@@ -90,6 +92,14 @@ private:
     bool m_windMode;
     float m_windMaxPow;
     float m_windScalar; //how much mouse movement changes wind power
+
+    //Calculating sign of wind for noise application. Doesn't actualy return right sign
+    int findSign(const float& f){
+        return (f>0) ? 1 : -1;
+    }
+    glm::vec3 findSign(const glm::vec3& v){
+        return glm::vec3(findSign(v.x),findSign(v.y),findSign(v.z));
+    }
 
     //testing tearing
     bool m_tearMode;

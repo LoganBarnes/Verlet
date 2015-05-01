@@ -15,3 +15,13 @@ Shift + mouse move (or arrow keys) = wind direction
 
 If you have headphones, there is sound!
 
+
+
+WASD: movement
+LMB+drag = select + manipulate environment
+MMB+drag = change camera angle
+MMB+scroll = zoom
+RMB+drag = tear (wip)
+Shift+drag = change wind direction
+Double-click: freeze
+

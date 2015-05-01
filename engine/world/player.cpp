@@ -3,6 +3,7 @@
 
 #define GLM_FORCE_RADIANS
 #include <gtx/norm.hpp>
+#include <iostream>
 
 Player::Player(ActionCamera *cam, glm::vec3 pos)
     : MovableEntity(pos),
@@ -13,6 +14,7 @@ Player::Player(ActionCamera *cam, glm::vec3 pos)
       m_wsad(0),
       m_canJump(false),
       m_jump(false),
+      m_jumping(false),
       m_eyeHeight(.75f),
       m_yaw(0.f),
       m_pitch(0.f)
@@ -52,11 +54,14 @@ void Player::onTick(float secs)
         force.x -= 1;
     if (m_wsad & 0b0001)
         force.x += 1;
-    if (m_jump && m_canJump)
-    {
-        v.y = 10.f;
+    if (m_jump && m_canJump){
         m_canJump = false;
+        m_jumping = true;
+        v.y = 11.f;
     }
+
+    //else if (m_jump&&!m_canJump)
+    //    m_jump = false;
 
     glm::vec4 look = m_camera->getLook();
 
@@ -72,12 +77,18 @@ void Player::onTick(float secs)
 
     v.x = thrust.x;
     v.z = thrust.z;
+
+    if(m_jumping){ //less horizontal displacement allows more controlled landing
+        v.x=v.x*.7;
+        v.z=v.z*.7;
+    }
     setVelocity(v);
 //    if (m_canJump)
 //        applyForce(glm::vec3(0, 10, 0) * getMass()); // no gravity on cloth hack
     MovableEntity::onTick(secs);
 
-    m_canJump = false;
+    //m_canJump = false; //jump latency issue due to this being set to false before space is activated?
+    m_jump = false;
 }
 
 
@@ -175,9 +186,6 @@ void Player::onKeyReleased(QKeyEvent *e)
     case Qt::Key_D:
         m_wsad &= 0b1110;
         break;
-    case Qt::Key_Space:
-        m_jump = false;
-        break;
     default:
         break;
     }
@@ -186,8 +194,10 @@ void Player::onKeyReleased(QKeyEvent *e)
 
 void Player::handleCollision(Collision *col, bool resetVel)
 {
-    if (glm::dot(col->impulse, glm::vec3(0, 1, 0)) > .5)
+    //if (glm::dot(col->impulse, glm::vec3(0, 1, 0)) > 1)
+    if(col->impulse.y>0)
     {
+        m_jumping = false;
         m_canJump = true;
         if (resetVel)
         {

@@ -17,13 +17,13 @@ struct Tri
     glm::vec3 vertices[3];
     Link* edges[3];
     glm::vec3 normal;
-    float windForce; //value between 0 + 1 representing wind influence
+    //float windForce; //value between 0 + 1 representing wind influence
     int random; //to give noise to wind
 
     Tri(){}
     Tri(int _a, int _b, int _c){
         a = _a; b = _b; c= _c;
-        random = rand() % 10;
+        random = rand() %10;
     }
 
     bool operator == (const Tri &t)
@@ -57,6 +57,7 @@ public:
     //between 0 and 1: how much cloth is influenced by collisions
     float sphereInfluence = 1;
     float rayTraceSize = .3f;
+    float windNoise =.06; // how much random noise to give verlet's wind response
 
     int getSize(){return numPoints;}
     glm::vec3 getPoint(const int& id){return _pos[id];}

@@ -23,6 +23,9 @@ public:
     // grass doesn't move the entity
     virtual glm::vec3 collide(MovableEntity *e);
 
+    //grass has more noise
+    virtual void applyWind(Tri* t);
+
     void createPatch(const glm::vec2 &center, float radius, OBJ* obj);
     void setColor(const glm::vec3& base, const glm::vec3& mix){
         baseColor = base;

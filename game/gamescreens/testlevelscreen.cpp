@@ -39,7 +39,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_resetHalves.append(level->top);
     level = m_oh->getObject(":/objects/Level1e.obj", shader, &tris);
     m_resetHalves.append(level->top);
-    level = m_oh->getObject(":/objects/Level1f.obj", shader, &tris);
+    level = m_oh->getObject(":/objects/Level1g.obj", shader, &tris);
     m_resetHalves.append(level->top);
 
     resetWorld(glm::vec3(0, 10, 0));
@@ -157,9 +157,10 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_world->addManager(gcm);
     m_world->addManager(vm);
     m_world->addObject(level);
-    m_world->addObject(m_oh->getObject(":/objects/Level1b.obj", shader, &tris2));
-    m_world->addObject(m_oh->getObject(":/objects/Level1c.obj", shader, &tris3));
-    m_world->addObject(m_oh->getObject(":/objects/Level1d.obj", shader, &tris4));
+    m_world->addObject(m_oh->getObject(":/objects/Level1a.obj", shader, &tris2));
+    m_world->addObject(m_oh->getObject(":/objects/Level1b.obj", shader, &tris3));
+    m_world->addObject(m_oh->getObject(":/objects/Level1c.obj", shader, &tris4));
+    m_world->addObject(m_oh->getObject(":/objects/Level1d.obj", shader, &tris5));
     m_world->addObject(m_oh->getObject(":/objects/Level1e.obj", shader, &tris5));
     m_world->addObject(m_oh->getObject(":/objects/Level1g.obj", shader, &tris6));
 
@@ -174,7 +175,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_world->setGravity(glm::vec3(0,-10,0));
 
     setCamera(cam);
-    player->setMaxOffset(50);
+    player->setMaxOffset(50); //zoom
 
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.02f / cam->getAspectRatio(), .02f, .02f));
     m_cursor[3][2] = -.999f;
@@ -200,12 +201,13 @@ void TestLevelScreen::onTick(float secs)
     glm::vec3 pos = m_world->getPlayer()->getPosition();
     for (int i = 0; i < m_resetHalves.size(); i++)
     {
-        if (m_resetHalves.value(i)->inHitBox(pos))
+        if (m_resetHalves.value(i)->inHitBox(pos)&&i>m_resetIndex)
         {
             m_resetIndex = i;
             break;
         }
     }
+
 }
 
 
