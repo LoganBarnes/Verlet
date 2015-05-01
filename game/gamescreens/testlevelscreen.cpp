@@ -32,7 +32,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
 
     m_oh = new ObjectHandler();
 
-    m_level = m_oh->getObject(":/objects/Level1a.obj", shader, &tris);
+    m_level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris);
 
     //m_level->setTexture("01.png");
     m_level->setTexture("grass.png");
@@ -40,7 +40,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     // make an object handler for the lights and parse them in from an obj
     // save into a list of lights and send to the world
     LightParser lightParser;
-    QList<Light*> lights = lightParser.getLights(":/objects/Level1Lights.obj");
+    QList<Light*> lights = lightParser.getLights(":/objects/island_lights.obj");
 
     ActionCamera *cam;
     cam = new ActionCamera();
@@ -104,19 +104,19 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_world->addManager(gcm);
     m_world->addManager(vm);
     m_world->addObject(m_level);
-    m_world->addObject(m_oh->getObject(":/objects/Level1b.obj", shader, &tris2));
-    m_world->addObject(m_oh->getObject(":/objects/Level1c.obj", shader, &tris3));
-    m_world->addObject(m_oh->getObject(":/objects/Level1d.obj", shader, &tris4));
-    m_world->addObject(m_oh->getObject(":/objects/Level1e.obj", shader, &tris5));
-    m_world->addObject(m_oh->getObject(":/objects/Level1f.obj", shader, &tris6));
+//    m_world->addObject(m_oh->getObject(":/objects/Level1b.obj", shader, &tris2));
+//    m_world->addObject(m_oh->getObject(":/objects/Level1c.obj", shader, &tris3));
+//    m_world->addObject(m_oh->getObject(":/objects/Level1d.obj", shader, &tris4));
+//    m_world->addObject(m_oh->getObject(":/objects/Level1e.obj", shader, &tris5));
+//    m_world->addObject(m_oh->getObject(":/objects/Level1f.obj", shader, &tris6));
 
     m_world->setPlayer(player);
     m_world->addToMesh(tris);
-    m_world->addToMesh(tris2);
-    m_world->addToMesh(tris3);
-    m_world->addToMesh(tris4);
-    m_world->addToMesh(tris5);
-    m_world->addToMesh(tris6);
+//    m_world->addToMesh(tris2);
+//    m_world->addToMesh(tris3);
+//    m_world->addToMesh(tris4);
+//    m_world->addToMesh(tris5);
+//    m_world->addToMesh(tris6);
 
     m_world->setGravity(glm::vec3(0,-10,0));
 
