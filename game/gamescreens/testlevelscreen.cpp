@@ -102,7 +102,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     player->setMaxOffset(50); //zoom
 
     //Add all islands
-    OBJ* island1 = addIsland(":/objects/testsmall.obj",shader,glm::vec3(0));
+    OBJ* island1 = addIsland(":/objects/LargeIsland.obj",shader,glm::vec3(0));
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-20,0,0));
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-55,30,0));
 
