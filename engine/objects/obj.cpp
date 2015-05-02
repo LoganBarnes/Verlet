@@ -50,6 +50,15 @@ bool OBJ::findY(const glm::vec2& coor, float& y, bool surface){
         return bot->findY(coor,y);
 }
 
+bool OBJ::inRange(const glm::vec3& pos, float range){
+    glm::vec2 center = top->getCenter();
+    float maxY = top->getYLimits().y;
+    float minY = bot->getYLimits().x;
+    return (pos.x>center.x-range&&pos.x<center.x+range&&
+            pos.z>center.y-range&&pos.z<center.y+range&&
+            pos.y > minY && pos.y < maxY);
+}
+
 GLuint OBJ::getShader()
 {
     return m_shader;

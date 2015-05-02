@@ -39,6 +39,7 @@ public:
     // resize
     virtual void onResize(int w, int h);
 
+    OBJ* addIsland(const QString& path, GLuint shader, const glm::vec3& offset);
 private:
     void render2D(Graphics *g);
     void adjustDeltasForLeap(float *deltaX, float *deltaY);

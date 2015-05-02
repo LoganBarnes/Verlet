@@ -16,7 +16,7 @@ ObjectHandler::~ObjectHandler()
 }
 
 
-OBJ *ObjectHandler::getObject(const QString &path, GLuint shader, QList<Triangle *> *tris, glm::vec3 offset)
+OBJ *ObjectHandler::getObject(const QString &path, GLuint shader, QList<Triangle *> *tris, const glm::vec3& offset)
 {
     OBJ* obj;
 //    obj = m_objects.value(path, NULL);

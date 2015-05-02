@@ -7,13 +7,23 @@ class Mesh;
 class VerletManager;
 typedef unsigned int GLuint;
 
+enum PinMode
+{
+    NONE, TOP_CORNERS, ALL_CORNERS, TOP_EDGE, HORIZONTAL_EDGE, ALL_EDGE
+};
+enum Axis
+{
+    X, Y, Z
+};
+
 class TriangleMesh: public Verlet
 {
 public:
     TriangleMesh(const glm::vec2& dimension, float width, const glm::vec3& start,
-                 VerletManager* vm, GLuint shader, int axis = 0, float flat = false);
+                 VerletManager* vm, GLuint shader, Axis axis = X, bool flat = false, PinMode p = TOP_CORNERS);
     virtual ~TriangleMesh();
 
+    void pin(PinMode p, int r, int c);
     void onTick(float seconds);
     virtual void onDraw(Graphics *g);
     virtual void updateBuffer();
