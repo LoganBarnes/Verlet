@@ -96,7 +96,8 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 
     //Marker
     QList<Triangle *> tris4;
-    m_world->addObject(m_oh->getObject(":/objects/WoodenPost.obj", shader, &tris4, glm::vec3(0)));
+    OBJ* marker = m_oh->getObject(":/objects/WoodenPost.obj", shader, &tris4, glm::vec3(0));
+    m_world->addObject(marker);
     m_world->addToMesh(tris4);
 
     //Add all verlet entities
