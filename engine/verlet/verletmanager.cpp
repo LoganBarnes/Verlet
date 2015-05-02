@@ -178,14 +178,8 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
 */
     setWind(m_windDirection);
 
-
-
     QList<MovableEntity *> mes = world->getMovableEntities();
     QList<OBJ* > obj = world->getObjs();
-
-    //Collide verlet against terrain
-    foreach(OBJ* o, obj)
-        this->collideSurface(o);
 
     Collision *col = new Collision();
     foreach (MovableEntity *me, mes)
@@ -270,6 +264,10 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
             verlets.at(i)->onTick(onTickSecs);
         updateBuffer();
     }
+
+    //Collide verlet against terrain
+    foreach(OBJ* o, obj)
+        this->collideSurface(o);
 }
 
 void VerletManager::onDraw(Graphics *g){

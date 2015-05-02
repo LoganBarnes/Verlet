@@ -361,13 +361,14 @@ void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2){
     points1.push_back(index2);
 
     //4.Assign index2 to structural edges (connectedLink1): update link_map
-    QList<Link*> remainingLinks = link_map[index];
     foreach(Link* l, connectedLink1){
         (l->pointA==index) ? l->pointA=index2 : l->pointB=index2;
         link_map[index2]+=l;
-        remainingLinks.removeOne(l);
+        link_map[index].removeOne(l);
+        QList<Link*> shears = link_to_shear[l];
+        foreach(Link* s, shears)
+            if(s->pointC==index) s->pointC=index2;
     }
-    link_map[index]=remainingLinks;
 
     //5.Group shears into:
     //shear_a / shear_b: on side1 / side2, doesn't contain border links
@@ -426,14 +427,14 @@ void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2){
          if(segments.size()==1&&segments[0]==link_a1){
              shear_to_link[s]+=link_a2;
              link_to_shear[link_a2]+=s;
-             crossover_map[index2]+=s;
-             crossover_map[index].removeOne(s);
+             //crossover_map[index2]+=s;
+             //crossover_map[index].removeOne(s);
          }
          else if(segments.size()==1&&segments[0]==link_a2){
              shear_to_link[s]+=link_a1;
              link_to_shear[link_a1]+=s;
-             crossover_map[index2]+=s;
-             crossover_map[index].removeOne(s);
+             //crossover_map[index2]+=s;
+             //crossover_map[index].removeOne(s);
          }
          else if(segments.size()==1&&segments[0]==link_b1){
              shear_to_link[s]+=link_b2;
@@ -447,21 +448,23 @@ void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2){
              std::cout<<"no match"<<std::endl;
      }
 
-     QList<Link*> cross2 = cross;  //on the side of index
-     QList<Link*> cross1; //on the side of index2
-
-
      //Update index
      foreach(Link* c, cross){
          QList<Link*> segments = shear_to_link[c];
          if(segments[0]->pointA==index2||segments[0]->pointB==index2||segments[1]->pointA==index2||segments[1]->pointB==index2){
              c->pointC=index2;
              crossover_map[index2]+=c;
-             cross2.removeOne(c);
-             cross1.push_back(c);
+             crossover_map[index].removeAll(c);
+             //cross2.removeOne(c);
+             //cross1.push_back(c);
              //removeFromHash(index,c,crossover_map);
          }
      }
+
+
+     QList<Link*> cross2 = crossover_map[index];  //on the side of index
+     QList<Link*> cross1 = crossover_map[index2]; //on the side of index2
+
      foreach(Link* c, cross2){
          int a = c->pointA;
          int b = c->pointB;
@@ -469,7 +472,7 @@ void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2){
          if(!onSide||!checkShearValid(c)){
              removeShear(c);
              cross2.removeOne(c);
-             cross.removeOne(c);
+             //cross.removeOne(c);
          }
      }
      foreach(Link* c, cross1){
@@ -479,7 +482,7 @@ void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2){
          if(!onSide||!checkShearValid(c)){
              removeShear(c);
              cross1.removeOne(c);
-             cross.removeOne(c);
+             //cross.removeOne(c);
          }
      }
      crossover_map[index]=cross2;
