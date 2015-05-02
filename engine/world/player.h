@@ -38,7 +38,7 @@ public:
     virtual void onKeyPressed(QKeyEvent *e);
     virtual void onKeyReleased(QKeyEvent *e);
 
-    virtual void handleCollision(Collision *col);
+    virtual void handleCollision(Collision *col, bool resetVel);
 
     void useSound(Audio *audio);
     glm::vec4 getCamEye();
@@ -48,9 +48,11 @@ protected:
     ActionCamera *m_camera;
     float m_offset;
     float m_maxOffset;
+    float m_offsetFactor;
 
     int m_wsad;
     bool m_canJump, m_jump;
+    bool m_jumping;
 
 private:
     float m_eyeHeight;

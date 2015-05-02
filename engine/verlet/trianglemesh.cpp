@@ -10,19 +10,29 @@
 
 //******************************CONSTRUCTING**********************************//
 TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
-      const glm::vec3& start, VerletManager* vm, GLuint shader)
+      const glm::vec3& start, VerletManager* vm, GLuint shader, int axis, float flat)
     : Verlet(vm),
     m_shader(shader)
 {
     int r = dimension.y;
     int c = dimension.x;
-
-    float half_w = w*.5;
     float h = (sqrt(3)/2.0) * w;
 
-    glm::vec3 width = glm::vec3(w,0,0);
-    glm::vec3 height = glm::vec3(0,-h,0);
-    glm::vec3 half_width = glm::vec3(half_w,0,0);
+    glm::vec3 width, height, half_width;
+
+    if(axis==0){ //x-axis
+        width = glm::vec3(w,0,0);
+        height = flat ? glm::vec3(0,0,-h) : glm::vec3(0,-h,0);
+    }
+    if(axis==1){ //y-axis
+        width = glm::vec3(0,w,0);
+        height = flat ? glm::vec3(-h,0,0) : glm::vec3(0,0,-h);
+    }
+    if(axis==2){ //z-axis
+        width = glm::vec3(0,0,w);
+        height = flat ? glm::vec3(-h,0,0) : glm::vec3(0,-h,0);
+    }
+    half_width = width*.5f;
 
     //Create points
     for(int i =0; i<r; i++){

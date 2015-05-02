@@ -11,14 +11,20 @@ class Grass: public Verlet
 {
 public:
     Grass(VerletManager *vm, GLuint shader);
-    ~Grass();
+    virtual ~Grass();
 
     void onTick(float seconds); //updates triangle vertices + normal
     void onDraw(Graphics *g);
     virtual void updateBuffer();
 
     //Grass doesn't collide with the surface, to save on runtimes
-    void collideSurface(OBJ* obj);
+    virtual void collideSurface(OBJ* obj);
+
+    // grass doesn't move the entity
+    virtual glm::vec3 collide(MovableEntity *e);
+
+    //grass has more noise
+    virtual void applyWind(Tri* t);
 
     void createPatch(const glm::vec2 &center, float radius, OBJ* obj);
     void setColor(const glm::vec3& base, const glm::vec3& mix){

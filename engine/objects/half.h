@@ -22,6 +22,10 @@ public:
     //Returns y corresponding w/ given x+z- doesn't consider hitbox
     bool findY(const glm::vec2 &coord, float& y);
 
+    glm::vec2 getCenter() { return center; }
+    glm::vec2 getYLimits() { return yLimits; }
+
+    bool inHitBox(const glm::vec3& pos);
 private:
     std::vector<Triangle*> _triangles;
     std::vector<Triangle> flatTri;

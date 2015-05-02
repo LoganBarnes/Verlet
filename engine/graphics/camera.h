@@ -15,6 +15,7 @@ public:
     glm::mat4 getFrustumMatrix();
     glm::vec4 getLook();
     glm::vec4 getUp();
+    glm::vec3 getRight();
     glm::vec4 getEye();
     float getAspectRatio();
 
@@ -29,7 +30,6 @@ public:
     void pitch(float degrees);
     void yaw(float degrees);
     void roll(float degrees);
-
 protected:
     void setCameraSpace();
     void setViewMatrix();

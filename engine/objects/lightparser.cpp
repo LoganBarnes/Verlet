@@ -10,13 +10,13 @@ LightParser::LightParser()
 }
 
 // Read in an obj file and make a list of lights from it to return
-QList<Light*> LightParser::getLights(const QString &path){
+QList<Light*> LightParser::getLights(const QString &path, glm::vec3 offset){
 
     QList<Light*> lights;
     QList<Triangle*> tris;
 
     OBJ* obj = new OBJ(0);
-    obj->read(path, &tris);
+    obj->read(path, &tris, offset);
 
     Light* light;
     int counter = 0;
@@ -27,7 +27,7 @@ QList<Light*> LightParser::getLights(const QString &path){
 
         // use triangle information to make a light
         light = new Light();
-        light->id = counter++;                  // index into array in shader
+        light->id = counter++;
 
 
         if(norm.y>0)

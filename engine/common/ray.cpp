@@ -14,8 +14,8 @@ Ray::Ray(Camera *camera)
 }
 
 Ray::Ray(const glm::vec3& source, const glm::vec3& direction){
-    m_source = source;
-    m_direction = direction;
+    m_p = glm::vec4(source,0);
+    m_d = glm::vec4(direction,0);
 }
 
 
@@ -50,9 +50,12 @@ float Ray::hitPlane(const glm::vec3& point, const glm::vec3& normal){
 }
 
 glm::vec3 Ray::getPointonPlane(const glm::vec3& point, const glm::vec3& normal){
-    float denom = glm::dot(normal, m_direction);
-    float t = glm::dot((point-m_source), normal) / denom;
-    return m_source+m_direction*t;
+    float t = hitPlane(point,normal);
+    return getPoint(t);
+}
+
+glm::vec3 Ray::getPointonPlane(const glm::vec3& point, const glm::vec4& normal){
+    return getPointonPlane(point,glm::vec3(normal));
 }
 
 //glm::vec4 Ray::intersectSphere(glm::mat4 invTrans)

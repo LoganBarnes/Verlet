@@ -22,7 +22,7 @@ public:
     Application();
     ~Application();
 
-    void init(ScreenH *initScreen);
+    void init();
 
     // set the current screen
     void addScreen(ScreenH *s);
@@ -61,6 +61,8 @@ public:
 
     void setUseCubeMap(bool use);
     GLuint getShader(GraphicsMode gm);
+    int getWidth() { return m_width; }
+    int getHeight() { return m_height; }
 
     // prepare graphics object for lighting
     void resetFBOs(int width, int height);

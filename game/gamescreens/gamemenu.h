@@ -2,7 +2,9 @@
 #define GAMEMENU_H
 
 #include "screen.h"
-#include "button.h"
+
+class Button;
+class SoundTester;
 
 class GameMenu : public ScreenH
 {
@@ -32,6 +34,7 @@ public:
 
 private:
     Button *m_startButton;
+    SoundTester *m_st;
     // Button m_settingsButton;
     // Button m_controlsButton;
 

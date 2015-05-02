@@ -10,8 +10,8 @@ typedef unsigned int GLuint;
 class TriangleMesh: public Verlet
 {
 public:
-    TriangleMesh(const glm::vec2& dimension, float width,
-                 const glm::vec3& start, VerletManager* vm, GLuint shader);
+    TriangleMesh(const glm::vec2& dimension, float width, const glm::vec3& start,
+                 VerletManager* vm, GLuint shader, int axis = 0, float flat = false);
     virtual ~TriangleMesh();
 
     void onTick(float seconds);

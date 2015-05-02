@@ -17,6 +17,7 @@ World::World()
     m_player = NULL;
     m_gravity = glm::vec3();
     useDeferredLighting = true;
+    m_timeElapsed = 0.0;
 }
 
 World::~World()
@@ -120,6 +121,7 @@ void World::onTick(float secs, float mouseX, float mouseY)
     }
 
     m_player->setCameraPos();
+    m_timeElapsed += secs;
 }
 
 ObjectsInfo *World::getObjectInfo()

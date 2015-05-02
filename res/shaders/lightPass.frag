@@ -53,7 +53,8 @@ void main(){
     }
 
     float diffuseIntensity = max(0.0, dot(vertexToLight, normal_worldSpace));
-    diffLight += max(vec3(0), lightColor * diffuseIntensity);
+//    diffLight += max(vec3(0), lightColor * diffuseIntensity);
+    diffLight += max(vec3(0), (normal_worldSpace.xyz * .2 + lightColor) * diffuseIntensity); // colors influenced by normals
 
     // specular componenent
     if (abs(shininess) > 0.001)

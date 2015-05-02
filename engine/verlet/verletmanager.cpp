@@ -10,33 +10,26 @@
 
 #define GLM_FORCE_RADIANS
 #include <gtc/matrix_transform.hpp>
+#include <gtx/norm.hpp>
 
 //#include "debugprinting.h"
 
-VerletManager::VerletManager(Camera *cam, GLuint shader)
+VerletManager::VerletManager(Camera *cam)
     : Manager(DEFAULT),
+      windPow(2),
       m_dragMode(false),
       m_draggedPoint(0),
       m_draggedVerlet(NULL),
+      m_windStart(false),
+      m_windMode(false),
+      m_windMaxPow(2.5),
+      m_windScalar(4),
       m_tearMode(false),
       m_tear_ptA(-1),
       m_tear_ptB(-1),
       m_tearVerlet(NULL),
       m_tearLink(NULL)
 {
-//    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,52), .3, glm::vec3(0,10,0), this, shader);
-//    tri2->createPin(0);
-//    tri2->createPin(11);
-//    addVerlet(tri2);
-
-//    Net* n2 = new Net(glm::vec2(50,50), glm::vec3(-10,10,10),
-//                     glm::vec3(0,0,.3), glm::vec3(.3,0,0), this, shader);
-//    for(int i=0;i<10;i++)
-//        n2->createPin(i*5);
-//    for(int i=0;i<10;i++)
-//        n2->createPin((49*50)+i*5);
-//    addVerlet(n2);
-
     m_ray = new Ray(cam);
     m_curV = -1;
     m_curI = -1;
@@ -128,26 +121,78 @@ void VerletManager::constraints(){
 
 void VerletManager::manage(World *world, float onTickSecs, float mouseX, float mouseY)
 {
+    //Wind direction
+    if(m_windStart){
+        m_windStart = false;
+        m_windStartPos = glm::vec2(mouseX,mouseY);
+
+        //find point in world space for drawing visualization
+        Camera* cam = world->getPlayer()->getCamera();
+        glm::vec3 look = glm::vec3(cam->getLook());
+        glm::vec3 direction = -1.0f*look;
+        glm::vec3 source = look + world->getPlayer()->getEyePos();
+        m_windStartVis = m_ray->getPointonPlane(source,direction);
+        m_windEndVis = m_windStartVis;
+    }
+    if(m_windMode){
+        glm::vec2 m_windEndPos = glm::vec2(mouseX,mouseY);
+        if(m_windStartPos!=m_windEndPos){ //causes nan -> disappearing verlet
+            glm::vec2 wind = m_windEndPos-m_windStartPos;
+            //Use length of drawn vector to determine wind strength
+            float factor = glm::length2(wind) * m_windScalar;
+            windPow = (factor>m_windMaxPow) ? m_windMaxPow : factor;
+
+            //Convert 'wind' (mouse movement in screenspace) to a vector on the xz plane
+            Camera* cam = world->getPlayer()->getCamera();
+            //Vectors are relative to where the camera is facing
+            glm::vec3 right = cam->getRight();
+            glm::vec3 forward = (glm::vec3) cam->getLook();
+            //Cancel out the y components, to that pitch doesn't effect calculations
+            //Since camera looks down at player, vector slopes down when blowing away && up when blowing towards player
+            forward.y = 0;
+            forward = glm::normalize(forward);
+            right.y = 0;
+            right = glm::normalize(right);
+            //Find the x (right) + z (forward) components and add them
+            glm::vec3 forwardComponent = forward*wind.y;
+            glm::vec3 rightComponent = right*wind.x;
+            glm::vec3 composite = forwardComponent+rightComponent;
+            composite = glm::normalize(composite)+this->gravity*-.075f*windPow; //offset gravity
+            m_windDirection = composite;
+
+            //Assign wind sign, so that noise can be correctly appleid per triangle in applyWind()
+            windSign = findSign(m_windDirection);
+
+            glm::vec3 look = glm::vec3(cam->getLook());
+            glm::vec3 direction = -1.0f*look;
+            glm::vec3 source = look + world->getPlayer()->getEyePos();
+            m_windEndVis = m_ray->getPointonPlane(source,direction);
+        }
+    }
+/*
+    float r = (.01 * (rand() %100))-0.5f;
+    glm::vec3 test = m_windDirection;
+    test.x+=r;
+    test.z+=r;
+    setWind(test);
+*/
     setWind(m_windDirection);
 
-    if(solve){
-        verlet(onTickSecs);
-        for(int i=0; i<_numSolves; i++)
-            constraints();
-        for(unsigned int i=0; i<verlets.size(); i++)
-            verlets.at(i)->onTick(onTickSecs);
-        updateBuffer();
-    }
+
 
     QList<MovableEntity *> mes = world->getMovableEntities();
     QList<OBJ* > obj = world->getObjs();
 
+    //Collide verlet against terrain
+    foreach(OBJ* o, obj)
+        this->collideSurface(o);
+
     Collision *col = new Collision();
     foreach (MovableEntity *me, mes)
     {
-        col->mtv = collideTerrain(me);
+        col->mtv = collideTerrain(me) * .5f;
         col->t = onTickSecs;
-        me->handleCollision(col);
+        me->handleCollision(col, !solve);
         //check if player (bottom of sphere) intersects w/ ground - assumes radius of 1
 
         foreach(OBJ* o, obj){
@@ -158,10 +203,6 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
         }
     }
     delete col;
-
-    //Collide verlet against terrain
-    foreach(OBJ* o, obj)
-        this->collideSurface(o);
 
     rayTrace(mouseX, mouseY);
 
@@ -220,12 +261,31 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
             m_tearLink = NULL;
         }
     }
+
+    if(solve){
+        verlet(onTickSecs);
+        for(int i=0; i<_numSolves; i++)
+            constraints();
+        for(unsigned int i=0; i<verlets.size(); i++)
+            verlets.at(i)->onTick(onTickSecs);
+        updateBuffer();
+    }
 }
 
 void VerletManager::onDraw(Graphics *g){
     g->setTexture("");
     for(unsigned int i=0; i<verlets.size(); i++)
         verlets.at(i)->onDraw(g);
+
+    //for wind
+    g->setAllWhite(true);
+    if(m_windMode){
+        glm::mat4 trans = glm::translate(glm::mat4(), m_windStartVis);
+        trans *= glm::scale(glm::mat4(), glm::vec3(.2,.2,.2));
+        g->drawSphere(trans);
+        g->drawLineSeg(m_windStartVis,m_windEndVis,.1,4);
+    }
+    g->setAllWhite(false);
 
     //for dragging
     if(m_dragMode){
@@ -279,6 +339,12 @@ void VerletManager::onMousePressed(QMouseEvent *e)
         m_draggedVerlet = getVerlet(m_curV);
         m_interpolate = m_draggedVerlet->getPoint(m_draggedPoint);
     }
+    //freeze
+    if(e->type() == QEvent::MouseButtonDblClick && e->button() == Qt::LeftButton)
+        enableSolve();
+    //tear
+    if(e->button() == Qt::RightButton)
+        m_tearMode=true;
 }
 
 void VerletManager::onMouseMoved(QMouseEvent *, float, float)
@@ -291,18 +357,24 @@ void VerletManager::onMouseReleased(QMouseEvent *e)
 {
     if(e->button() == Qt::LeftButton)
         m_dragMode = false;
+    if(e->button() == Qt::RightButton){
+        m_tearMode = false;
+        m_tear_ptA=-1;
+        m_tear_ptB=-1;
+        m_tearVerlet=NULL;
+    }
 }
 
 void VerletManager::onMouseDragged(QMouseEvent *, float, float)
-{
-    //if(m_dragMode)
-    //    m_draggedVerlet->setPos(m_draggedPoint, m_interpolate);
-}
+{}
 
 void VerletManager::onKeyPressed(QKeyEvent *e)
 {
-    if(e->key() == Qt::Key_T)
-        m_tearMode=true;
+    //wind
+    if(e->key() == Qt::Key_Shift){
+        m_windStart = true;
+        m_windMode = true;
+    }
 }
 
 void VerletManager::onKeyReleased(QKeyEvent *e)
@@ -312,23 +384,23 @@ void VerletManager::onKeyReleased(QKeyEvent *e)
     case Qt::Key_F:
         enableSolve();
         break;
+    case Qt::Key_Shift:
+        m_windMode = false;
+        break;
     case Qt::Key_Down:
-        m_windDirection = glm::vec3(0,0,1);
-        break;
-    case Qt::Key_Up:
-        m_windDirection = glm::vec3(0,0,-1);
-        break;
-    case Qt::Key_Left:
-        m_windDirection = glm::vec3(-1,0,0);
-        break;
-    case Qt::Key_Right:
         m_windDirection = glm::vec3(1,0,0);
         break;
-    case Qt::Key_T:
-        m_tearMode = false;
-        m_tear_ptA=-1;
-        m_tear_ptB=-1;
-        m_tearVerlet=NULL;
+    case Qt::Key_Up:
+        m_windDirection = glm::vec3(-1,0,0);
+        break;
+    case Qt::Key_Left:
+        m_windDirection = glm::vec3(0,0,1);
+        break;
+    case Qt::Key_Right:
+        m_windDirection = glm::vec3(0,0,-1);
+        break;
+    case Qt::Key_C:
+        m_windDirection = glm::vec3();
         break;
     default:
         break;

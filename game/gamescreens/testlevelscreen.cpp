@@ -11,15 +11,56 @@
 #include "soundtester.h"
 #include "grass.h"
 #include "trianglemesh.h"
+#include "half.h"
 
+#include "debugprinting.h"
 
 TestLevelScreen::TestLevelScreen(Application *parent)
-    : ScreenH(parent)
+    : ScreenH(parent),
+      m_world(NULL),
+      m_oh(NULL),
+      m_resetIndex(0)
 {
     m_parentApp->setMouseDecoupled(true);
     m_parentApp->setLeapRightClick(GRAB);
     m_parentApp->setLeapLeftClick(PINCH);
-//    m_parentApp->setMouseDecoupleKey(Qt::Key_Shift);
+
+    GLuint shader = m_parentApp->getShader(GEOMETRY);
+    m_oh = new ObjectHandler();
+    QList<Triangle *> tris;
+
+    OBJ *level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris, glm::vec3(0));
+    m_resetHalves.append(level->top);
+//    level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris);
+//    m_resetHalves.append(level->top);
+//    level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris);
+//    m_resetHalves.append(level->top);
+//    level = m_oh->getObject(":/objects/Level1d.obj", shader, &tris);
+//    m_resetHalves.append(level->top);
+//    level = m_oh->getObject(":/objects/Level1e.obj", shader, &tris);
+//    m_resetHalves.append(level->top);
+//    level = m_oh->getObject(":/objects/Level1g.obj", shader, &tris);
+//    m_resetHalves.append(level->top);
+
+    resetWorld(glm::vec3(0, 10, 0));
+
+}
+
+
+TestLevelScreen::~TestLevelScreen()
+{
+    delete m_world;
+    delete m_oh; // m_level is deleted here
+}
+
+
+void TestLevelScreen::resetWorld(glm::vec3 playerPos)
+{
+    if (m_world)
+    {
+        delete m_world;
+        m_world = NULL;
+    }
 
     GLuint shader = m_parentApp->getShader(GEOMETRY);
 //    GLuint shader = m_parentApp->getShader(DEFAULT);
@@ -30,122 +71,155 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     QList<Triangle *> tris5;
     QList<Triangle *> tris6;
 
-    m_oh = new ObjectHandler();
-
-    m_level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris);
-
-    //m_level->setTexture("01.png");
-    m_level->setTexture("grass.png");
+    OBJ *level = m_oh->getObject(":/objects/testsmall.obj", shader, &tris, glm::vec3(0));
+    //level->setTexture("one.png");
 
     // make an object handler for the lights and parse them in from an obj
     // save into a list of lights and send to the world
     LightParser lightParser;
-    QList<Light*> lights = lightParser.getLights(":/objects/island_lights.obj");
+    QList<Light*> lights = lightParser.getLights(":/objects/island_lights.obj", glm::vec3(0));
+
+//    Light *l = lights.value(0);
+//    lights.clear();
+//    lights.append(l);
 
     ActionCamera *cam;
     cam = new ActionCamera();
-        glm::vec3 playerPos = glm::vec3(0, 10, 0);
     cam->setCenter(playerPos);
 
     GamePlayer *player = new GamePlayer(cam, playerPos);
     player->useSound(m_parentApp->getAudioObject());
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
-    VerletManager *vm = new VerletManager(cam, shader);
+    VerletManager *vm = new VerletManager(cam);
 
     Grass* grass = new Grass(vm, shader);
-    grass->createPatch(glm::vec2(0,0),6,m_level);
+    grass->createPatch(glm::vec2(0,0),6,level);
     vm->addVerlet(grass);
 
-    // stairs
-
-    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(12,75), .3, glm::vec3(-5,1,0), vm, shader);
+    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(8,28), .6, glm::vec3(-5,0,-2.2), vm, shader,2);
     tri2->createPin(0);
-    tri2->createPin(11);
+    tri2->createPin(5);
     vm->addVerlet(tri2);
 
-    TriangleMesh* tri3 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-27,0,4), vm, shader);
+    TriangleMesh* tri3 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-27,0,4), vm, shader);
     tri3->createPin(0);
-    tri3->createPin(11);
+    tri3->createPin(5);
     vm->addVerlet(tri3);
 
-    TriangleMesh* tri4 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-32,4,4), vm, shader);
+    TriangleMesh* tri4 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-32,4,4), vm, shader);
     tri4->createPin(0);
-    tri4->createPin(11);
+    tri4->createPin(5);
     vm->addVerlet(tri4);
 
-    TriangleMesh* tri5 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-37,8,4), vm, shader);
+    TriangleMesh* tri5 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-37,8,4), vm, shader);
     tri5->createPin(0);
-    tri5->createPin(11);
+    tri5->createPin(5);
     vm->addVerlet(tri5);
 
-    TriangleMesh* tri6 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-42,12,4), vm, shader);
+    TriangleMesh* tri6 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-42,12,4), vm, shader);
     tri6->createPin(0);
-    tri6->createPin(11);
+    tri6->createPin(5);
     vm->addVerlet(tri6);
 
-    TriangleMesh* tri7 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-47,16,4), vm, shader);
+    TriangleMesh* tri7 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-47,16,4), vm, shader);
     tri7->createPin(0);
-    tri7->createPin(11);
+    tri7->createPin(5);
     vm->addVerlet(tri7);
 
-    TriangleMesh* tri8 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-52,19,4), vm, shader);
+    TriangleMesh* tri8 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-52,19,4), vm, shader);
     tri8->createPin(0);
-    tri8->createPin(11);
+    tri8->createPin(5);
     vm->addVerlet(tri8);
 
-    TriangleMesh* tri9 = new TriangleMesh(glm::vec2(12,35), .3, glm::vec3(-60,19,4), vm, shader);
+    TriangleMesh* tri9 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-60,19,4), vm, shader);
     tri9->createPin(0);
-    tri9->createPin(11);
+    tri9->createPin(5);
     vm->addVerlet(tri9);
 
+    TriangleMesh* tri10 = new TriangleMesh(glm::vec2(6,25), .6, glm::vec3(-74,18,-2), vm, shader,2,true);
+    tri10->createPin(0);
+    tri10->createPin(5);
+    tri10->createPin(144);
+    tri10->createPin(149);
+    vm->addVerlet(tri10);
+
+    TriangleMesh* tri11 = new TriangleMesh(glm::vec2(8,22), .3, glm::vec3(-88,-8,-2.2), vm, shader,2,true);
+    tri11->createPin(0);
+    tri11->createPin(7);
+    vm->addVerlet(tri11);
+
+
     m_world = new GameWorld();
+
     m_world->setLights(lights);
     m_world->addManager(gcm);
     m_world->addManager(vm);
-    m_world->addObject(m_level);
-//    m_world->addObject(m_oh->getObject(":/objects/Level1b.obj", shader, &tris2));
-//    m_world->addObject(m_oh->getObject(":/objects/Level1c.obj", shader, &tris3));
-//    m_world->addObject(m_oh->getObject(":/objects/Level1d.obj", shader, &tris4));
+    m_world->addObject(level);
+    m_world->addObject(m_oh->getObject(":/objects/testsmall.obj", shader, &tris2, glm::vec3(-35,0,0)));
+    m_world->addObject(m_oh->getObject(":/objects/testsmall.obj", shader, &tris3, glm::vec3(-55,30,0)));
+    m_world->addObject(m_oh->getObject(":/objects/WoodenPost.obj", shader, &tris4, glm::vec3(0)));
+//    m_world->addObject(m_oh->getObject(":/objects/Stone.obj", shader, &tris5, glm::vec3(0)));
 //    m_world->addObject(m_oh->getObject(":/objects/Level1e.obj", shader, &tris5));
-//    m_world->addObject(m_oh->getObject(":/objects/Level1f.obj", shader, &tris6));
+//    m_world->addObject(m_oh->getObject(":/objects/Level1g.obj", shader, &tris6));
 
     m_world->setPlayer(player);
     m_world->addToMesh(tris);
-//    m_world->addToMesh(tris2);
-//    m_world->addToMesh(tris3);
-//    m_world->addToMesh(tris4);
+    m_world->addToMesh(tris2);
+    m_world->addToMesh(tris3);
+    m_world->addToMesh(tris4);
 //    m_world->addToMesh(tris5);
 //    m_world->addToMesh(tris6);
 
     m_world->setGravity(glm::vec3(0,-10,0));
 
-    // uncomment to play sound at the origin
-    SoundTester *st = new SoundTester(glm::vec3());
-    st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
-    st->playSound();
-    m_world->addMovableEntity(st);
-
     setCamera(cam);
+    player->setMaxOffset(50); //zoom
 
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.02f / cam->getAspectRatio(), .02f, .02f));
     m_cursor[3][2] = -.999f;
 
     m_drawCursor = true;
     m_deltas = glm::vec2(0);
-}
 
-
-TestLevelScreen::~TestLevelScreen()
-{
-    delete m_world;
-    delete m_oh; // m_level is deleted here
+    onResize(m_parentApp->getWidth(), m_parentApp->getHeight());
 }
 
 // update and render
 void TestLevelScreen::onTick(float secs)
 {
     m_world->onTick(secs, m_cursor[3][0], m_cursor[3][1]);
+
+    if (m_world->getPlayer()->getPosition().y < -50)
+    {
+        Half *h = m_resetHalves.value(m_resetIndex);
+        glm::vec2 c = h->getCenter();
+        resetWorld(glm::vec3(c.x, h->getYLimits().y + 5.f, c.y));
+    }
+
+    glm::vec3 pos = m_world->getPlayer()->getPosition();
+    for (int i = 0; i < m_resetHalves.size(); i++)
+    {
+        if (m_resetHalves.value(i)->inHitBox(pos)&&i>m_resetIndex)
+        {
+            m_resetIndex = i;
+            break;
+        }
+    }
+
+
+    if(pos.z > 1.5){
+
+        // draw a full screen quad with a texture
+        // display a texture (later activated by objects and hit boxes)
+
+
+
+    }
+//    else
+//        // display regular world
+//    cout<<"player positin: "<<pos.x<<" "<<pos.y<<" "<<pos.z<<endl;
+
 }
 
 
@@ -172,7 +246,8 @@ void TestLevelScreen::render2D(Graphics *g)
     if (m_drawCursor)
     {
         g->setTexture("");
-        g->setAllWhite(true);
+        g->setColor(1, 0, 0, 1, 0);
+//        g->setAllWhite(true);
         g->drawSphere(m_cursor);
         g->setAllWhite(false);
     }
@@ -238,7 +313,7 @@ void TestLevelScreen::onResize(int w, int h)
 
 void TestLevelScreen::onMousePressed(QMouseEvent *e)
 {
-    if (e->button() == Qt::RightButton)
+    if (e->button() == Qt::MidButton)   //Qt::RightButton
         m_parentApp->setMouseDecoupled(false);
 
     m_world->onMousePressed(e);
@@ -246,11 +321,13 @@ void TestLevelScreen::onMousePressed(QMouseEvent *e)
 
 void TestLevelScreen::onMouseReleased(QMouseEvent *e)
 {
-    if (e->button() == Qt::RightButton)
+    if (e->button() == Qt::MidButton)  //Qt::RightButton
         m_parentApp->setMouseDecoupled(true);
 
     m_world->onMouseReleased(e);
 }
 
 // unused in game
-void TestLevelScreen::onMouseWheel(QWheelEvent *) {}
+void TestLevelScreen::onMouseWheel(QWheelEvent *e) {
+    m_world->onMouseWheel(e);
+}

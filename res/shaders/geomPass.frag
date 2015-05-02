@@ -1,7 +1,7 @@
 #version 410 core
 
-in vec4 worldPos;
-in vec4 worldNormal;
+in vec4 position_worldSpace;
+in vec4 normal_worldSpace;
 
 //in vec4 position_cameraSpace;
 //in vec4 normal_cameraSpace;
@@ -18,7 +18,7 @@ uniform vec4 materialColor;         // keeps diffuse color and monochromatic spe
 
 void main(){
 
-    out0 = worldPos;
-    out1 = worldNormal;
-    out2 = worldNormal;
+    out0 = position_worldSpace;
+    out1 = normal_worldSpace;
+    out2 = materialColor;
 }

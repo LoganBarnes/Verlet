@@ -18,6 +18,7 @@
     <qresource prefix="/images">
         <file alias="play.png">res/images/play.png</file>
         <file alias="grass.png">res/images/grass.png</file>
+        <file alias="one.png">res/images/one.png</file>
     </qresource>
     <qresource prefix="/cubemap">
         <file alias="posx.jpg">res/cubemap/posx.jpg</file>
@@ -29,7 +30,6 @@
     </qresource>
     <qresource prefix="/objects">
         <file alias="test.obj">res/objects/test.obj</file>
-        <file alias="testsmall.obj">res/objects/testsmall.obj</file>
         <file alias="level_one.obj">res/objects/level_one.obj</file>
         <file alias="island_lights.obj">res/objects/island_lights.obj</file>
         <file alias="LevelRiver.obj">res/objects/LevelRiver.obj</file>
@@ -40,7 +40,11 @@
         <file alias="Level1d.obj">res/objects/Level1d.obj</file>
         <file alias="Level1e.obj">res/objects/Level1e.obj</file>
         <file alias="Level1f.obj">res/objects/Level1f.obj</file>
+        <file alias="Level1g.obj">res/objects/Level1g.obj</file>
         <file alias="Level1Lights.obj">res/objects/justLights.obj</file>
+        <file alias="testsmall.obj">res/objects/SingleIsland.obj</file>
+        <file alias="WoodenPost.obj">res/objects/WoodenPost.obj</file>
+        <file alias="Stone.obj">res/objects/Stone.obj</file>
     </qresource>
     <qresource prefix="/audio">
         <file alias="kickDrumMod.wav">res/audio/kickDrumMod.wav</file>

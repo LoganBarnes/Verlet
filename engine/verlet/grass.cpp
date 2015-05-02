@@ -2,9 +2,12 @@
 #include "mesh.h"
 #include "graphics.h"
 #include "obj.h"
+#include "movableentity.h"
+#include "verletmanager.h"
 
 #define GLM_FORCE_RADIANS
 #include <gtc/type_ptr.hpp>
+#include <gtx/norm.hpp>
 
 Grass::Grass(VerletManager* vm, GLuint shader):
     Verlet(vm),
@@ -13,6 +16,8 @@ Grass::Grass(VerletManager* vm, GLuint shader):
     m_shader(shader)
 {
     m_mesh = new Mesh();
+    windNoise =.15;
+
 }
 
 Grass::~Grass()
@@ -30,6 +35,36 @@ void Grass::onTick(float ){
     }
 }
 
+void Grass::applyWind(Tri* t){
+    //wind has full effect to perpendicular cloth, none on parallel cloth
+    float r = (.03 * (rand() %100))-1.5f;
+
+    glm::vec3 windDirection = _manager->wind;
+    windDirection.x+=r;
+    windDirection.z+=r;
+    /*
+    float r = (.02 * (rand() %100))-1.f;
+    glm::vec3 test = m_windDirection;
+    test.x+=r;
+    test.z+=r;
+    setWind(test);
+    //float windScalar =  glm::dot(windDirection, t->normal);
+
+    //if(windScalar<0)
+    //    windScalar*=-1;
+*/
+    glm::vec3 windForce = windDirection*_manager->windPow; //*windScalar;
+/*
+    //Apply noise
+    float noise = windNoise;
+    windForce.z += -1*_manager->windSign.x*((t->random*noise)-noise*.5);
+    windForce.x += 1*_manager->windSign.z*((t->random*noise)-noise*.5);
+*/
+    _acc[t->a] += windForce;
+    _acc[t->b] += windForce;
+    _acc[t->c] += windForce;
+}
+
 void Grass::updateBuffer()
 {
 //    m_mesh->setVerts(getPosArray(), getNormArray());
@@ -38,8 +73,9 @@ void Grass::updateBuffer()
 
 void Grass::onDraw(Graphics *g)
 {
+    GLuint shader = g->getShader(CURRENT);
     g->setColor(.3f,.7,.5f,1.f,0.f);
-    glUniformMatrix4fv(glGetUniformLocation(m_shader, "model"),
+    glUniformMatrix4fv(glGetUniformLocation(shader, "model"),
                        1, GL_FALSE, glm::value_ptr(glm::mat4()));
     m_mesh->onDraw(GL_TRIANGLES);
 }
@@ -71,14 +107,6 @@ void Grass::createPatch(const glm::vec2& center, float radius, OBJ* obj){
         if(onSurface) //grass extending over edge of platform isn't created
             createStrand3(glm::vec3(x,y,z), segments, length);
     }
-    /*
-    createPoint(glm::vec3(0,0,0));
-    createPoint(glm::vec3(1,0,0));
-    createPoint(glm::vec3(0,0,1));
-
-    Tri* test = new Tri(0,2,1);
-    _triangles.push_back(test);
-    */
     m_mesh->initTriangles(m_shader, _triangles, getPosArray());
 }
 
@@ -135,4 +163,30 @@ void Grass::createStrand(const glm::vec3 &s, int segments, float length){
     //Secure the two points: 0 below ground level, 1 at ground level
     createPin(index0);
     createPin(index0+1);
+}
+
+
+glm::vec3 Grass::collide(MovableEntity *e)
+{
+    glm::vec3 center = e->getPosition();
+    float radius = 1.f;
+    bool solve = _manager->solve; //determines whether to move points themselves
+
+    for(int i=0; i<numPoints; i++) {
+        glm::vec3 dist =_pos[i]-center; //distance between entity + point
+        float radiusSquared = radius * radius;
+        if(radiusSquared>glm::length2(dist)){  //colliding
+
+            //mtv
+            glm::vec3 unit = glm::normalize(dist);
+            float factor = glm::length(dist)-radius;
+            glm::vec3 extra = unit*factor;
+
+            if(solve)
+                _pos[i]=_pos[i]-(extra*sphereInfluence);
+
+        }
+    }
+
+    return glm::vec3();
 }

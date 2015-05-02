@@ -102,6 +102,7 @@ void Graphics::init()
     m_defaultLocs["projection"] = glGetUniformLocation(defaultShader, "projection");
     m_defaultLocs["view"] = glGetUniformLocation(defaultShader, "view");
     m_defaultLocs["model"] = glGetUniformLocation(defaultShader, "model");
+    m_geomLocs["invModel"] = glGetUniformLocation(defaultShader, "invModel");
 
     m_defaultLocs["diffuse_color"] = glGetUniformLocation(defaultShader, "diffuse_color");
     m_defaultLocs["world_color"] = glGetUniformLocation(defaultShader, "world_color");
@@ -164,6 +165,7 @@ void Graphics::init()
     m_geomLocs["projection"] = glGetUniformLocation(geomShader, "projection");
     m_geomLocs["view"] = glGetUniformLocation(geomShader, "view");
     m_geomLocs["model"] = glGetUniformLocation(geomShader, "model");
+    m_geomLocs["invModel"] = glGetUniformLocation(geomShader, "invModel");
     m_geomLocs["materialColor"] = glGetUniformLocation(geomShader, "materialColor");
     m_geomLocs["shininess"] = glGetUniformLocation(geomShader, "shininess");
 
@@ -381,6 +383,7 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
         break;
     }
     case CUBEMAP:
+    case CURRENT:
     {
         break;
     }
@@ -489,6 +492,7 @@ GLuint Graphics::getShader(GraphicsMode m){
         return m_shaders["compositeShader"];
     case FOG:
         return m_shaders["fogShader"];
+    case CURRENT:
     default:
         return m_currentShader;
     }
@@ -783,8 +787,7 @@ void Graphics::drawMesh(Mesh *mesh, glm::mat4 trans, GLenum mode)
 
 void Graphics::drawObject(OBJ *obj, glm::mat4 trans)
 {
-    setColor(.28f, .81f, .8f, 1.1f, 0);
-    obj->draw(trans, m_currentShader);
+    obj->draw(trans, m_currentShader, this);
 }
 
 

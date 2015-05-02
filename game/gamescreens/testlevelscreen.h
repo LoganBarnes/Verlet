@@ -11,6 +11,7 @@ class OBJ;
 class VerletManager;
 class Verlet;
 struct Link;
+class Half;
 
 class TestLevelScreen : public ScreenH
 {
@@ -41,14 +42,19 @@ private:
     void render2D(Graphics *g);
     void adjustDeltasForLeap(float *deltaX, float *deltaY);
 
+    void resetWorld(glm::vec3 playerPos);
+
     GameWorld *m_world;
     ObjectHandler *m_oh;
-    OBJ *m_level;
+
+    QList<Half*> m_resetHalves;
+    int m_resetIndex;
 
     glm::mat4 m_cursor;
     bool m_drawCursor;
     glm::vec2 m_deltas;
 
+    int _island;
 };
 
 #endif // TESTLEVELSCREEN_H

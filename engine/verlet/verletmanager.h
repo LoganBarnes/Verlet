@@ -14,7 +14,7 @@ struct Link;
 class VerletManager: public Manager
 {
 public:
-    VerletManager(Camera *cam, GLuint shader);
+    VerletManager(Camera *cam);
     ~VerletManager();
 
     void addVerlet(Verlet* v);
@@ -39,9 +39,13 @@ public:
     virtual void onKeyReleased(QKeyEvent *e);
 
     //Settings
-    glm::vec3 gravity = glm::vec3(0,-3,0);
+    glm::vec3 gravity = glm::vec3(0,-1.5,0);
     glm::vec3 wind = glm::vec3(0,0,0.5);
-    float windPow = 3;
+    //multiplier for noise (in applyWind) based on signs of 'wind'
+    glm::vec3 windSign = glm::vec3(1,1,1);
+    float windPow;
+    float windNoise; //how much random noise (per triangle)
+
 
     //Whether constraints are solved
     bool solve = true;
@@ -81,6 +85,21 @@ private:
 
     //testing wind
     glm::vec3 m_windDirection;
+    glm::vec2 m_windStartPos;
+    glm::vec3 m_windStartVis;
+    glm::vec3 m_windEndVis;
+    bool m_windStart;
+    bool m_windMode;
+    float m_windMaxPow;
+    float m_windScalar; //how much mouse movement changes wind power
+
+    //Calculating sign of wind for noise application. Doesn't actualy return right sign
+    int findSign(const float& f){
+        return (f>0) ? 1 : -1;
+    }
+    glm::vec3 findSign(const glm::vec3& v){
+        return glm::vec3(findSign(v.x),findSign(v.y),findSign(v.z));
+    }
 
     //testing tearing
     bool m_tearMode;

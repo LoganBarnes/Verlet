@@ -170,6 +170,8 @@ void Shape::transformAndRender(GLuint shader, glm::mat4 trans, GLenum mode)
 {
     glBindVertexArray(m_vaoID);
     glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(trans));
+    glm::mat3 invTrans = glm::mat3(glm::transpose(glm::inverse(trans)));
+    glUniformMatrix3fv(glGetUniformLocation(shader, "invModel"), 1, GL_FALSE, glm::value_ptr(invTrans));
     glDrawArrays(mode, 0, m_numVerts);
     glBindVertexArray(0);
 }

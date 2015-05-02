@@ -40,17 +40,19 @@ public:
     QList<glm::vec3> normals;
     QList<Tri> triangles;
 
-    void draw(glm::mat4 trans, GLuint shader) const;
+    void draw(glm::mat4 trans, GLuint shader, Graphics *g) const;
     void drawTriangle(int start, glm::mat4 trans) const;
-    bool read(const QString &path, QList<Triangle *> *tris);
+    bool read(const QString &path, QList<Triangle *> *tris, glm::vec3 offset);
     bool write(const QString &path) const;
+
+    void makeTriList(QList<Triangle *> *tris);
 
     void setTexture(QString tex) { m_texture = tex; }
     void setColor(glm::vec4 color) { m_color = color; }
 
     GLuint getShader();
 
-    //VERLET COLLISION TESTING
+    //VERLET COLLISION
     Half* top;
     Half* bot;
     //Adjust a point within a Half's hitbox to be outside of the mesh

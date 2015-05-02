@@ -19,7 +19,7 @@ OBJ::OBJ(GLuint shader)
     m_vboID = 0;
 
     m_texture = "";
-    m_color = glm::vec4(1, 1, 1, 0); // w is shininess (no transparency for objs)
+    m_color = glm::vec4(.5f, .5f, .5f, 0); // w is shininess (no transparency for objs)
 }
 
 OBJ::~OBJ()
@@ -55,11 +55,15 @@ GLuint OBJ::getShader()
     return m_shader;
 }
 
-void OBJ::draw(glm::mat4 trans, GLuint shader) const
+void OBJ::draw(glm::mat4 trans, GLuint shader, Graphics *g) const
 {
+    g->setTexture(m_texture);
+    g->setColor(m_color.r, m_color.g, m_color.b, 1, m_color.w);
 
     glBindVertexArray(m_vaoID);
     glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(trans));
+    glm::mat3 invTrans = glm::mat3(glm::transpose(glm::inverse(trans)));
+    glUniformMatrix3fv(glGetUniformLocation(shader, "invModel"), 1, GL_FALSE, glm::value_ptr(invTrans));
     glDrawArrays(GL_TRIANGLES, 0, m_numVerts);
     glBindVertexArray(0);
 }
@@ -77,7 +81,7 @@ static bool inBounds(int i, int size)
     return (i >= 0 && i < size);
 }
 
-bool OBJ::read(const QString &path, QList<Triangle *> *tris)
+bool OBJ::read(const QString &path, QList<Triangle *> *tris, glm::vec3 offset)
 {
     // Open the file
     QFile file(path);
@@ -95,7 +99,7 @@ bool OBJ::read(const QString &path, QList<Triangle *> *tris)
         if (parts.isEmpty()) continue;
 
         if (parts[0] == "v" && parts.count() >= 4) {
-            vertices += glm::vec3(parts[1].toFloat(), parts[2].toFloat(), parts[3].toFloat());
+            vertices += (glm::vec3(parts[1].toFloat(), parts[2].toFloat(), parts[3].toFloat())+offset);
         } else if (parts[0] == "vt" && parts.count() >= 3) {
             coords += glm::vec2(parts[1].toFloat(), parts[2].toFloat());
         } else if (parts[0] == "vn" && parts.count() >= 4) {
@@ -248,4 +252,12 @@ OBJ::Index OBJ::getIndex(const QString &str) const
     int coord = parts.count() > 1 ? relativeIndex(parts[1].toInt(), coords.size()) : -1;
     int normal = parts.count() > 2 ? relativeIndex(parts[2].toInt(), normals.size()) : -1;
     return Index(vertex, coord, normal);
+}
+
+void OBJ::makeTriList(QList<Triangle *> *tris)
+{
+    foreach (Tri tri, triangles)
+    {
+        tris->append(new Triangle(vertices[tri.a.vertex], vertices[tri.b.vertex], vertices[tri.c.vertex]));
+    }
 }

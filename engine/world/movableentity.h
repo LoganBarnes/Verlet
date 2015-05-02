@@ -13,7 +13,7 @@ public:
 
     virtual void onTick(float secs);
 
-    virtual void handleCollision(Collision *col);
+    virtual void handleCollision(Collision *col, bool resetVel = false);
 
     virtual float getMass();
     virtual glm::vec3 getVelocity();

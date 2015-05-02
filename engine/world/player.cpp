@@ -3,15 +3,19 @@
 
 #define GLM_FORCE_RADIANS
 #include <gtx/norm.hpp>
+#include <iostream>
+using namespace std;
 
 Player::Player(ActionCamera *cam, glm::vec3 pos)
     : MovableEntity(pos),
       m_camera(cam),
       m_offset(0.f),
       m_maxOffset(15.f),
+      m_offsetFactor(.1),
       m_wsad(0),
       m_canJump(false),
       m_jump(false),
+      m_jumping(false),
       m_eyeHeight(.75f),
       m_yaw(0.f),
       m_pitch(0.f)
@@ -39,6 +43,7 @@ void Player::setEyeHeight(float height)
 
 void Player::onTick(float secs)
 {
+    glm::vec3 v = getVelocity();
 
     float forceAmt = 8.f;
     glm::vec3 force = glm::vec3();
@@ -50,8 +55,14 @@ void Player::onTick(float secs)
         force.x -= 1;
     if (m_wsad & 0b0001)
         force.x += 1;
-    if (m_jump && m_canJump)
-        force.y += 20.f;
+    if (m_jump && m_canJump){
+        m_canJump = false;
+        m_jumping = true;
+        v.y = 11.f;
+    }
+
+    //else if (m_jump&&!m_canJump)
+    //    m_jump = false;
 
     glm::vec4 look = m_camera->getLook();
 
@@ -59,14 +70,26 @@ void Player::onTick(float secs)
     thrust += glm::normalize(glm::vec3(-look.z, 0.f, look.x)) * force.x;
     if (glm::length2(thrust) > 0.00001)
         thrust = glm::normalize(thrust) * forceAmt;
-    thrust.y = force.y;
+//    thrust.y = force.y;
 
-    glm::vec3 vel = (thrust - m_vel);
-    vel.y = thrust.y;
-    applyImpulse(vel);
+//    glm::vec3 vel = (thrust - m_vel);
+//    vel.y = 0;
+//    applyImpulse(vel);
+
+    v.x = thrust.x;
+    v.z = thrust.z;
+
+    if(m_jumping){ //less horizontal displacement allows more controlled landing
+        v.x=v.x*.7;
+        v.z=v.z*.7;
+    }
+    setVelocity(v);
+//    if (m_canJump)
+//        applyForce(glm::vec3(0, 10, 0) * getMass()); // no gravity on cloth hack
     MovableEntity::onTick(secs);
 
-    m_canJump = false;
+    //m_canJump = false; //jump latency issue due to this being set to false before space is activated?
+    m_jump = false;
 }
 
 
@@ -92,10 +115,12 @@ glm::vec3 Player::getEyePos()
 // mouse event
 void Player::onMouseMoved(QMouseEvent *, float deltaX, float deltaY)
 {
+
+    cout<<"here"<<endl;
     m_yaw += deltaX / 10.f;
     m_pitch += deltaY / 10.f;
-//    m_camera->yaw(deltaX / 10.f);
-//    m_camera->pitch(deltaY / 10.f);
+    m_camera->yaw(deltaX / 10.f);
+    m_camera->pitch(deltaY / 10.f);
 }
 
 // key events
@@ -164,19 +189,26 @@ void Player::onKeyReleased(QKeyEvent *e)
     case Qt::Key_D:
         m_wsad &= 0b1110;
         break;
-    case Qt::Key_Space:
-        m_jump = false;
-        break;
     default:
         break;
     }
 }
 
 
-void Player::handleCollision(Collision *col)
+void Player::handleCollision(Collision *col, bool resetVel)
 {
-    if (glm::dot(col->impulse, glm::vec3(0, 1, 0)) > .5)
+    //if (glm::dot(col->impulse, glm::vec3(0, 1, 0)) > 1)
+    if(col->impulse.y>0)
+    {
+        m_jumping = false;
         m_canJump = true;
+        if (resetVel)
+        {
+            glm::vec3 v = getVelocity();
+            v.y = 0;
+            setVelocity(v);
+        }
+    }
 
 }
 
@@ -185,7 +217,14 @@ void Player::onMousePressed(QMouseEvent *) {}
 void Player::onMouseReleased(QMouseEvent *) {}
 
 void Player::onMouseDragged(QMouseEvent *, float, float) {}
-void Player::onMouseWheel(QWheelEvent *) {}
+void Player::onMouseWheel(QWheelEvent *e) {
+    int scroll = e->delta();
+    if((scroll>0)&&(m_offset>0))
+        m_offset*=(1-m_offsetFactor);
+    else if((scroll<0)&&(m_offset<m_maxOffset))
+        m_offset*=(1+m_offsetFactor);
+    m_camera->setOffset(m_offset);
+}
 
 void Player::useSound(Audio *audio)
 {

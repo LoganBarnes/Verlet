@@ -54,7 +54,8 @@ void View::initializeGL()
     }
 
     // init the Graphics object.
-    m_app->init(new GameMenu(m_app));
+    m_app->init();
+    m_app->addScreen(new GameMenu(m_app));
 
     // Enable depth testing, so that objects are occluded based on depth instead of drawing order.
     glEnable(GL_DEPTH_TEST);
@@ -79,7 +80,7 @@ void View::initializeGL()
     // Start a timer that will try to get 60 frames per second (the actual
     // frame rate depends on the operating system and other running programs)
     time.start();
-    timer.start(/*1000 / 60*/);
+    timer.start(1000 / 60);
 
     // Center the mouse, which is explained more in mouseMoveEvent() below.
     // This needs to be done here because the mouse may be initially outside
@@ -124,7 +125,7 @@ void View::paintGL()
 //    else if (fps > 30.f)
 //        m_fpsInit = true;
 
-//    // Can't use Core profile with this
+    // Can't use Core profile with this
 //    glUseProgram(0);
 //    glColor3f(1.f, 1.f, 1.f);
 //    renderText(10, 20, "FPS: " + QString::number((int) (fps)));
