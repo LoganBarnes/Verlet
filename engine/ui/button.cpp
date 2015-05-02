@@ -49,7 +49,6 @@ void Button::onDraw(Graphics *g)
 {
     g->setWorldColor(1, 1, 1);
     g->setColor(m_color.r, m_color.g, m_color.b, m_color.a, 0);
-
     if (m_image.size() > 0)
         g->setTexture(m_image);
 

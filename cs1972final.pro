@@ -118,7 +118,8 @@ SOURCES += \
     game/entities/soundtester.cpp \
     engine/objects/half.cpp \
     engine/verlet/grass.cpp \
-    engine/objects/lightparser.cpp
+    engine/objects/lightparser.cpp \
+    game/entities/marker.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -177,7 +178,8 @@ HEADERS += \
     game/entities/soundtester.h \
     engine/objects/half.h \
     engine/verlet/grass.h \
-    engine/objects/lightparser.h
+    engine/objects/lightparser.h \
+    game/entities/marker.h
 
 
 FORMS += engine/ui/mainwindow.ui

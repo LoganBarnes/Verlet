@@ -80,11 +80,23 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
     VerletManager *vm = new VerletManager(cam);
 
+    QList<Triangle*> tris5;
+
+    //MARKER OBJECTS:
+    OBJ* objMarker1 = m_oh->getObject(":/objects/Stone.obj", shader, &tris5, glm::vec3(0));
+    Marker* marker1 = new Marker(objMarker1, glm::vec2(0.f, 0.f), glm::vec2(1.2,1.2), "freezeSign.png");
+    m_markers.append(marker1);
+    //END MARKER OBJECTS
+
     m_world = new GameWorld();
     m_world->setLights(lights);
     m_world->addManager(gcm);
     m_world->addManager(vm);
+
+    m_world->addObject(objMarker1);
     m_world->setPlayer(player);
+    m_world->addToMesh(tris5);
+
     m_world->setGravity(glm::vec3(0,-10,0));
     setCamera(cam);
     player->setMaxOffset(50); //zoom
@@ -93,12 +105,6 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     OBJ* island1 = addIsland(":/objects/testsmall.obj",shader,glm::vec3(0));
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-20,0,0));
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-55,30,0));
-
-    //Marker
-    QList<Triangle *> tris4;
-    OBJ* marker = m_oh->getObject(":/objects/WoodenPost.obj", shader, &tris4, glm::vec3(0));
-    m_world->addObject(marker);
-    m_world->addToMesh(tris4);
 
     //Add all verlet entities
     vm->addVerlet(new TriangleMesh(glm::vec2(8,18), .6, glm::vec3(-5,0,-2.2), vm, shader,Z,true,HORIZONTAL_EDGE));
@@ -146,34 +152,17 @@ void TestLevelScreen::onTick(float secs)
             break;
         }
     }
-    /*
-    for (int i = 0; i < m_resetHalves.size(); i++)
-    {
-        if (m_resetHalves.value(i)->inHitBox(pos)&&i>m_resetIndex)
-        {
-            m_resetIndex = i;
-            break;
-        }
-    }
-    */
-
-    if(pos.z > 1.5){
-
-        // draw a full screen quad with a texture
-        // display a texture (later activated by objects and hit boxes)
-
-
-
-    }
-//    else
-//        // display regular world
-//    cout<<"player positin: "<<pos.x<<" "<<pos.y<<" "<<pos.z<<endl;
-
 }
 
 
 void TestLevelScreen::onRender(Graphics *g)
 {
+    // draw markers first
+    foreach(Marker* marker, m_markers){
+        if(marker->isInRange(m_world->getPlayer()->getPosition(), 1.8))
+            marker->displayTexture(g);
+    }
+
     g->setWorldColor(.2f,.2f,.2f);
     g->setColor(1,1,1,1,0);
 
