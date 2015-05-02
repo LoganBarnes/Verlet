@@ -4,6 +4,7 @@
 #include "world.h"
 #include "obj.h"
 #include "verletmanager.h"
+#include "button.h"
 
 class GameWorld : public World
 {

@@ -27,11 +27,13 @@ public:
 
     bool contains(float x, float y);
 
-private:
     QString m_image;
     glm::mat4 m_trans;
     glm::vec4 m_color;
     glm::vec2 m_size;
+
+private:
+
 
 };
 

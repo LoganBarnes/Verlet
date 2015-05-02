@@ -4,6 +4,7 @@
 #include "screen.h"
 #include "audio.h"
 #include "lightparser.h"
+#include "marker.h"
 
 class GameWorld;
 class ObjectHandler;
@@ -55,6 +56,8 @@ private:
     glm::vec2 m_deltas;
 
     int _island;
+
+    QList<Marker*> m_markers;
 };
 
 #endif // TESTLEVELSCREEN_H

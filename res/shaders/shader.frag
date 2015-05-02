@@ -56,10 +56,10 @@ void main()
         else
             continue;
 
-//        if (transparency < 1.0)
-//            color = diffuse_color;
-//        else
-//        {
+        if (transparency < 1.0)
+            color = diffuse_color;
+        else
+        {
             // Add diffuse component
             float diffuseIntensity = max(0.0, dot(vertexToLight, norm_camSpace));
             color += max(vec3(0), lightColors[i] * diffCol * diffuseIntensity);
@@ -72,7 +72,7 @@ void main()
                 float specIntensity = pow(max(0.0, dot(eyeDirection, lightReflection)), shininess);
                 color += max (vec3(0), lightColors[i] * specular_color * specIntensity);
             }
-//        }
+        }
     }
     color = clamp(color + allWhite, 0.0, 1.0) * allBlack;
 

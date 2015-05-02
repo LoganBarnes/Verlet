@@ -128,6 +128,20 @@ void GameWorld::drawShapes(Graphics *g, int pass, GLuint shader){
 }
 
 void GameWorld::onDraw(Graphics *g){
+//    // Draw any signs that are in range
+//    if(m_player->getPosition().z>1.5){
+////        g->setTransparentMode(true);
+//        g->setWorldColor(1, 1, 1);
+//        g->setColor(1, 1, 1, .5, 0);
+
+//        g->setGraphicsMode(DRAW2D);
+//        m_freezeSign->onDraw(g);
+
+//        g->setTexture("");
+//        g->setColor(1, 0, 0, .5, 0);
+////        g->setTransparentMode(false);
+//    }
+
 
     if(useDeferredLighting){
 
@@ -137,15 +151,6 @@ void GameWorld::onDraw(Graphics *g){
         g->setupFirstPass();
         World::onDraw(g);
         drawShapes(g, 1, shader);
-//        glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(.5f));
-//        glm::mat4 posMat = glm::mat4();
-//        g->setColor(1, 1, 1, 1  , 0);
-//        foreach (Light *l, m_lights)
-//        {
-//            posMat[3] = glm::vec4(l->posDir, 1);
-//            g->drawSphere(posMat * trans);
-//        }
-
         m_player->onDrawOpaque(g);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glUseProgram(0);
@@ -175,7 +180,6 @@ void GameWorld::onDraw(Graphics *g){
         g->drawFullScreenQuad(glm::mat4());
         glBindFramebuffer( GL_FRAMEBUFFER,0 );
         glUseProgram(0);
-
     }
 
     else{
@@ -198,6 +202,5 @@ void GameWorld::onDraw(Graphics *g){
         g->setAllWhite(false);
 //        g->setTransparentMode(false);
     }
-
 
 }

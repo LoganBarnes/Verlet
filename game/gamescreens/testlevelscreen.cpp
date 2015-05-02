@@ -149,6 +149,12 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     tri11->createPin(7);
     vm->addVerlet(tri11);
 
+    //MARKER OBJECTS:
+    OBJ* objMarker1 = m_oh->getObject(":/objects/Stone.obj", shader, &tris5, glm::vec3(0));
+    Marker* marker1 = new Marker(objMarker1, glm::vec2(0.f, 0.f), glm::vec2(1.2,1.2), "freezeSign.png");
+    m_markers.append(marker1);
+
+    //END MARKER OBJECTS
 
     m_world = new GameWorld();
 
@@ -158,8 +164,13 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_world->addObject(level);
     m_world->addObject(m_oh->getObject(":/objects/testsmall.obj", shader, &tris2, glm::vec3(-35,0,0)));
     m_world->addObject(m_oh->getObject(":/objects/testsmall.obj", shader, &tris3, glm::vec3(-55,30,0)));
-    m_world->addObject(m_oh->getObject(":/objects/WoodenPost.obj", shader, &tris4, glm::vec3(0)));
-//    m_world->addObject(m_oh->getObject(":/objects/Stone.obj", shader, &tris5, glm::vec3(0)));
+
+//    m_world->addObject(m_oh->getObject(":/objects/WoodenPost.obj", shader, &tris4, glm::vec3(0)));
+    m_world->addObject(objMarker1);
+
+
+
+
 //    m_world->addObject(m_oh->getObject(":/objects/Level1e.obj", shader, &tris5));
 //    m_world->addObject(m_oh->getObject(":/objects/Level1g.obj", shader, &tris6));
 
@@ -167,8 +178,8 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_world->addToMesh(tris);
     m_world->addToMesh(tris2);
     m_world->addToMesh(tris3);
-    m_world->addToMesh(tris4);
-//    m_world->addToMesh(tris5);
+//    m_world->addToMesh(tris4);
+    m_world->addToMesh(tris5);
 //    m_world->addToMesh(tris6);
 
     m_world->setGravity(glm::vec3(0,-10,0));
@@ -206,25 +217,18 @@ void TestLevelScreen::onTick(float secs)
             break;
         }
     }
-
-
-    if(pos.z > 1.5){
-
-        // draw a full screen quad with a texture
-        // display a texture (later activated by objects and hit boxes)
-
-
-
-    }
-//    else
-//        // display regular world
-//    cout<<"player positin: "<<pos.x<<" "<<pos.y<<" "<<pos.z<<endl;
-
 }
 
 
 void TestLevelScreen::onRender(Graphics *g)
 {
+
+    // draw markers first
+    foreach(Marker* marker, m_markers){
+        if(marker->isInRange(m_world->getPlayer()->getPosition(), 2.5))
+            marker->displayTexture(g);
+    }
+
     g->setWorldColor(.2f,.2f,.2f);
     g->setColor(1,1,1,1,0);
 
