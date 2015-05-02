@@ -64,7 +64,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     // make an object handler for the lights and parse them in from an obj
     // save into a list of lights and send to the world
     LightParser lightParser;
-    QList<Light*> lights = lightParser.getLights(":/objects/island_lights.obj", glm::vec3(0));
+    QList<Light*> lights = lightParser.getLights(":/objects/LargeLights.obj", glm::vec3(0));
 
 //    Light *l = lights.value(0);
 //    lights.clear();
@@ -83,7 +83,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     QList<Triangle*> tris5;
 
     //MARKER OBJECTS:
-    OBJ* objMarker1 = m_oh->getObject(":/objects/Stone.obj", shader, &tris5, glm::vec3(0));
+    OBJ* objMarker1 = m_oh->getObject(":/objects/LargeStone.obj", shader, &tris5, glm::vec3(0));
     Marker* marker1 = new Marker(objMarker1, glm::vec2(0.f, 0.f), glm::vec2(1.2,1.2), "freezeSign.png");
     m_markers.append(marker1);
     //END MARKER OBJECTS
@@ -103,11 +103,12 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 
     //Add all islands
     OBJ* island1 = addIsland(":/objects/LargeIsland.obj",shader,glm::vec3(0));
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-20,0,0));
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-18,0,0));
+
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-55,30,0));
 
     //Add all verlet entities
-    vm->addVerlet(new TriangleMesh(glm::vec2(8,18), .6, glm::vec3(-5,0,-2.2), vm, shader,Z,true,TOP_EDGE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(8,18), .6, glm::vec3(-5,0,-2.2), vm, shader,Z,true,HORIZONTAL_EDGE));
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-27,0,4), vm, shader));
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-32,4,4), vm, shader));
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-37,8,4), vm, shader));
@@ -144,10 +145,9 @@ void TestLevelScreen::onTick(float secs)
     }
 
     glm::vec3 pos = m_world->getPlayer()->getPosition();
-    QList<OBJ*> objs = m_world->getObjs();
-    for (int i = 0; i < objs.size(); i++){
-        OBJ* o = objs[i];
-        if(o->top->inHitBox(pos)&&i>m_resetIndex){
+    for (int i = 0; i < m_resetHalves.size(); i++){
+        Half* h = m_resetHalves[i];
+        if(h->inHitBox(pos)&&i>m_resetIndex){
             m_resetIndex = i;
             break;
         }

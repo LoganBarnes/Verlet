@@ -114,8 +114,8 @@ void VerletManager::verlet(float seconds){
 void VerletManager::constraints(){
     for(unsigned int i=0; i<verlets.size(); i++) {
         Verlet* v = verlets.at(i);
-        v->pinConstraint();
         v->linkConstraint();
+        v->pinConstraint();
     }
 }
 
