@@ -19,10 +19,7 @@ Marker::Marker(OBJ* obj, glm::vec2 center, glm::vec2 size, QString path)
 
 // Check if the member obj is in range of the position
 bool Marker::isInRange(glm::vec3 pos, float range){
-
-    return false;
-
-
+    return m_visualization->inRange(pos, range);
 }
 
 

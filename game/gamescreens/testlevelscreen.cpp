@@ -80,16 +80,13 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
     VerletManager *vm = new VerletManager(cam);
 
-
+    QList<Triangle*> tris5;
 
     //MARKER OBJECTS:
     OBJ* objMarker1 = m_oh->getObject(":/objects/Stone.obj", shader, &tris5, glm::vec3(0));
     Marker* marker1 = new Marker(objMarker1, glm::vec2(0.f, 0.f), glm::vec2(1.2,1.2), "freezeSign.png");
     m_markers.append(marker1);
-
     //END MARKER OBJECTS
-
-
 
     m_world = new GameWorld();
     m_world->setLights(lights);
@@ -160,10 +157,9 @@ void TestLevelScreen::onTick(float secs)
 
 void TestLevelScreen::onRender(Graphics *g)
 {
-
     // draw markers first
     foreach(Marker* marker, m_markers){
-        if(marker->isInRange(m_world->getPlayer()->getPosition(), 2.5))
+        if(marker->isInRange(m_world->getPlayer()->getPosition(), 1.8))
             marker->displayTexture(g);
     }
 
