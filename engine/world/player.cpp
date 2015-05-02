@@ -4,6 +4,7 @@
 #define GLM_FORCE_RADIANS
 #include <gtx/norm.hpp>
 #include <iostream>
+using namespace std;
 
 Player::Player(ActionCamera *cam, glm::vec3 pos)
     : MovableEntity(pos),
@@ -114,10 +115,12 @@ glm::vec3 Player::getEyePos()
 // mouse event
 void Player::onMouseMoved(QMouseEvent *, float deltaX, float deltaY)
 {
+
+    cout<<"here"<<endl;
     m_yaw += deltaX / 10.f;
     m_pitch += deltaY / 10.f;
-//    m_camera->yaw(deltaX / 10.f);
-//    m_camera->pitch(deltaY / 10.f);
+    m_camera->yaw(deltaX / 10.f);
+    m_camera->pitch(deltaY / 10.f);
 }
 
 // key events

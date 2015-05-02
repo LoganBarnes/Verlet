@@ -38,6 +38,7 @@ public:
     // resize
     virtual void onResize(int w, int h);
 
+    OBJ* addIsland(const QString& path, GLuint shader, const glm::vec3& offset);
 private:
     void render2D(Graphics *g);
     void adjustDeltasForLeap(float *deltaX, float *deltaY);
@@ -53,8 +54,6 @@ private:
     glm::mat4 m_cursor;
     bool m_drawCursor;
     glm::vec2 m_deltas;
-
-    int _island;
 };
 
 #endif // TESTLEVELSCREEN_H

@@ -1,7 +1,7 @@
 #include "gameworld.h"
 #include <glm/gtc/constants.hpp>
 
-//#include "debugprinting.h"
+#include "debugprinting.h"
 
 GameWorld::GameWorld()
 {
@@ -40,18 +40,18 @@ Triangle* GameWorld::intersectWorld(glm::vec3 p, glm::vec3 d, float *t)
 void GameWorld::onKeyPressed(QKeyEvent *e)
 {
     // temp lighting controls
-//    if(e->key()==Qt::Key_1){
-//        if(usingFog)
-//            usingFog = false;
-//        else
-//            usingFog = true;
-//    }
-//    if(e->key() == Qt::Key_L){
-//        if(useDeferredLighting)
-//            useDeferredLighting = false;
-//        else
-//            useDeferredLighting = true;
-//    }
+    if(e->key()==Qt::Key_1){
+        if(usingFog)
+            usingFog = false;
+        else
+            usingFog = true;
+    }
+    if(e->key() == Qt::Key_2){
+        if(useDeferredLighting)
+            useDeferredLighting = false;
+        else
+            useDeferredLighting = true;
+    }
     World::onKeyPressed(e);
 }
 
@@ -68,83 +68,83 @@ void GameWorld::drawShapes(Graphics *g, int pass, GLuint shader){
 
     // transparency left out cause it don't play nice with deferred lighting...
 
-    glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(1.f));
 
-    // sphere
+//    // cone
+//    if(pass==1){
+//        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
+//        glUniform4f(glGetUniformLocation(shader, "materialColor"), 1, .5, 0, .7);
+//    }
+//    else
+//        g->setColor(1, .5, 0, 1, 0);
+//    float offset = sin(m_timeElapsed);
+//    glm::mat4 trans = glm::translate(glm::mat4(), glm::vec3(0, 5+offset, 3.5));
+//    trans = glm::rotate(trans, 135.f, glm::vec3(1,0,0));
 
-    if(pass==1){
-        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
-        glUniform4f(glGetUniformLocation(shader, "materialColor"), 1, 0, 0, .7);
-    }
-    else
-        g->setColor(1, 0, 0, 1, 0);
-
-    trans = glm::translate(glm::mat4(), glm::vec3(0, 1, 0));
-    g->drawSphere(trans);
-
-    // cone
-    if(pass==1){
-        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
-        glUniform4f(glGetUniformLocation(shader, "materialColor"), 1, .5, 0, .7);
-    }
-    else
-        g->setColor(1, .5, 0, 1, 0);
-    trans = glm::translate(glm::mat4(), glm::vec3(2, 1, 2));
-    g->drawCone(trans);
-
-    // cube
-    if(pass==1){
-        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
-        glUniform4f(glGetUniformLocation(shader, "materialColor"), .5, 1, 0, .7);
-    }
-    else
-        g->setColor(.5, 1, 0, 1, 0);
-    trans = glm::translate(glm::mat4(), glm::vec3(-2, 1, 2));
-    g->drawCube(trans);
-
-    // cylinder
-    if(pass==1){
-        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
-        glUniform4f(glGetUniformLocation(shader, "materialColor"), 0, 1, .3, .7);
-    }
-    else
-        g->setColor(0, 1, .3, 1, 0);
-    trans = glm::translate(glm::mat4(), glm::vec3(-10, 1, 2));
-    g->drawCylinder(trans);
+//    g->drawCone(trans);
 
 
-    if(pass==1){
-        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
-        glUniform4f(glGetUniformLocation(shader, "materialColor"), 0, 0, 1, .7);
-    }
-    else
-        g->setColor(0, 0, 1, 1, 0);
+//    // sphere
 
-    trans = glm::translate(glm::mat4(), glm::vec3(-13, 1, 5));
-    g->drawSphere(trans);
+//    if(pass==1){
+//        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
+//        glUniform4f(glGetUniformLocation(shader, "materialColor"), 1, 0, 0, .7);
+//    }
+//    else
+//        g->setColor(1, 0, 0, 1, 0);
+
+//    trans = glm::translate(glm::mat4(), glm::vec3(0, 1, 0));
+//    g->drawSphere(trans);
+
+//    // cube
+//    if(pass==1){
+//        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
+//        glUniform4f(glGetUniformLocation(shader, "materialColor"), .5, 1, 0, .7);
+//    }
+//    else
+//        g->setColor(.5, 1, 0, 1, 0);
+//    trans = glm::translate(glm::mat4(), glm::vec3(-2, 1, 2));
+//    g->drawCube(trans);
+
+//    // cylinder
+//    if(pass==1){
+//        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
+//        glUniform4f(glGetUniformLocation(shader, "materialColor"), 0, 1, .3, .7);
+//    }
+//    else
+//        g->setColor(0, 1, .3, 1, 0);
+//    trans = glm::translate(glm::mat4(), glm::vec3(-10, 1, 2));
+//    g->drawCylinder(trans);
+
+//    if(pass==1){
+//        glUniform1f(glGetUniformLocation(shader, "shininess"), 3.0);
+//        glUniform4f(glGetUniformLocation(shader, "materialColor"), 0, 0, 1, .7);
+//    }
+//    else
+//        g->setColor(0, 0, 1, 1, 0);
+
+//    trans = glm::translate(glm::mat4(), glm::vec3(-13, 1, 5));
+//    g->drawSphere(trans);
 
 }
-
 
 void GameWorld::onDraw(Graphics *g){
 
     if(useDeferredLighting){
 
-        g->setGraphicsMode(GEOMETRY);
+        GLuint shader = g->setGraphicsMode(GEOMETRY);
 
         // first pass:
         g->setupFirstPass();
         World::onDraw(g);
-//        drawShapes(g,1,firstPassShader);        //render all geometry
-        glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(.5f));
-        glm::mat4 posMat = glm::mat4();
-
-        g->setColor(1, 1, 1, 1  , 0);
-        foreach (Light *l, m_lights)
-        {
-            posMat[3] = glm::vec4(l->posDir, 1);
-            g->drawSphere(posMat * trans);
-        }
+        drawShapes(g, 1, shader);
+//        glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(.5f));
+//        glm::mat4 posMat = glm::mat4();
+//        g->setColor(1, 1, 1, 1  , 0);
+//        foreach (Light *l, m_lights)
+//        {
+//            posMat[3] = glm::vec4(l->posDir, 1);
+//            g->drawSphere(posMat * trans);
+//        }
 
         m_player->onDrawOpaque(g);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

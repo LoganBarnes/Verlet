@@ -73,6 +73,8 @@ protected:
 
     QList<Light*> m_lights;
 
+    float m_timeElapsed;
+
 };
 
 #endif // WORLD_H

@@ -81,7 +81,7 @@ static bool inBounds(int i, int size)
     return (i >= 0 && i < size);
 }
 
-bool OBJ::read(const QString &path, QList<Triangle *> *tris)
+bool OBJ::read(const QString &path, QList<Triangle *> *tris, glm::vec3 offset)
 {
     // Open the file
     QFile file(path);
@@ -99,7 +99,7 @@ bool OBJ::read(const QString &path, QList<Triangle *> *tris)
         if (parts.isEmpty()) continue;
 
         if (parts[0] == "v" && parts.count() >= 4) {
-            vertices += glm::vec3(parts[1].toFloat(), parts[2].toFloat(), parts[3].toFloat());
+            vertices += (glm::vec3(parts[1].toFloat(), parts[2].toFloat(), parts[3].toFloat())+offset);
         } else if (parts[0] == "vt" && parts.count() >= 3) {
             coords += glm::vec2(parts[1].toFloat(), parts[2].toFloat());
         } else if (parts[0] == "vn" && parts.count() >= 4) {

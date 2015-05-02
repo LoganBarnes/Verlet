@@ -125,7 +125,7 @@ void View::paintGL()
 //    else if (fps > 30.f)
 //        m_fpsInit = true;
 
-//    // Can't use Core profile with this
+    // Can't use Core profile with this
 //    glUseProgram(0);
 //    glColor3f(1.f, 1.f, 1.f);
 //    renderText(10, 20, "FPS: " + QString::number((int) (fps)));
