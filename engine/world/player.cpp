@@ -58,7 +58,7 @@ void Player::onTick(float secs)
     if (m_jump && m_canJump){
         m_canJump = false;
         m_jumping = true;
-        v.y = 11.f;
+        v.y = 11.5f;
         m_jumpVel = v;
     }
 
@@ -85,9 +85,7 @@ void Player::onTick(float secs)
         //v.x = .7*thrust.x;
         //v.z = .7*thrust.z;
 
-        //v.x*=.8;
         v.x=m_jumpVel.x*.96+thrust.x*.04;
-        //v.z*=.8;
         v.z=m_jumpVel.z*.96+thrust.z*.04;
         m_jumpVel = v;
     }

@@ -103,7 +103,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 
     //Add all islands
     OBJ* island1 = addIsland(":/objects/testsmall.obj",shader,glm::vec3(0));
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-20,0,0));
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-18,0,0));
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-55,30,0));
 
     //Add all verlet entities
@@ -144,10 +144,9 @@ void TestLevelScreen::onTick(float secs)
     }
 
     glm::vec3 pos = m_world->getPlayer()->getPosition();
-    QList<OBJ*> objs = m_world->getObjs();
-    for (int i = 0; i < objs.size(); i++){
-        OBJ* o = objs[i];
-        if(o->top->inHitBox(pos)&&i>m_resetIndex){
+    for (int i = 0; i < m_resetHalves.size(); i++){
+        Half* h = m_resetHalves[i];
+        if(h->inHitBox(pos)&&i>m_resetIndex){
             m_resetIndex = i;
             break;
         }
