@@ -59,6 +59,7 @@ void Player::onTick(float secs)
         m_canJump = false;
         m_jumping = true;
         v.y = 11.f;
+        m_jumpVel = v;
     }
 
     //else if (m_jump&&!m_canJump)
@@ -74,14 +75,21 @@ void Player::onTick(float secs)
 
 //    glm::vec3 vel = (thrust - m_vel);
 //    vel.y = 0;
-//    applyImpulse(vel);
+    //    applyImpulse(vel);
 
-    v.x = thrust.x;
-    v.z = thrust.z;
-
+    if(!m_jumping){
+        v.x = thrust.x;
+        v.z = thrust.z;
+    }
     if(m_jumping){ //less horizontal displacement allows more controlled landing
-        v.x=v.x*.7;
-        v.z=v.z*.7;
+        //v.x = .7*thrust.x;
+        //v.z = .7*thrust.z;
+
+        //v.x*=.8;
+        v.x=m_jumpVel.x*.96+thrust.x*.04;
+        //v.z*=.8;
+        v.z=m_jumpVel.z*.96+thrust.z*.04;
+        m_jumpVel = v;
     }
     setVelocity(v);
 //    if (m_canJump)

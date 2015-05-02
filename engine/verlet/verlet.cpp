@@ -236,17 +236,13 @@ glm::vec3 Verlet::collide(MovableEntity *e)
 
             if(solve)
                 _pos[i]=_pos[i]-(extra*sphereInfluence);
-
             translation+=extra;
-            //note: approximated original method
-            //toMove += (extra/12.0);
-            //e->setMove(toMove);
         }
     }
 
     if(count>0){
         //lower = jittery, higher = doesn't compensate for collisions
-        count *= .25;
+        count *= .45;
         translation /= count; //divide accumulative mtv by points hit
     }
 

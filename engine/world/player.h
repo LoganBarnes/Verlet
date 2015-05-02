@@ -53,6 +53,7 @@ protected:
     int m_wsad;
     bool m_canJump, m_jump;
     bool m_jumping;
+    glm::vec3 m_jumpVel;
 
 private:
     float m_eyeHeight;

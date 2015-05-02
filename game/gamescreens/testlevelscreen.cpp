@@ -101,7 +101,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_world->addToMesh(tris4);
 
     //Add all verlet entities
-    vm->addVerlet(new TriangleMesh(glm::vec2(8,18), .6, glm::vec3(-5,0,-2.2), vm, shader,Z,true,TOP_EDGE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(8,18), .6, glm::vec3(-5,0,-2.2), vm, shader,Z,true,HORIZONTAL_EDGE));
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-27,0,4), vm, shader));
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-32,4,4), vm, shader));
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-37,8,4), vm, shader));
