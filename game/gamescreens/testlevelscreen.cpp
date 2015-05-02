@@ -25,7 +25,6 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     m_parentApp->setLeapRightClick(GRAB);
     m_parentApp->setLeapLeftClick(PINCH);
 
-    GLuint shader = m_parentApp->getShader(GEOMETRY);
     m_oh = new ObjectHandler();
     QList<Triangle *> tris;
 
@@ -101,57 +100,16 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_world->addToMesh(tris4);
 
     //Add all verlet entities
-    TriangleMesh* tri2 = new TriangleMesh(glm::vec2(8,28), .6, glm::vec3(-5,0,-2.2), vm, shader,2);
-    tri2->createPin(0);
-    tri2->createPin(5);
-    vm->addVerlet(tri2);
-
-    TriangleMesh* tri3 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-27,0,4), vm, shader);
-    tri3->createPin(0);
-    tri3->createPin(5);
-    vm->addVerlet(tri3);
-
-    TriangleMesh* tri4 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-32,4,4), vm, shader);
-    tri4->createPin(0);
-    tri4->createPin(5);
-    vm->addVerlet(tri4);
-
-    TriangleMesh* tri5 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-37,8,4), vm, shader);
-    tri5->createPin(0);
-    tri5->createPin(5);
-    vm->addVerlet(tri5);
-
-    TriangleMesh* tri6 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-42,12,4), vm, shader);
-    tri6->createPin(0);
-    tri6->createPin(5);
-    vm->addVerlet(tri6);
-
-    TriangleMesh* tri7 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-47,16,4), vm, shader);
-    tri7->createPin(0);
-    tri7->createPin(5);
-    vm->addVerlet(tri7);
-
-    TriangleMesh* tri8 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-52,19,4), vm, shader);
-    tri8->createPin(0);
-    tri8->createPin(5);
-    vm->addVerlet(tri8);
-
-    TriangleMesh* tri9 = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-60,19,4), vm, shader);
-    tri9->createPin(0);
-    tri9->createPin(5);
-    vm->addVerlet(tri9);
-
-    TriangleMesh* tri10 = new TriangleMesh(glm::vec2(6,25), .6, glm::vec3(-74,18,-2), vm, shader,2,true);
-    tri10->createPin(0);
-    tri10->createPin(5);
-    tri10->createPin(144);
-    tri10->createPin(149);
-    vm->addVerlet(tri10);
-
-    TriangleMesh* tri11 = new TriangleMesh(glm::vec2(8,22), .3, glm::vec3(-88,-8,-2.2), vm, shader,2,true);
-    tri11->createPin(0);
-    tri11->createPin(7);
-    vm->addVerlet(tri11);
+    vm->addVerlet(new TriangleMesh(glm::vec2(8,18), .6, glm::vec3(-5,0,-2.2), vm, shader,Z,true,TOP_EDGE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-27,0,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-32,4,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-37,8,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-42,12,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-47,16,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-52,19,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-60,19,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,25), .6, glm::vec3(-74,18,-2), vm, shader,Z,true, ALL_CORNERS));
+    vm->addVerlet(new TriangleMesh(glm::vec2(8,22), .3, glm::vec3(-88,-8,-2.2), vm, shader,Z,true));
 
     Grass* grass = new Grass(vm, shader);
     grass->createPatch(glm::vec2(0,0),6,island1);

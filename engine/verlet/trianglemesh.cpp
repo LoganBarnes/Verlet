@@ -8,9 +8,12 @@
 
 #include "debugprinting.h"
 
+
+
 //******************************CONSTRUCTING**********************************//
 TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
-      const glm::vec3& start, VerletManager* vm, GLuint shader, int axis, float flat)
+                           const glm::vec3& start, VerletManager* vm, GLuint shader,
+                           Axis axis, bool flat, PinMode p)
     : Verlet(vm),
     m_shader(shader)
 {
@@ -127,6 +130,46 @@ TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
     m_mesh = new Mesh();
 //    m_mesh->initStrip(m_shader, c, r, getPosArray(), getNormArray());
     m_mesh->initTriangles(m_shader, _triangles, getPosArray());
+
+    //pin
+    pin(p,r,c);
+}
+
+void TriangleMesh::pin(PinMode p, int r, int c){
+    switch (p){
+    case TOP_CORNERS:
+        createPin(0);
+        createPin(c-1);
+        break;
+    case ALL_CORNERS:
+        createPin(0);
+        createPin(c-1);
+        createPin((r-1)*c);
+        createPin(r*c-1);
+        break;
+    case TOP_EDGE:
+        for(int i = 0; i<c; i++)
+            createPin(i);
+        break;
+    case HORIZONTAL_EDGE:
+        for(int i = 0; i<c; i++){
+            createPin(i);
+            createPin(i+((r-1)*c));
+        }
+        break;
+    case ALL_EDGE:
+        for(int i = 0; i<c; i++){
+            createPin(i);
+            createPin(i+((r-1)*c));
+        }
+        for(int i = 0; i<r; i++){
+            createPin(i*c);
+            createPin(i*c+c-1);
+        }
+        break;
+    case NONE:
+        break;
+    }
 }
 
 TriangleMesh::~TriangleMesh()
