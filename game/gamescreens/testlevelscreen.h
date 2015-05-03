@@ -56,9 +56,8 @@ private:
     bool m_drawCursor;
     glm::vec2 m_deltas;
 
-    int _island;
-
     QList<Marker*> m_markers;
+    //QList<OBJ*> m_islands;
 };
 
 #endif // TESTLEVELSCREEN_H

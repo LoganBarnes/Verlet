@@ -44,6 +44,7 @@ OBJ* TestLevelScreen::addIsland(const QString& path, GLuint shader, const glm::v
     OBJ *island = m_oh->getObject(path, shader, &tris, offset);
     m_world->addObject(island);
     m_world->addToMesh(tris);
+    //m_world->m_islands+=island;
     m_resetHalves.append(island->top);
     return island;
 }

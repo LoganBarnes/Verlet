@@ -205,8 +205,11 @@ void Player::handleCollision(Collision *col, bool resetVel)
     if (glm::dot(col->impulse, glm::vec3(0, 1, 0)) > .5)
     //if(col->impulse.y>0)
     {
-        m_jumping = false;
-        m_canJump = true;
+        glm::vec3 v = getVelocity();
+        if(v.y<0){
+            m_jumping = false;
+            m_canJump = true;
+        }
         if (resetVel)
         {
             glm::vec3 v = getVelocity();
