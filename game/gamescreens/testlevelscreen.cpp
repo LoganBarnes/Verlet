@@ -153,7 +153,6 @@ void TestLevelScreen::onTick(float secs)
     }
 }
 
-
 void TestLevelScreen::onRender(Graphics *g)
 {
     // draw markers first
