@@ -64,7 +64,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     // make an object handler for the lights and parse them in from an obj
     // save into a list of lights and send to the world
     LightParser lightParser;
-    QList<Light*> lights = lightParser.getLights(":/objects/island_lights.obj", glm::vec3(0));
+    QList<Light*> lights = lightParser.getLights(":/objects/LargeLights.obj", glm::vec3(0));
 
 //    Light *l = lights.value(0);
 //    lights.clear();
@@ -83,7 +83,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     QList<Triangle*> tris5;
 
     //MARKER OBJECTS:
-    OBJ* objMarker1 = m_oh->getObject(":/objects/Stone.obj", shader, &tris5, glm::vec3(0));
+    OBJ* objMarker1 = m_oh->getObject(":/objects/LargeStone.obj", shader, &tris5, glm::vec3(0));
     Marker* marker1 = new Marker(objMarker1, glm::vec2(0.f, 0.f), glm::vec2(1.2,1.2), "freezeSign.png");
     m_markers.append(marker1);
     //END MARKER OBJECTS
@@ -102,8 +102,9 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     player->setMaxOffset(50); //zoom
 
     //Add all islands
-    OBJ* island1 = addIsland(":/objects/testsmall.obj",shader,glm::vec3(0));
+    OBJ* island1 = addIsland(":/objects/LargeIsland.obj",shader,glm::vec3(0));
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-18,0,0));
+
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-55,30,0));
 
     //Add all verlet entities
