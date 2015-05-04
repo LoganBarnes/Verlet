@@ -16,6 +16,7 @@ public:
     virtual void onDraw(Graphics *g);
     void drawShapes(Graphics* g, int pass, GLuint shader);
     void onKeyPressed(QKeyEvent *e);
+    void setLights(QList<Light*> l);
 
 private:
     int mode;

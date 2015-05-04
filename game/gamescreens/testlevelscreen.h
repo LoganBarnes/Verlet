@@ -40,6 +40,9 @@ public:
     virtual void onResize(int w, int h);
 
     OBJ* addIsland(const QString& path, GLuint shader, const glm::vec3& offset);
+    void addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath);
+
+
 private:
     void render2D(Graphics *g);
     void adjustDeltasForLeap(float *deltaX, float *deltaY);

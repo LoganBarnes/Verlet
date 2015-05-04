@@ -16,7 +16,7 @@ World::World()
 
     m_player = NULL;
     m_gravity = glm::vec3();
-    useDeferredLighting = false;
+    useDeferredLighting = true;
     m_timeElapsed = 0.0;
 }
 

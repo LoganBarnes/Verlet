@@ -48,6 +48,17 @@ OBJ* TestLevelScreen::addIsland(const QString& path, GLuint shader, const glm::v
     return island;
 }
 
+void TestLevelScreen::addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath){
+
+    QList<Triangle*> tris;
+    OBJ* objMarker = m_oh->getObject(objPath, shader, &tris, offset);
+    Marker* marker = new Marker(objMarker, glm::vec2(0.f, 0.f), glm::vec2(1.2,1.2), signPath);
+    m_markers.append(marker);
+
+    m_world->addObject(objMarker);
+    m_world->addToMesh(tris);
+}
+
 
 void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 {
@@ -64,7 +75,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     // make an object handler for the lights and parse them in from an obj
     // save into a list of lights and send to the world
     LightParser lightParser;
-    QList<Light*> lights = lightParser.getLights(":/objects/LargeLights.obj", glm::vec3(0));
+    QList<Light*> lights = lightParser.getLights(":/objects/LargeLights.obj", glm::vec3(0));        //either have all lights or add on a per file basis
 
 //    Light *l = lights.value(0);
 //    lights.clear();
@@ -80,22 +91,17 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
     VerletManager *vm = new VerletManager(cam);
 
-    QList<Triangle*> tris5;
-
-    //MARKER OBJECTS:
-    OBJ* objMarker1 = m_oh->getObject(":/objects/LargeStone.obj", shader, &tris5, glm::vec3(0));
-    Marker* marker1 = new Marker(objMarker1, glm::vec2(0.f, 0.f), glm::vec2(1.2,1.2), "freezeSign.png");
-    m_markers.append(marker1);
-    //END MARKER OBJECTS
-
     m_world = new GameWorld();
     m_world->setLights(lights);
     m_world->addManager(gcm);
     m_world->addManager(vm);
-
-    m_world->addObject(objMarker1);
     m_world->setPlayer(player);
-    m_world->addToMesh(tris5);
+
+    //MARKER OBJECTS:
+    addMarker(":/objects/LargeStone.obj", shader, glm::vec3(0), "basicsign.png");
+    addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-47,-.2,1), "freezesign.png");
+    addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-67,-4.8,-52), "windsign.png");
+    addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-130,34.8,-40), "tearsign.png");
 
     m_world->setGravity(glm::vec3(0,-10,0));
     setCamera(cam);
@@ -103,21 +109,32 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 
     //Add all islands
     OBJ* island1 = addIsland(":/objects/LargeIsland.obj",shader,glm::vec3(0));
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-18,0,0));
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-48,0,0));
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-70,-5,-40));
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-130,35,-40));
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-170,35,-40));
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-150,25,-40));
 
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-55,30,0));
 
     //Add all verlet entities
-    vm->addVerlet(new TriangleMesh(glm::vec2(8,18), .6, glm::vec3(-5,0,-2.2), vm, shader,Z,true,HORIZONTAL_EDGE));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-27,0,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-32,4,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-37,8,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-42,12,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-47,16,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-52,19,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-60,19,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,25), .6, glm::vec3(-74,18,-2), vm, shader,Z,true, ALL_CORNERS));
-    vm->addVerlet(new TriangleMesh(glm::vec2(8,22), .3, glm::vec3(-88,-8,-2.2), vm, shader,Z,true));
+    vm->addVerlet(new TriangleMesh(glm::vec2(8,58), .6, glm::vec3(-11,1.2,-2.2), vm, shader,Z,true,HORIZONTAL_EDGE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,40), .6, glm::vec3(-53,1.2,-8), vm, shader));
+
+    // stairs
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-85,-5,-36), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-90,2,-36), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-95,9,-36), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-100,16,-36), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-105,23,-36), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-110,30,-36), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-117,35,-36), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-122,35,-36), vm, shader));
+
+
+    vm->addVerlet(new TriangleMesh(glm::vec2(25,55), .6, glm::vec3(-136,35,-48), vm, shader,Z,true, ALL_CORNERS));
+//    vm->addVerlet(new TriangleMesh(glm::vec2(25,12), .6, glm::vec3(0,10,0), vm, shader,X,true, ALL_EDGE));
+
+//    vm->addVerlet(new TriangleMesh(glm::vec2(8,22), .3, glm::vec3(-88,-8,-2.2), vm, shader,Z,true));
 
     Grass* grass = new Grass(vm, shader);
     grass->createPatch(glm::vec2(0,0),6,island1);
@@ -130,11 +147,13 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_deltas = glm::vec2(0);
 
     onResize(m_parentApp->getWidth(), m_parentApp->getHeight());
+
 }
 
 // update and render
 void TestLevelScreen::onTick(float secs)
 {
+
     m_world->onTick(secs, m_cursor[3][0], m_cursor[3][1]);
 
     if (m_world->getPlayer()->getPosition().y < -40)
@@ -152,6 +171,8 @@ void TestLevelScreen::onTick(float secs)
             break;
         }
     }
+
+//    cout<<"player pos: "<<pos.x<<" "<<pos.y<<" "<<pos.z<<endl;
 }
 
 

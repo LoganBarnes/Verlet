@@ -19,7 +19,10 @@
         <file alias="play.png">res/images/play.png</file>
         <file alias="grass.png">res/images/grass.png</file>
         <file alias="one.png">res/images/one.png</file>
-        <file alias="freezeSign.png">res/images/sign1.png</file>
+        <file alias="basicsign.png">res/images/Sign1.png</file>
+        <file alias="freezesign.png">res/images/Sign2.png</file>
+        <file alias="windsign.png">res/images/Sign3.png</file>
+        <file alias="tearsign.png">res/images/Sign4.png</file>
     </qresource>
     <qresource prefix="/cubemap">
         <file alias="posx.jpg">res/cubemap/posx.jpg</file>
@@ -38,6 +41,9 @@
         <file alias="LargeIsland.obj">res/objects/LargeIsland.obj</file>
         <file alias="LargeLights.obj">res/objects/LargeLights.obj</file>
         <file alias="LargeStone.obj">res/objects/LargeStone.obj</file>
+        <file alias="MediumIsland.obj">res/objects/MediumIsland.obj</file>
+        <file alias="MediumLights.obj">res/objects/MediumLights.obj</file>
+        <file alias="MediumStone.obj">res/objects/MediumStone.obj</file>
     </qresource>
     <qresource prefix="/audio">
         <file alias="kickDrumMod.wav">res/audio/kickDrumMod.wav</file>
