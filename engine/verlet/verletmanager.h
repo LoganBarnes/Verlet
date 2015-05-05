@@ -109,6 +109,8 @@ private:
     int m_tear_prevA;
     Verlet* m_tearVerlet;
     Link* m_tearLink;
+    int m_tearDelay;
+    int m_tearTimer;
     int rayTrace(float x, float y, std::vector<int> points, Verlet* v);
 
 

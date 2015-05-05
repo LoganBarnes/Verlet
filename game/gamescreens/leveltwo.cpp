@@ -109,16 +109,17 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
     vm->addVerlet(new TriangleMesh(glm::vec2(5,35), .6, glm::vec3(-2,43,-3), vm, shader,X,true,TOP_EDGE));
 
     vm->addVerlet(new TriangleMesh(glm::vec2(10,40), .6, glm::vec3(0,44,-55), vm, shader,Y,true, NONE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(30,30), .6, glm::vec3(0,60,0), vm, shader));
+
 
     // stairs
-    int numStairs = 10;
-    int y = 5;
-    for(int i=0; i<720; i+= 360/numStairs, y+=2){
-
-        float rad = i * (PI/180.0);
-        TriangleMesh* t = new TriangleMesh(glm::vec2(6,12), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader);
-        vm->addVerlet(t);
-    }
+//    int numStairs = 10;
+//    int y = 5;
+//    for(int i=0; i<720; i+= 360/numStairs, y+=2){
+//        float rad = i * (PI/180.0);
+//        TriangleMesh* t = new TriangleMesh(glm::vec2(6,12), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader);
+//        vm->addVerlet(t);
+//    }
 
 
 

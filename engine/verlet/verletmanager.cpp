@@ -29,7 +29,9 @@ VerletManager::VerletManager(Camera *cam)
       m_tear_ptB(-1),
       m_tear_prevA(-1),
       m_tearVerlet(NULL),
-      m_tearLink(NULL)
+      m_tearLink(NULL),
+      m_tearDelay(2),
+      m_tearTimer(0)
 {
     m_ray = new Ray(cam);
     m_curV = -1;
@@ -219,35 +221,10 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
             m_tear_ptA = m_curI;
             m_tearVerlet = getVerlet(m_curV);
         }
-        /*
         else if(m_tear_ptA>0&&m_tear_ptB<0){
-            QList<Link*> proximity = m_tearVerlet->link_map[m_tear_ptA];
-            foreach(Link* l, proximity){
-                int point = (l->pointA==m_tear_ptA) ? l->pointB : l->pointA;
-                glm::vec3 pos = m_tearVerlet->getPoint(point);
-                m_ray->setRay(mouseX, mouseY);
-                float t = m_ray->intersectPoint(pos, .7).w;
-                if(t<100){
-                    m_tear_ptB= point;
-                    m_tearLink = m_tearVerlet->findLink(m_tear_ptA,m_tear_ptB);
-                }
-            }
-        }
-
-        else if(m_tearLink!=NULL){//&&m_tear_ptB!=m_tear_prevA){
-            m_tearVerlet->tearLink(m_tearLink);
-            m_tearLink=NULL;
-            //m_tear_prevA = m_tear_ptA;
-            m_tear_ptA = m_tear_ptB;
-            m_tear_ptB = -1;
-        }
-        */
-
-        else if(m_tear_ptA>0&&m_tear_ptB<0){
-            QList<Link*> proximity = m_tearVerlet->_linkMap[m_tear_ptA].links;//link_map[m_tear_ptA];
-            std::vector<int> p;
+            QList<Link*> proximity = m_tearVerlet->_linkMap[m_tear_ptA].links; //link_map[m_tear_ptA];
+            QList<int> p;
             QHash<int,Link*> pairs;
-
             foreach(Link* l, proximity){
                 if(l->pointA==m_tear_ptA){
                     p.push_back(l->pointB);
@@ -258,25 +235,48 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
                     pairs[l->pointA]=l;
                 }
             }
-            int id = rayTrace(mouseX, mouseY, p, m_tearVerlet);
-            if(id>-1){
-                m_tear_ptB=id;
+            //_ray->hitVerlet(tearVerlet,h);
+            if(m_curV > -1 &&getVerlet(m_curV)==m_tearVerlet&&p.contains(m_curI)){
+                m_tear_ptB= m_curI;
                 m_tearLink = pairs[m_tear_ptB];
             }
+            glm::vec3 point = m_tearVerlet->getPoint(m_tear_ptA);
+            glm::vec4 n = world->getPlayer()->getCamera()->getLook();
+            n*=-1;
 
+            float t = m_ray->hitPlane(point,glm::vec3(n));
+            glm::vec3 tearMouse = m_ray->getPoint(t);
+
+            float d = glm::length2(tearMouse-m_tearVerlet->getPoint(m_tear_ptA));
+            if(m_tear_ptB<0&&d>.5){
+                int near = -1;
+                float closest = 1000;
+                foreach(int i,p){
+                    float dist = glm::length2(tearMouse-m_tearVerlet->getPoint(i));
+                    if(dist<closest){
+                        closest = dist;
+                        near = i;
+                    }
+                }
+                if(near>0){
+                    m_tear_ptB=near;
+                    m_tearLink = pairs[m_tear_ptB];
+                }
+            }
+            if(m_tear_ptB==m_tear_prevA)
+                m_tear_ptB=-1;
         }
-        else if(m_tear_ptA>0&&m_tear_ptB>0){
-            //Link* tearLink = m_tearVerlet->findLink(m_tear_ptA, m_tear_ptB);
-            if(m_tearLink!=NULL)
-                m_tearVerlet->tearLink(m_tearLink);
+        else if(m_tear_ptA>0&&m_tear_ptB>0&&m_tearLink!=NULL){
+            m_tearVerlet->tearLink(m_tearLink);
+            m_tear_prevA = m_tear_ptA;
             m_tear_ptA = m_tear_ptB;
             m_tear_ptB = -1;
             m_tearLink = NULL;
+            m_tearTimer=m_tearDelay;
         }
-
+        else if(m_tearTimer!=0)
+            m_tearTimer--;
     }
-
-
     // range check first
 
     if(solve){
