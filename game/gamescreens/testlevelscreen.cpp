@@ -99,6 +99,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_world->addToMesh(tris5);
 
     m_world->setGravity(glm::vec3(0,-10,0));
+    vm->wind = glm::vec3(0);
     setCamera(cam);
     player->setMaxOffset(50); //zoom
 
@@ -109,7 +110,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-55,30,0));
 
     //Add all verlet entities
-    vm->addVerlet(new TriangleMesh(glm::vec2(8,18), .6, glm::vec3(-5,0,-2.2), vm, shader,Z,true,HORIZONTAL_EDGE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(30,30), .4, glm::vec3(-5,15,-2.2), vm, shader,Z,false,TOP_EDGE));
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-27,0,4), vm, shader));
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-32,4,4), vm, shader));
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-37,8,4), vm, shader));
@@ -117,8 +118,8 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-47,16,4), vm, shader));
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-52,19,4), vm, shader));
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-60,19,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,25), .6, glm::vec3(-74,18,-2), vm, shader,Z,true, ALL_CORNERS));
-    vm->addVerlet(new TriangleMesh(glm::vec2(8,22), .3, glm::vec3(-88,-8,-2.2), vm, shader,Z,true));
+    //vm->addVerlet(new TriangleMesh(glm::vec2(6,25), .6, glm::vec3(-74,18,-2), vm, shader,Z,true, ALL_CORNERS));
+    //vm->addVerlet(new TriangleMesh(glm::vec2(8,22), .3, glm::vec3(-88,-8,-2.2), vm, shader,Z,true));
 
     Grass* grass = new Grass(vm, shader);
     grass->createPatch(glm::vec2(0,0),6,island1);

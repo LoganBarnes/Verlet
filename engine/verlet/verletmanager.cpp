@@ -16,7 +16,7 @@
 
 VerletManager::VerletManager(Camera *cam)
     : Manager(DEFAULT),
-      windPow(2),
+      windPow(0),
       m_dragMode(false),
       m_draggedPoint(0),
       m_draggedVerlet(NULL),
@@ -27,6 +27,7 @@ VerletManager::VerletManager(Camera *cam)
       m_tearMode(false),
       m_tear_ptA(-1),
       m_tear_ptB(-1),
+      m_tear_prevA(-1),
       m_tearVerlet(NULL),
       m_tearLink(NULL)
 {
@@ -218,6 +219,30 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
             m_tear_ptA = m_curI;
             m_tearVerlet = getVerlet(m_curV);
         }
+        /*
+        else if(m_tear_ptA>0&&m_tear_ptB<0){
+            QList<Link*> proximity = m_tearVerlet->link_map[m_tear_ptA];
+            foreach(Link* l, proximity){
+                int point = (l->pointA==m_tear_ptA) ? l->pointB : l->pointA;
+                glm::vec3 pos = m_tearVerlet->getPoint(point);
+                m_ray->setRay(mouseX, mouseY);
+                float t = m_ray->intersectPoint(pos, .7).w;
+                if(t<100){
+                    m_tear_ptB= point;
+                    m_tearLink = m_tearVerlet->findLink(m_tear_ptA,m_tear_ptB);
+                }
+            }
+        }
+
+        else if(m_tearLink!=NULL){//&&m_tear_ptB!=m_tear_prevA){
+            m_tearVerlet->tearLink(m_tearLink);
+            m_tearLink=NULL;
+            //m_tear_prevA = m_tear_ptA;
+            m_tear_ptA = m_tear_ptB;
+            m_tear_ptB = -1;
+        }
+        */
+
         else if(m_tear_ptA>0&&m_tear_ptB<0){
             QList<Link*> proximity = m_tearVerlet->link_map[m_tear_ptA];
             std::vector<int> p;
@@ -238,12 +263,6 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
                 m_tear_ptB=id;
                 m_tearLink = pairs[m_tear_ptB];
             }
-            /*
-            foreach(Link* l, proximity){
-                if(m_curI==l->pointA||m_curI==l->pointB)
-                    m_tear_ptB = m_curI;
-            }
-            */
 
         }
         else if(m_tear_ptA>0&&m_tear_ptB>0){
@@ -254,6 +273,7 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
             m_tear_ptB = -1;
             m_tearLink = NULL;
         }
+
     }
 
     if(solve){
