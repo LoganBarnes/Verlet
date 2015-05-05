@@ -64,7 +64,7 @@ void LevelTwo::addMarker(const QString& objPath, GLuint shader, const glm::vec3&
 
 void LevelTwo::resetWorld(glm::vec3 playerPos)
 {
-    playerPos = glm::vec3(0,50,-50);
+    playerPos = glm::vec3(0,50,0);
 
     if (m_world)
     {
