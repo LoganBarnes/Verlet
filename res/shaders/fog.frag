@@ -6,11 +6,6 @@ uniform vec3 eyePos;            // eye position in world space
 uniform vec2 viewport;
 uniform bool usingFog;
 
-//const int numLights;
-//uniform int lightTypes[numLights];         // 0 for point, 1 for directional
-//uniform vec3 lightPositions[numLights];    // pos for point lights dir for direction
-//uniform vec3 lightColors[numLights];
-
 out vec4 fragColor;
 
 void main(){
@@ -33,7 +28,7 @@ void main(){
 
         // exponential interpolation
         float b = .05;
-        interpVal = 1.0/(exp(b*distance)) + .2;
+        interpVal = 1.0/(exp(b*distance));
         clamp(interpVal, 0.0, 1.0);
 
         fragColor = vec4((image*(interpVal) + fogColor*(1.0-interpVal)).xyz,1);

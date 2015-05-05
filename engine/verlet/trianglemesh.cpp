@@ -262,7 +262,6 @@ void TriangleMesh::removeShear(Link* s){
     delete s;
 }
 //********************************TEARING*************************************//
-/*
 void TriangleMesh::tearLink(Link* l){
     QList<Tri*> tri = link_to_tri[l];
     if(tri.size()==2){
@@ -542,7 +541,7 @@ void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2){
     numTri[index] = numTri[index]-connectedTri1.size();
     _scalar[index]=1/(float)numTri[index];
 }
-*/
+
 //********************************UPDATING*************************************//
 void TriangleMesh::onTick(float ){
     for(unsigned int i = 0; i<_triangles.size(); i++){

@@ -16,6 +16,7 @@ public:
     virtual void onDraw(Graphics *g);
     void drawShapes(Graphics* g, int pass, GLuint shader);
     void onKeyPressed(QKeyEvent *e);
+    void setLights(QList<Light*> l);
 
     //virtual QList<OBJ* > getTerrain(){return m_islands;}
     //QList<OBJ*> m_islands;

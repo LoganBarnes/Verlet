@@ -6,7 +6,7 @@
 GameWorld::GameWorld()
 {
     mode = 0;
-    usingFog = true;
+    usingFog = false;
 }
 
 
@@ -14,6 +14,39 @@ GameWorld::~GameWorld()
 {
     foreach (Light *l, m_lights)
         delete l;
+}
+
+void GameWorld::setLights(QList<Light*> l){
+//    m_lights = l;
+
+    m_lights.clear();
+
+    int counter = m_lights.size();
+
+    // Custom lights
+    QList<glm::vec3> positions;
+    positions.append(glm::vec3(0,3,0));
+    positions.append(glm::vec3(10,5,0));
+    positions.append(glm::vec3(-10,5,0));
+    positions.append(glm::vec3(-50,5,0));
+
+    for(int i=0; i<positions.size(); i++){
+
+        Light* light;
+
+        light = new Light();
+        light->id = counter++;
+        light->type = POINT;
+        light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
+
+        light->posDir = positions.at(i);
+
+        light->radius = 50.f;
+        light->function = glm::vec3(1.0, .1, .01);
+
+        m_lights.append(light);
+    }
+
 }
 
 
@@ -129,19 +162,6 @@ void GameWorld::drawShapes(Graphics *g, int pass, GLuint shader){
 }
 
 void GameWorld::onDraw(Graphics *g){
-//    // Draw any signs that are in range
-//    if(m_player->getPosition().z>1.5){
-////        g->setTransparentMode(true);
-//        g->setWorldColor(1, 1, 1);
-//        g->setColor(1, 1, 1, .5, 0);
-
-//        g->setGraphicsMode(DRAW2D);
-//        m_freezeSign->onDraw(g);
-
-//        g->setTexture("");
-//        g->setColor(1, 0, 0, .5, 0);
-////        g->setTransparentMode(false);
-//    }
 
 
     if(useDeferredLighting){

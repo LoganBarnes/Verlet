@@ -358,8 +358,8 @@ void VerletManager::onMousePressed(QMouseEvent *e)
         m_interpolate = m_draggedVerlet->getPoint(m_draggedPoint);
     }
     //freeze
-    if(e->type() == QEvent::MouseButtonDblClick && e->button() == Qt::LeftButton)
-        enableSolve();
+//    if(e->type() == QEvent::MouseButtonDblClick && e->button() == Qt::LeftButton)
+//        enableSolve();
     //tear
     if(e->button() == Qt::RightButton)
         m_tearMode=true;
