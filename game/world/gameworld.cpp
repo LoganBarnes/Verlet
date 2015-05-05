@@ -29,6 +29,7 @@ void GameWorld::setLights(QList<Light*> l){
     positions.append(glm::vec3(10,5,0));
     positions.append(glm::vec3(-10,5,0));
     positions.append(glm::vec3(-50,5,0));
+    positions.append(glm::vec3(0,45,0));
 
     for(int i=0; i<positions.size(); i++){
 

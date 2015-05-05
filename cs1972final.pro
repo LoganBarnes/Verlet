@@ -119,7 +119,8 @@ SOURCES += \
     engine/objects/half.cpp \
     engine/verlet/grass.cpp \
     engine/objects/lightparser.cpp \
-    game/entities/marker.cpp
+    game/entities/marker.cpp \
+    game/gamescreens/leveltwo.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -179,7 +180,8 @@ HEADERS += \
     engine/objects/half.h \
     engine/verlet/grass.h \
     engine/objects/lightparser.h \
-    game/entities/marker.h
+    game/entities/marker.h \
+    game/gamescreens/leveltwo.h
 
 
 FORMS += engine/ui/mainwindow.ui

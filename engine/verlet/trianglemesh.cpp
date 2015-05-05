@@ -17,8 +17,10 @@ TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
     : Verlet(vm),
     m_shader(shader)
 {
-    int r = dimension.y;
-    int c = dimension.x;
+    m_row = dimension.y;
+    m_col = dimension.x;
+    int r = m_row;
+    int c = m_col;
     float h = (sqrt(3)/2.0) * w;
 
     glm::vec3 width, height, half_width;
@@ -146,6 +148,9 @@ void TriangleMesh::pin(PinMode p, int r, int c){
         createPin(c-1);
         createPin((r-1)*c);
         createPin(r*c-1);
+        break;
+    case ONE_CORNER:
+        createPin(0);
         break;
     case TOP_EDGE:
         for(int i = 0; i<c; i++)
