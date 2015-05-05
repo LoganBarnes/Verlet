@@ -1,4 +1,4 @@
-#include "testlevelscreen.h"
+#include "leveltwo.h"
 #include "application.h"
 #include "gameworld.h"
 #include "objecthandler.h"
@@ -13,9 +13,11 @@
 #include "trianglemesh.h"
 #include "half.h"
 
+#define PI 3.14159
+
 #include "debugprinting.h"
 
-TestLevelScreen::TestLevelScreen(Application *parent)
+LevelTwo::LevelTwo(Application *parent)
     : ScreenH(parent),
       m_world(NULL),
       m_oh(NULL),
@@ -32,14 +34,14 @@ TestLevelScreen::TestLevelScreen(Application *parent)
 }
 
 
-TestLevelScreen::~TestLevelScreen()
+LevelTwo::~LevelTwo()
 {
     delete m_world;
     delete m_oh; // m_level is deleted here
 }
 
 
-OBJ* TestLevelScreen::addIsland(const QString& path, GLuint shader, const glm::vec3& offset){
+OBJ* LevelTwo::addIsland(const QString& path, GLuint shader, const glm::vec3& offset){
     QList<Triangle *> tris;
     OBJ *island = m_oh->getObject(path, shader, &tris, offset);
     m_world->addObject(island);
@@ -48,7 +50,7 @@ OBJ* TestLevelScreen::addIsland(const QString& path, GLuint shader, const glm::v
     return island;
 }
 
-void TestLevelScreen::addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath){
+void LevelTwo::addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath){
 
     QList<Triangle*> tris;
     OBJ* objMarker = m_oh->getObject(objPath, shader, &tris, offset);
@@ -60,8 +62,10 @@ void TestLevelScreen::addMarker(const QString& objPath, GLuint shader, const glm
 }
 
 
-void TestLevelScreen::resetWorld(glm::vec3 playerPos)
+void LevelTwo::resetWorld(glm::vec3 playerPos)
 {
+    playerPos = glm::vec3(0,50,-50);
+
     if (m_world)
     {
         delete m_world;
@@ -72,14 +76,8 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     GLuint shader = m_parentApp->getShader(GEOMETRY);
 //    GLuint shader = m_parentApp->getShader(DEFAULT);
 
-    // make an object handler for the lights and parse them in from an obj
-    // save into a list of lights and send to the world
-    LightParser lightParser;
-    QList<Light*> lights = lightParser.getLights(":/objects/LargeLights.obj", glm::vec3(0));        //either have all lights or add on a per file basis
-
-//    Light *l = lights.value(0);
-//    lights.clear();
-//    lights.append(l);
+    QList<Light*> lights;
+    // set lights
 
     ActionCamera *cam;
     cam = new ActionCamera();
@@ -97,44 +95,38 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_world->addManager(vm);
     m_world->setPlayer(player);
 
-    //MARKER OBJECTS:
-    addMarker(":/objects/LargeStone.obj", shader, glm::vec3(0), "basicsign.png");
-    addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-47,-.2,1), "freezesign.png");
-    addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-67,-4.8,-52), "windsign.png");
-    addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-130,34.8,-40), "tearsign.png");
-
     m_world->setGravity(glm::vec3(0,-10,0));
     setCamera(cam);
     player->setMaxOffset(50); //zoom
 
     //Add all islands
-    OBJ* island1 = addIsland(":/objects/LargeIsland.obj",shader,glm::vec3(0));
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-48,0,0));
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-70,-5,-40));
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-130,35,-40));
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-170,35,-40));
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-150,25,-40));
-
+//    OBJ* island1 = addIsland(":/objects/Plane.obj",shader,glm::vec3(0));
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,0,0));
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,42,0));
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0,42,-50));
 
     //Add all verlet entities
-    vm->addVerlet(new TriangleMesh(glm::vec2(8,58), .6, glm::vec3(-11,1.2,-2.2), vm, shader,Z,true,HORIZONTAL_EDGE));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,40), .6, glm::vec3(-53,1.2,-8), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(5,35), .6, glm::vec3(-2,43,-3), vm, shader,X,true,TOP_EDGE));
+
+    vm->addVerlet(new TriangleMesh(glm::vec2(10,40), .6, glm::vec3(0,44,-55), vm, shader,Y,true, NONE));
 
     // stairs
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-85,-5,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-90,2,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-95,9,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-100,16,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-105,23,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-110,30,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-117,35,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-122,35,-36), vm, shader));
+    int numStairs = 10;
+    int y = 5;
+    for(int i=0; i<720; i+= 360/numStairs, y+=2){
+
+        float rad = i * (PI/180.0);
+        TriangleMesh* t = new TriangleMesh(glm::vec2(6,12), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader);
+        vm->addVerlet(t);
+    }
 
 
-    vm->addVerlet(new TriangleMesh(glm::vec2(25,55), .6, glm::vec3(-136,35,-48), vm, shader,Z,true, ALL_CORNERS));
-//    vm->addVerlet(new TriangleMesh(glm::vec2(25,12), .6, glm::vec3(0,10,0), vm, shader,X,true, ALL_EDGE));
 
-//    vm->addVerlet(new TriangleMesh(glm::vec2(8,22), .3, glm::vec3(-88,-8,-2.2), vm, shader,Z,true));
+//    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-90,2,-36), vm, shader));
+
+//    vm->addVerlet(new TriangleMesh(glm::vec2(25,55), .6, glm::vec3(-136,35,-48), vm, shader,Z,true, ALL_CORNERS));
+
+
 
 //    Grass* grass = new Grass(vm, shader);
 //    grass->createPatch(glm::vec2(0,0),10,island1);
@@ -151,7 +143,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 }
 
 // update and render
-void TestLevelScreen::onTick(float secs)
+void LevelTwo::onTick(float secs)
 {
 
     m_world->onTick(secs, m_cursor[3][0], m_cursor[3][1]);
@@ -176,7 +168,7 @@ void TestLevelScreen::onTick(float secs)
 }
 
 
-void TestLevelScreen::onRender(Graphics *g)
+void LevelTwo::onRender(Graphics *g)
 {
     // draw markers first
     foreach(Marker* marker, m_markers){
@@ -198,7 +190,7 @@ void TestLevelScreen::onRender(Graphics *g)
     render2D(g);
 }
 
-void TestLevelScreen::render2D(Graphics *g)
+void LevelTwo::render2D(Graphics *g)
 {
     g->setGraphicsMode(DRAW2D);
 
@@ -212,7 +204,7 @@ void TestLevelScreen::render2D(Graphics *g)
     }
 }
 
-void TestLevelScreen::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos)
+void LevelTwo::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos)
 {
     if (m_parentApp->isUsingLeapMotion())
     {
@@ -226,7 +218,7 @@ void TestLevelScreen::onMouseMoved(QMouseEvent *e, float deltaX, float deltaY, g
     m_cursor[3][1] = pos.y;
 }
 
-void TestLevelScreen::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos)
+void LevelTwo::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY, glm::vec3 pos)
 {
     if (m_parentApp->isUsingLeapMotion())
     {
@@ -240,7 +232,7 @@ void TestLevelScreen::onMouseDragged(QMouseEvent *e, float deltaX, float deltaY,
     m_cursor[3][1] = pos.y;
 }
 
-void TestLevelScreen::onKeyPressed(QKeyEvent *e)
+void LevelTwo::onKeyPressed(QKeyEvent *e)
 {
     if (e->key() == Qt::Key_Backspace)
     {
@@ -250,7 +242,7 @@ void TestLevelScreen::onKeyPressed(QKeyEvent *e)
     m_world->onKeyPressed(e);
 }
 
-void TestLevelScreen::onKeyReleased(QKeyEvent *e )
+void LevelTwo::onKeyReleased(QKeyEvent *e )
 {
     if (e->key() == Qt::Key_P)
         m_parentApp->useLeapMotion(!m_parentApp->isUsingLeapMotion());
@@ -259,7 +251,7 @@ void TestLevelScreen::onKeyReleased(QKeyEvent *e )
 
 }
 
-void TestLevelScreen::onResize(int w, int h)
+void LevelTwo::onResize(int w, int h)
 {
     ScreenH::onResize(w, h);
 
@@ -270,7 +262,7 @@ void TestLevelScreen::onResize(int w, int h)
     m_cursor[3] = pos;
 }
 
-void TestLevelScreen::onMousePressed(QMouseEvent *e)
+void LevelTwo::onMousePressed(QMouseEvent *e)
 {
     if (e->button() == Qt::MidButton)   //Qt::RightButton
         m_parentApp->setMouseDecoupled(false);
@@ -278,7 +270,7 @@ void TestLevelScreen::onMousePressed(QMouseEvent *e)
     m_world->onMousePressed(e);
 }
 
-void TestLevelScreen::onMouseReleased(QMouseEvent *e)
+void LevelTwo::onMouseReleased(QMouseEvent *e)
 {
     if (e->button() == Qt::MidButton)  //Qt::RightButton
         m_parentApp->setMouseDecoupled(true);
@@ -287,6 +279,7 @@ void TestLevelScreen::onMouseReleased(QMouseEvent *e)
 }
 
 // unused in game
-void TestLevelScreen::onMouseWheel(QWheelEvent *e) {
+void LevelTwo::onMouseWheel(QWheelEvent *e) {
     m_world->onMouseWheel(e);
 }
+

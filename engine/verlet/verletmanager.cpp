@@ -256,6 +256,9 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
         }
     }
 
+
+    // range check first
+
     if(solve){
         verlet(onTickSecs);
         for(int i=0; i<_numSolves; i++)
