@@ -2,6 +2,7 @@
 #include "application.h"
 //#include "gamescreen.h"
 #include "testlevelscreen.h"
+#include "leveltwo.h"
 #include "button.h"
 #include "soundtester.h"
 
@@ -70,7 +71,8 @@ void GameMenu::onMousePressed(QMouseEvent *e)
     if (e->button() == Qt::LeftButton && m_startButton->contains(m_cursor[3][0], m_cursor[3][1]))
     {
         m_parentApp->setMouseDecoupled(false);
-        m_parentApp->addScreen(new TestLevelScreen(m_parentApp));
+//        m_parentApp->addScreen(new TestLevelScreen(m_parentApp));
+        m_parentApp->addScreen(new LevelTwo(m_parentApp));
     }
 }
 
@@ -102,8 +104,8 @@ void GameMenu::onLeapKeyTap(glm::vec3)
     if (m_startButton->contains(m_cursor[3][0], m_cursor[3][1]))
     {
         m_parentApp->setMouseDecoupled(false);
-        m_parentApp->addScreen(new TestLevelScreen(m_parentApp));
-//        m_parentApp->addScreen(new GameScreen(m_parentApp));
+//        m_parentApp->addScreen(new TestLevelScreen(m_parentApp));
+        m_parentApp->addScreen(new LevelTwo(m_parentApp));
     }
 }
 
