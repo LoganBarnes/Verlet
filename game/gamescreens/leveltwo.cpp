@@ -13,6 +13,8 @@
 #include "trianglemesh.h"
 #include "half.h"
 
+#define PI 3.14159
+
 #include "debugprinting.h"
 
 LevelTwo::LevelTwo(Application *parent)
@@ -62,6 +64,8 @@ void LevelTwo::addMarker(const QString& objPath, GLuint shader, const glm::vec3&
 
 void LevelTwo::resetWorld(glm::vec3 playerPos)
 {
+    playerPos = glm::vec3(0,50,-50);
+
     if (m_world)
     {
         delete m_world;
@@ -74,9 +78,6 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
 
     QList<Light*> lights;
     // set lights
-
-
-
 
     ActionCamera *cam;
     cam = new ActionCamera();
@@ -104,27 +105,30 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
 
 
     //Add all verlet entities
-//    vm->addVerlet(new TriangleMesh(glm::vec2(8,58), .6, glm::vec3(-11,1.2,-2.2), vm, shader,Z,true,HORIZONTAL_EDGE));
-//    vm->addVerlet(new TriangleMesh(glm::vec2(6,40), .6, glm::vec3(-53,1.2,-8), vm, shader));
 
-//    // stairs
-//    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-85,-5,-36), vm, shader));
-//    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-90,2,-36), vm, shader));
-//    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-95,9,-36), vm, shader));
-//    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-100,16,-36), vm, shader));
-//    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-105,23,-36), vm, shader));
-//    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-110,30,-36), vm, shader));
-//    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-117,35,-36), vm, shader));
-//    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-122,35,-36), vm, shader));
+//    OBJ* island1 = addIsland(":/objects/Plane.obj",shader,glm::vec3(0));
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,0,0));
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,42,0));
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0,42,-50));
 
+    //Add all verlet entities
+    vm->addVerlet(new TriangleMesh(glm::vec2(5,35), .6, glm::vec3(-2,43,-3), vm, shader,X,true,TOP_EDGE));
 
-//    vm->addVerlet(new TriangleMesh(glm::vec2(25,55), .6, glm::vec3(-136,35,-48), vm, shader,Z,true, ALL_CORNERS));
+    vm->addVerlet(new TriangleMesh(glm::vec2(10,40), .6, glm::vec3(0,44,-55), vm, shader,Y,true, NONE));
 
+    // stairs
+    int numStairs = 10;
+    int y = 5;
+    for(int i=0; i<720; i+= 360/numStairs, y+=2){
 
+        float rad = i * (PI/180.0);
+        TriangleMesh* t = new TriangleMesh(glm::vec2(6,12), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader);
+        vm->addVerlet(t);
+    }
 
-    Grass* grass = new Grass(vm, shader);
-    grass->createPatch(glm::vec2(0,0),10,island1);
-    vm->addVerlet(grass);
+//    Grass* grass = new Grass(vm, shader);
+//    grass->createPatch(glm::vec2(0,0),10,island1);
+//    vm->addVerlet(grass);
 
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.02f / cam->getAspectRatio(), .02f, .02f));
     m_cursor[3][2] = -.999f;

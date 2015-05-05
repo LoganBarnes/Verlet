@@ -9,7 +9,7 @@ typedef unsigned int GLuint;
 
 enum PinMode
 {
-    NONE, TOP_CORNERS, ALL_CORNERS, TOP_EDGE, HORIZONTAL_EDGE, ALL_EDGE
+    NONE, TOP_CORNERS, ALL_CORNERS, TOP_EDGE, HORIZONTAL_EDGE, ALL_EDGE, ONE_CORNER
 };
 enum Axis
 {
@@ -27,6 +27,7 @@ public:
     void onTick(float seconds);
     virtual void onDraw(Graphics *g);
     virtual void updateBuffer();
+    int m_row, m_col;
 private:
     float _scalar[NUM]; //for triangleMesh: 1/numTriangles, for averaging
 
