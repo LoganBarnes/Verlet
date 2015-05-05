@@ -244,7 +244,7 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
         */
 
         else if(m_tear_ptA>0&&m_tear_ptB<0){
-            QList<Link*> proximity = m_tearVerlet->link_map[m_tear_ptA];
+            QList<Link*> proximity = m_tearVerlet->_linkMap[m_tear_ptA].links;//link_map[m_tear_ptA];
             std::vector<int> p;
             QHash<int,Link*> pairs;
 
