@@ -18,6 +18,8 @@ public:
     void onKeyPressed(QKeyEvent *e);
     void setLights(QList<Light*> l);
 
+    //virtual QList<OBJ* > getTerrain(){return m_islands;}
+    //QList<OBJ*> m_islands;
 private:
     int mode;
     bool usingFog;

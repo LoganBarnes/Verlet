@@ -462,7 +462,7 @@ void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2){
          }
      }
      foreach(Link* s, border_b){
-         if(!checkShearValid(s)){
+         if(!checkShearValid(s)){ //the check shouldn't be reliant on shears having two links...
              border_b.removeOne(s);
              removeShear(s);
          }
@@ -492,13 +492,16 @@ void TriangleMesh::insertPoint(int index, Tri* t1, Link* l1, Tri* t2, Link* l2){
              shear_to_link[s]+=link_b1;
              link_to_shear[link_b1]+=s;
          }
-         else if(segments.size()==1)
-             std::cout<<"no match"<<std::endl;
+         else if(segments.size()==1){
+             std::cout<<"no match:"<<std::endl;
+             std::cout<<segments[0]->pointA<<",b:"<<segments[0]->pointB<<",c:"<<segments[0]->pointC;
+                }
      }
 
      //Update index
      foreach(Link* c, cross){
          QList<Link*> segments = shear_to_link[c];
+         //***************HERE'S WHERE THE INDEX IS OUT OF RANGE, BC THERE WAS NO MATCH
          if(segments[0]->pointA==index2||segments[0]->pointB==index2||segments[1]->pointA==index2||segments[1]->pointB==index2){
              c->pointC=index2;
              crossover_map[index2]+=c;

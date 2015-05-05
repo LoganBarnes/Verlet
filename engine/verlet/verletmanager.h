@@ -40,7 +40,7 @@ public:
 
     //Settings
     glm::vec3 gravity = glm::vec3(0,-1.5,0);
-    glm::vec3 wind = glm::vec3(0,0,0.5);
+    glm::vec3 wind = glm::vec3(0,0,0);
     //multiplier for noise (in applyWind) based on signs of 'wind'
     glm::vec3 windSign = glm::vec3(1,1,1);
     float windPow;
@@ -106,6 +106,7 @@ private:
     //World-space pt: where cursor's ray intersects w/ tear's plane
     int m_tear_ptA;
     int m_tear_ptB;
+    int m_tear_prevA;
     Verlet* m_tearVerlet;
     Link* m_tearLink;
     int rayTrace(float x, float y, std::vector<int> points, Verlet* v);

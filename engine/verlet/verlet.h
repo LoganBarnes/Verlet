@@ -84,6 +84,7 @@ public:
     virtual Link* closestLink(int id, const glm::vec3& point);
     virtual void tearLink(Link* l);
     QHash<int, QList<Link*> > link_map;
+    Link* findLink(int a, int b);
 
     glm::vec3 *getPosArray() { return _pos; }
     glm::vec3 *getNormArray() { return _normal; }
@@ -119,7 +120,6 @@ protected:
 
     //Utility for editing links (tearing)
     void removeLink(Link* l);
-    Link* findLink(int a, int b);
     void replaceLink(Link* key, Link* oldLink, Link* newLink,
                      QHash<Link*, QList<Link*> >& hash);
 };
