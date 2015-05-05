@@ -24,8 +24,19 @@ out vec2 texc;
 
 uniform vec2 repeatUV = vec2(1.0);
 
+uniform float particleRadius = -1.f;
+uniform int screenHeight;
+
+
 void main()
 {
+    if (particleRadius > -0.5f)
+    {
+        gl_Position = projection * view * vec4(position.xyz, 1); // storing inverse mass in w position
+        gl_PointSize = screenHeight * projection[1][1] * particleRadius / gl_Position.w;
+        return;
+    }
+
     texc = texCoord * repeatUV;
 
     viewMat = view;

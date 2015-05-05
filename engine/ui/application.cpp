@@ -1,6 +1,11 @@
 #include "application.h"
 #include "audio.h"
 
+#ifdef CUDA
+#include <cuda_runtime.h>
+#include "util.cuh"
+#endif
+
 #include "debugprinting.h"
 
 Application::Application()
@@ -11,6 +16,10 @@ Application::Application()
 
 #ifdef LEAP
     m_leapController = NULL;
+#endif
+
+#ifdef CUDA
+    cudaInit();
 #endif
 
     m_currentScreen = NULL;
@@ -44,6 +53,9 @@ Application::~Application()
         delete m_leapController;
 #endif
 
+#ifdef CUDA
+    cudaDeviceReset();
+#endif
 }
 
 void Application::init()

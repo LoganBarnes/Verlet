@@ -103,6 +103,7 @@ void Graphics::init()
     m_defaultLocs["view"] = glGetUniformLocation(defaultShader, "view");
     m_defaultLocs["model"] = glGetUniformLocation(defaultShader, "model");
     m_geomLocs["invModel"] = glGetUniformLocation(defaultShader, "invModel");
+    m_geomLocs["screenHeight"] = glGetUniformLocation(defaultShader, "screenHeight");
 
     m_defaultLocs["diffuse_color"] = glGetUniformLocation(defaultShader, "diffuse_color");
     m_defaultLocs["world_color"] = glGetUniformLocation(defaultShader, "world_color");
@@ -168,6 +169,7 @@ void Graphics::init()
     m_geomLocs["invModel"] = glGetUniformLocation(geomShader, "invModel");
     m_geomLocs["materialColor"] = glGetUniformLocation(geomShader, "materialColor");
     m_geomLocs["shininess"] = glGetUniformLocation(geomShader, "shininess");
+    m_geomLocs["screenHeight"] = glGetUniformLocation(geomShader, "screenHeight");
 
     m_shaders.insert("geomShader", geomShader);
 
@@ -410,6 +412,7 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
                 glm::value_ptr(m_currProj));
         glUniformMatrix4fv(m_geomLocs["view"], 1, GL_FALSE,
                 glm::value_ptr(m_currView));
+        glUniform1i(m_geomLocs["screenHeight"], m_h);
         break;
     }
     case LIGHT:

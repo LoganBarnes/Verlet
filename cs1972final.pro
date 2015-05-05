@@ -8,15 +8,20 @@ DESTDIR     = $$system(pwd)
 OBJECTS_DIR = $$DESTDIR/bin
 
 unix:!macx {
-    LIBS += -lGLU -lalut
+    NON_CUDA_LIBS += -lGLU -lalut
+    LIBS += $$NON_CUDA_LIBS
     QMAKE_CXXFLAGS += -std=c++11
     DEFINES += LINUX
 }
 macx {
-    LIBS += -framework OpenAL
+    NON_CUDA_LIBS += -stdlib=libc++ -framework OpenAL
+    LIBS += $$NON_CUDA_LIBS
 
-    QMAKE_CFLAGS += -mmacosx-version-min=10.7
-    QMAKE_CXXFLAGS = $$QMAKE_CFLAGS_X86_64
+    QMAKE_CXXFLAGS += -stdlib=libc++
+    QMAKE_CXXFLAGS += -std=c++11
+    QMAKE_CXXFLAGS += -mmacosx-version-min=10.7
+    QMAKE_LFLAGS += -mmacosx-version-min=10.7
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
 
     MAC_SDK  = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/
     if( exists( $$MAC_SDK) ) {
@@ -38,6 +43,7 @@ INCLUDEPATH +=  lib/glm engine game shaders \
                 engine/objects \
                 engine/verlet \
                 engine/sound \
+                engine/particles_cuda \
                 game/gamescreens \
                 game/world \
                 game/entities \
@@ -55,6 +61,7 @@ DEPENDPATH +=   lib/glm engine game shaders \
                 engine/objects \
                 engine/verlet \
                 engine/sound \
+                engine/particles_cuda \
                 game/gamescreens \
                 game/world \
                 game/entities \
@@ -120,7 +127,10 @@ SOURCES += \
     engine/verlet/grass.cpp \
     engine/objects/lightparser.cpp \
     game/entities/marker.cpp \
-    game/gamescreens/leveltwo.cpp
+    game/gamescreens/leveltwo.cpp \
+    engine/particles_cuda/particlesystemmanager.cpp \
+    engine/particles_cuda/particlerenderer.cpp \
+    engine/particles_cuda/particlesystem.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -181,7 +191,10 @@ HEADERS += \
     engine/verlet/grass.h \
     engine/objects/lightparser.h \
     game/entities/marker.h \
-    game/gamescreens/leveltwo.h
+    game/gamescreens/leveltwo.h \
+    engine/particles_cuda/particlesystemmanager.h \
+    engine/particles_cuda/particlerenderer.h \
+    engine/particles_cuda/particlesystem.h
 
 
 FORMS += engine/ui/mainwindow.ui
@@ -215,3 +228,84 @@ macx {
 
 ################################ CUDA #################################
 
+unix:!macx {
+    # Path to cuda stuff
+    CUDA_DIR = /contrib/projects/cuda5-toolkit
+    CUDA_LIB = $$CUDA_DIR/lib64
+
+    # GPU architecture
+    CUDA_ARCH     = sm_21 # should be able to detect this somehow instead of hardcoding
+
+    SED_STUFF = 2>&1 | sed -r \"s/\\(([0-9]+)\\)/:\\1/g\" 1>&2
+}
+macx {
+    # Path to cuda stuff
+    CUDA_DIR = /Developer/NVIDIA/CUDA-7.0
+    CUDA_LIB = $$CUDA_DIR/lib
+
+    # GPU architecture
+    CUDA_ARCH     = sm_30 # should be able to detect this somehow instead of hardcoding
+
+    SED_STUFF = 2>&1 | sed -E \"s/\\(([0-9]+)\\)/:\\1/g\" 1>&2
+}
+
+if ( exists( $$CUDA_DIR/ ) ) {
+    message( "Configuring for cuda..." );
+    DEFINES += CUDA
+
+    # Cuda sources
+    CUDA_SOURCES += \
+                    engine/particles_cuda/shared_variables.cu \
+                    engine/particles_cuda/integration.cu \
+                    engine/particles_cuda/solver.cu \
+                    engine/particles_cuda/util.cu
+
+    OTHER_FILES +=  \
+                    engine/particles_cuda/wrappers.cuh \
+                    engine/particles_cuda/integration_kernel.cuh \
+                    engine/particles_cuda/solver_kernel.cuh \
+                    engine/particles_cuda/kernel.cuh \
+                    engine/particles_cuda/util.cuh \
+                    engine/particles_cuda/util.cu \
+                    engine/particles_cuda/integration.cu \
+                    engine/particles_cuda/solver.cu \
+                    engine/particles_cuda/shared_variables.cu \
+                    engine/particles_cuda/shared_variables.cuh \
+                    engine/particles_cuda/helper_cuda.h \
+                    engine/particles_cuda/helper_math.h
+
+    # Pather to header and lib files
+    INCLUDEPATH += $$CUDA_DIR/include
+    QMAKE_LIBDIR += $$CUDA_LIB
+
+    # prevents warnings from code we didn't write
+    QMAKE_CXXFLAGS += -isystem $$CUDA_DIR/include
+
+    LIBS += -lcudart -lcurand -lcublas -lcusparse
+    QMAKE_LFLAGS += -Wl,-rpath,$$CUDA_LIB
+    NVCCFLAGS = -Xlinker -rpath,$$CUDA_LIB
+
+    # libs used in the code
+    CUDA_LIBS = $$LIBS
+    CUDA_LIBS -= $$NON_CUDA_LIBS
+    # Some default NVCC flags?
+    NVCCFLAGS     += --compiler-options -fno-strict-aliasing -use_fast_math --ptxas-options=-v #--std=c++11
+
+    # Prepare the extra compiler configuration (taken from the nvidia forum)
+    CUDA_INC = $$join(INCLUDEPATH,' -I','-I',' ')
+
+    cuda.commands = $$CUDA_DIR/bin/nvcc -m64 -O3 -arch=$$CUDA_ARCH -c $$NVCCFLAGS \
+                    $$CUDA_INC $$CUDA_LIBS  ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_OUT} \
+                    $$SED_STUFF
+    # nvcc error printout format ever so slightly different from gcc
+    # http://forums.nvidia.com/index.php?showtopic=171651
+
+    cuda.dependency_type = TYPE_C
+    cuda.depend_command = $$CUDA_DIR/bin/nvcc -O3 -M $$CUDA_INC $$NVCCFLAGS   ${QMAKE_FILE_NAME}
+
+    cuda.input = CUDA_SOURCES
+    cuda.output = ${OBJECTS_DIR}${QMAKE_FILE_BASE}_cuda.o
+
+    # Tell Qt that we want add more stuff to the Makefile
+    QMAKE_EXTRA_COMPILERS += cuda
+}

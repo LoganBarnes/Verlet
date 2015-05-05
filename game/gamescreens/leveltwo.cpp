@@ -12,8 +12,9 @@
 #include "grass.h"
 #include "trianglemesh.h"
 #include "half.h"
+#include "particlesystemmanager.h"
 
-#define PI 3.14159
+#define PI 3.1415926535897932f
 
 #include "debugprinting.h"
 
@@ -94,6 +95,11 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
     m_world->addManager(gcm);
     m_world->addManager(vm);
     m_world->setPlayer(player);
+
+#ifdef CUDA
+    ParticleSystemManager *pcm = new ParticleSystemManager(GEOMETRY, shader);
+    m_world->addManager(pcm);
+#endif
 
     m_world->setGravity(glm::vec3(0,-10,0));
     setCamera(cam);
