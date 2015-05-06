@@ -59,7 +59,13 @@ private:
     bool m_drawCursor;
     glm::vec2 m_deltas;
 
-    int _island;
+    //int _island;
+    QList<Verlet*> m_spiral;
+    Marker* m_spiralSensor;
+    bool m_spiraling;
+    int m_spiralIndex;
+    int m_spiralDelay;
+    int m_spiralCounter;
 
     QList<Marker*> m_markers;
 };

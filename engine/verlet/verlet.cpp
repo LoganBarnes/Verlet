@@ -157,7 +157,7 @@ void Verlet::onTick(float ){}
 void Verlet::setWindDirection(float radian){
     float x = cos(radian);
     float y = sin(radian);
-    glm::vec3 w = glm::vec3(x,.2,y);
+    glm::vec3 w = glm::vec3(x,.25,y);
     w=glm::normalize(w);
     this->windDirection = w;
 }
@@ -165,22 +165,24 @@ void Verlet::setWindDirection(float radian){
 void Verlet::applyWind(Tri* t){
     //wind has full effect to perpendicular cloth, none on parallel cloth
     //glm::vec3 windDirection = _manager->wind;
-    //float r = (.01 * (rand() %100))-0.5f;        
-    glm::vec3 windDirection = (controlWind) ? this->windDirection : _manager->wind;
+    //float r = (.01 * (rand() %100))-0.5f;
     //windDirection.x+=r;
     //windDirection.z+=r;
+
+    glm::vec3 windDirection = (controlWind) ? this->windDirection : _manager->wind;
+    float power = (controlWind) ? 2 : _manager->windPow;
 
     float windScalar =  glm::dot(windDirection, t->normal);
 
     if(windScalar<0)
         windScalar*=-1;
 
-    glm::vec3 windForce = windDirection*_manager->windPow*windScalar;
+    glm::vec3 windForce = windDirection*power*windScalar;
 
     //Apply noise
     float noise = windNoise;
-    windForce.z += -.5*_manager->windSign.z*((t->random*noise)-noise*.5)*_manager->windPow;
-    windForce.x += -.5*_manager->windSign.x*((t->random*noise)-noise*.5)*_manager->windPow;
+    windForce.z += -.5*_manager->windSign.z*((t->random*noise)-noise*.5)*power;
+    windForce.x += -.5*_manager->windSign.x*((t->random*noise)-noise*.5)*power;
 
     _acc[t->a] += windForce;
     _acc[t->b] += windForce;

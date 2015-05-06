@@ -122,7 +122,8 @@ SOURCES += \
     game/entities/marker.cpp \
     game/gamescreens/leveltwo.cpp \
     game/entities/token.cpp \
-    engine/verlet/bend.cpp
+    engine/verlet/bend.cpp \
+    game/entities/spiralsensor.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -185,7 +186,8 @@ HEADERS += \
     game/entities/marker.h \
     game/gamescreens/leveltwo.h \
     game/entities/token.h \
-    engine/verlet/bend.h
+    engine/verlet/bend.h \
+    game/entities/spiralsensor.h
 
 
 FORMS += engine/ui/mainwindow.ui

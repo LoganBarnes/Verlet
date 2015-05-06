@@ -21,7 +21,11 @@ LevelTwo::LevelTwo(Application *parent)
     : ScreenH(parent),
       m_world(NULL),
       m_oh(NULL),
-      m_resetIndex(0)
+      m_resetIndex(0),
+      m_spiraling(false),
+      m_spiralIndex(0),
+      m_spiralDelay(30),
+      m_spiralCounter(0)
 {
     m_parentApp->setMouseDecoupled(true);
     m_parentApp->setLeapRightClick(GRAB);
@@ -39,7 +43,6 @@ LevelTwo::~LevelTwo()
     delete m_world;
     delete m_oh; // m_level is deleted here
 }
-
 
 OBJ* LevelTwo::addIsland(const QString& path, GLuint shader, const glm::vec3& offset, glm::vec4 color){
     QList<Triangle *> tris;
@@ -102,6 +105,11 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
     }
     m_resetHalves.clear();
 
+    //reset spiral
+    m_spiral.clear();
+    m_spiraling=false;
+    m_spiralIndex=0;
+
     GLuint shader = m_parentApp->getShader(GEOMETRY);
 //    GLuint shader = m_parentApp->getShader(DEFAULT);
 
@@ -116,6 +124,7 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
     VerletManager *vm = new VerletManager(cam);
+    vm->windPow=0;
 
     m_world = new GameWorld();
     m_world->setLights(lights);
@@ -129,7 +138,6 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
 
     //Add all islands
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0), glm::vec4(.5,.5,.5,0));
-
 
     //Add all verlet entities
 //    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,0,0),glm::vec4(.5,.5,.5,0));
@@ -180,13 +188,19 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
         float rad = i * (PI/180.0);
         //TriangleMesh* t = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader, i);
         TriangleMesh* t = new TriangleMesh(glm::vec2(8,30), .5, glm::vec3(-5*sin(rad),y,5*cos(rad)), vm, shader, i);
-        t->controlWind=true;
         float rad1 = (i+90) * (PI/180.0);
 
         t->setWindDirection(rad1);
         vm->addVerlet(t);
+        this->m_spiral.push_back(t);
     }
 
+    // wind trigger
+    QList<Triangle*> tris;
+    OBJ* objMarker = m_oh->getObject(":/objects/Bell.obj", shader, &tris, glm::vec3(0,1,0), glm::vec4(1,1,0,.6));
+    m_spiralSensor = new Marker(objMarker, glm::vec2(0.f, 0.f), glm::vec2(2,2), "");
+    m_world->addObject(objMarker);
+    m_world->addToMesh(tris);
 
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.02f / cam->getAspectRatio(), .02f, .02f));
     m_cursor[3][2] = -.999f;
@@ -219,8 +233,17 @@ void LevelTwo::onTick(float secs)
             break;
         }
     }
-
-//    cout<<"player pos: "<<pos.x<<" "<<pos.y<<" "<<pos.z<<endl;
+    if(this->m_spiralSensor->isInRange(pos,2.0))
+        m_spiraling = true;
+    if(m_spiraling){
+        if(m_spiralCounter==0){
+            m_spiralCounter = m_spiralDelay;
+            if(m_spiralIndex<m_spiral.size())
+                m_spiral[m_spiralIndex]->controlWind=true;
+            m_spiralIndex++;
+        }
+        m_spiralCounter--;
+    }
 }
 
 
