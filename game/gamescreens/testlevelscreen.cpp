@@ -122,14 +122,14 @@ QList<Light*> TestLevelScreen::makeLights(){
 
     positions.clear();
 
-    positions.append(glm::vec3(-10,12,-39));       //on stairs
-    positions.append(glm::vec3(-94,4,-39));
-    positions.append(glm::vec3(-116,20,-39));
-    positions.append(glm::vec3(-99,8,-39));
-    positions.append(glm::vec3(-109,16,-39));
-    positions.append(glm::vec3(-121,24,-39));
-    positions.append(glm::vec3(-89,1,-39));
-    positions.append(glm::vec3(-84,-2,-39));
+    positions.append(glm::vec3(-8,12,-39));       //on stairs
+    positions.append(glm::vec3(-92,4,-39));
+    positions.append(glm::vec3(-114,20,-39));
+    positions.append(glm::vec3(-97,8,-39));
+    positions.append(glm::vec3(-107,16,-39));
+    positions.append(glm::vec3(-119,24,-39));
+    positions.append(glm::vec3(-87,1,-39));
+    positions.append(glm::vec3(-82,-2,-39));
 
     for(int i=0; i<positions.size(); i++){
 
