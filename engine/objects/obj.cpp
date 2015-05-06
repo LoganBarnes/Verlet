@@ -12,14 +12,14 @@
 #define GLM_FORCE_RADIANS
 #include <gtc/type_ptr.hpp>
 
-OBJ::OBJ(GLuint shader)
+OBJ::OBJ(GLuint shader, glm::vec4 color)
 {
     m_shader = shader;
     m_vaoID = 0;
     m_vboID = 0;
 
     m_texture = "";
-    m_color = glm::vec4(.5f, .5f, .5f, 0); // w is shininess (no transparency for objs)
+    m_color = color; // w is shininess (no transparency for objs)
 }
 
 OBJ::~OBJ()

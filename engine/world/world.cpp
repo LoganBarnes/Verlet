@@ -2,7 +2,7 @@
 #include "manager.h"
 #include "obj.h"
 
-//#include "debugprinting.h"
+#include "debugprinting.h"
 
 
 World::World()
@@ -118,6 +118,32 @@ void World::onTick(float secs, float mouseX, float mouseY)
     foreach (Manager *m, m_managers)
     {
         m->manage(this, secs, mouseX, mouseY);
+    }
+
+
+
+    // animate lights
+    foreach(Light* light, m_lights){
+        Light::AnimationFunction func = light->animFunc;
+        switch(func){
+            case Light::NONE:
+            {
+            break;
+            }
+            case Light::ZSINE:
+            {
+                // move based on period and position
+                double periodFunc = sin(m_timeElapsed)*light->animationPeriod;
+                light->posDir = glm::vec3(light->center.x, light->center.y, light->center.z+periodFunc);
+                break;
+            }
+            case Light::CIRCLE:
+            {
+                glm::vec3 circle = glm::vec3(sin(m_timeElapsed/2.)*light->animationPeriod, 0, cos(m_timeElapsed/2.)*light->animationPeriod);
+                light->posDir = circle + light->center;
+                break;
+            }
+        }
     }
 
     m_player->setCameraPos();

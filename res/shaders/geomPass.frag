@@ -20,5 +20,5 @@ void main(){
 
     out0 = position_worldSpace;
     out1 = normal_worldSpace;
-    out2 = materialColor;
+    out2 = vec4(normal_worldSpace.x*.4, .65+normal_worldSpace.y*.3, .77+normal_worldSpace.z*.15,1);
 }

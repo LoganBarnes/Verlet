@@ -20,56 +20,10 @@ GameWorld::~GameWorld()
 
 
 void GameWorld::setLights(QList<Light*> l){
-//    m_lights = l;
+    m_lights = l;
 
-    m_lights.clear();
-
-    int counter = m_lights.size();
-
-    // Custom lights
-    QList<glm::vec3> positions;
-    positions.append(glm::vec3(0,3,0));
-    positions.append(glm::vec3(10,5,0));
-//    positions.append(glm::vec3(-10,5,0));
-    positions.append(glm::vec3(-25,-15,0));
-    positions.append(glm::vec3(-50,5,0));
-    positions.append(glm::vec3(0,45,0));
-    positions.append(glm::vec3(-70,0,-40));         //island bottom of stairs
-    positions.append(glm::vec3(-130,29,-40));       //island top of stairs
-
-    positions.append(glm::vec3(-105,13,-39));       //on stairs
-    positions.append(glm::vec3(-95,5,-39));
-    positions.append(glm::vec3(-117,21,-39));
-    positions.append(glm::vec3(-100,9,-39));
-    positions.append(glm::vec3(-110,17,-39));
-    positions.append(glm::vec3(-122,25,-39));
-    positions.append(glm::vec3(-90,2,-39));
-    positions.append(glm::vec3(-85,-3,-39));
-
-    positions.append(glm::vec3(-170,29,-40));       //last island
-
-    positions.append(glm::vec3(-150,17.,-42.5));   //bell
-    positions.append(glm::vec3(-150,20.,-42.5));
-
-
-    for(int i=0; i<positions.size(); i++){
-
-        Light* light;
-
-        light = new Light();
-        light->id = counter++;
-        light->type = POINT;
-        light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
-        lightColors.append(glm::vec3(.250, .250, .5f));
-
-        light->posDir = positions.at(i);
-
-        light->radius = 80.f;
-        light->function = glm::vec3(1.0, .1, .01);
-
-        m_lights.append(light);
-    }
-
+    foreach(Light* light, l)
+        lightColors.append(light->color);
 }
 
 

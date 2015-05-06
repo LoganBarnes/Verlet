@@ -39,9 +39,9 @@ public:
     // resize
     virtual void onResize(int w, int h);
 
-    OBJ* addIsland(const QString& path, GLuint shader, const glm::vec3& offset);
-    void addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath);
-
+    OBJ* addIsland(const QString& path, GLuint shader, const glm::vec3& offset, glm::vec4 color);
+    void addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath, glm::vec4 color);
+    QList<Light*> makeLights();
 
 private:
     void render2D(Graphics *g);

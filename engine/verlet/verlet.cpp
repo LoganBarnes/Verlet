@@ -173,9 +173,9 @@ void Verlet::applyWind(Tri* t){
     glm::vec3 windForce = windDirection*_manager->windPow*windScalar;
 
     //Apply noise
-    //float noise = windNoise;
-    //windForce.z += -.5*_manager->windSign.z*((t->random*noise)-noise*.5)*_manager->windPow;
-    //windForce.x += -.5*_manager->windSign.x*((t->random*noise)-noise*.5)*_manager->windPow;
+    float noise = windNoise;
+    windForce.z += -.5*_manager->windSign.z*((t->random*noise)-noise*.5)*_manager->windPow;
+    windForce.x += -.5*_manager->windSign.x*((t->random*noise)-noise*.5)*_manager->windPow;
 
     _acc[t->a] += windForce;
     _acc[t->b] += windForce;
