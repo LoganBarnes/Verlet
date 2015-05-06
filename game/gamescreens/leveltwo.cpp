@@ -64,7 +64,8 @@ void LevelTwo::addMarker(const QString& objPath, GLuint shader, const glm::vec3&
 
 void LevelTwo::resetWorld(glm::vec3 playerPos)
 {
-    //playerPos = glm::vec3(0,50,-50);
+
+//    playerPos = glm::vec3(0,50,0);
 
     if (m_world)
     {
@@ -100,6 +101,12 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
     player->setMaxOffset(50); //zoom
 
     //Add all islands
+    OBJ* island1 = addIsland(":/objects/Plane.obj",shader,glm::vec3(0));
+//    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-48,0,0));
+
+
+    //Add all verlet entities
+
 //    OBJ* island1 = addIsland(":/objects/Plane.obj",shader,glm::vec3(0));
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,0,0));
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,42,0));
@@ -120,14 +127,6 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
 //        TriangleMesh* t = new TriangleMesh(glm::vec2(6,12), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader);
 //        vm->addVerlet(t);
 //    }
-
-
-
-//    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-90,2,-36), vm, shader));
-
-//    vm->addVerlet(new TriangleMesh(glm::vec2(25,55), .6, glm::vec3(-136,35,-48), vm, shader,Z,true, ALL_CORNERS));
-
-
 
 //    Grass* grass = new Grass(vm, shader);
 //    grass->createPatch(glm::vec2(0,0),10,island1);

@@ -17,12 +17,14 @@ public:
     void drawShapes(Graphics* g, int pass, GLuint shader);
     void onKeyPressed(QKeyEvent *e);
     void setLights(QList<Light*> l);
+    void toggleLightColors();
 
     //virtual QList<OBJ* > getTerrain(){return m_islands;}
     //QList<OBJ*> m_islands;
 private:
     int mode;
-    bool usingFog;
+    bool usingFog, freezeOn;
+    QList<glm::vec3> lightColors;
 
 };
 

@@ -121,6 +121,7 @@ SOURCES += \
     engine/objects/lightparser.cpp \
     game/entities/marker.cpp \
     game/gamescreens/leveltwo.cpp \
+    game/entities/token.cpp \
     engine/verlet/bend.cpp
 
 HEADERS += \
@@ -183,6 +184,7 @@ HEADERS += \
     engine/objects/lightparser.h \
     game/entities/marker.h \
     game/gamescreens/leveltwo.h \
+    game/entities/token.h \
     engine/verlet/bend.h
 
 
