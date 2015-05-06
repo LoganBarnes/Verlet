@@ -61,6 +61,9 @@ private:
 
     QList<Marker*> m_markers;
     //QList<OBJ*> m_islands;
+
+protected:
+    Marker* m_levelChanger;
 };
 
 #endif // TESTLEVELSCREEN_H
