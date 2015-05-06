@@ -189,7 +189,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 
 
 #ifdef CUDA
-    ParticleSystemManager *pcm = new ParticleSystemManager(GEOMETRY, shader);
+    ParticleSystemManager *pcm = new ParticleSystemManager(playerPos, GEOMETRY, shader);
     m_world->addManager(pcm);
 #endif
 

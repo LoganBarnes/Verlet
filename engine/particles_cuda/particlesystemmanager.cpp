@@ -22,7 +22,7 @@ inline float frand()
     return rand() / (float) RAND_MAX;
 }
 
-ParticleSystemManager::ParticleSystemManager()
+ParticleSystemManager::ParticleSystemManager(glm::vec3 playerPos)
     : Manager(),
       m_particleSystem(NULL),
       m_renderer(NULL),
@@ -34,7 +34,7 @@ ParticleSystemManager::ParticleSystemManager()
 }
 
 
-ParticleSystemManager::ParticleSystemManager(GraphicsMode gm, GLuint shader)
+ParticleSystemManager::ParticleSystemManager(glm::vec3 playerPos, GraphicsMode gm, GLuint shader)
     : Manager(gm),
       m_particleSystem(NULL),
       m_renderer(NULL),
@@ -42,16 +42,16 @@ ParticleSystemManager::ParticleSystemManager(GraphicsMode gm, GLuint shader)
       m_timer(-1.f)
 {
     m_particleSystem = new ParticleSystem(PARTICLE_RADIUS, GRID_SIZE, MAX_PARTICLES, make_int3(-50, 0, -50), make_int3(50, 200, 50), 5);
-//    m_particleSystem->addParticleGridSparse(make_int3(-0,51,-0), make_int3(1,52,1), 1.f, true);
+
     float4 vel = make_float4(0.f);
     float4 pos;
 
     for (int i = 0; i < 100; i++)
     {
         pos = make_float4(
-                    frand() * 30 - 15,
-                    frand() * 20 + 40,
-                    frand() * 30 - 15,
+                    frand() * 30 - 15 + playerPos.x,
+                    frand() * 20 + playerPos.x,
+                    frand() * 30 - 15 + playerPos.x,
                     1.f);
         m_particleSystem->addParticle(pos, vel, 1.f, 1.5f, SOLID);
     }
