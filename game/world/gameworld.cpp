@@ -195,9 +195,11 @@ void GameWorld::onDraw(Graphics *g){
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glUseProgram(0);
 
+        glm::vec3 playerPos = m_player->getPosition();
         // fog pass:
         GLuint fogShader = g->setupFogPass(usingFog);
         glUniform3f(glGetUniformLocation(fogShader, "eyePos"),pos.x, pos.y, pos.z);
+        glUniform3f(glGetUniformLocation(fogShader, "playerPos"),playerPos.x, playerPos.y, playerPos.z);
         g->drawFullScreenQuad(glm::mat4());
         glBindFramebuffer( GL_FRAMEBUFFER,0 );
         glUseProgram(0);
