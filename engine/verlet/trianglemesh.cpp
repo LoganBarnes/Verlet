@@ -12,7 +12,7 @@
 //******************************CONSTRUCTING**********************************//
 TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
                            const glm::vec3& start, VerletManager* vm, GLuint shader,
-                           Axis axis, bool flat, PinMode p)
+                           Axis axis, bool flat, PinMode p, int angle)
     : Verlet(vm),
     m_shader(shader)
 {
@@ -134,6 +134,30 @@ TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
 
     //pin
     pin(p,r,c);
+}
+
+QPair<glm::vec2,glm::vec2> TriangleMesh::rotateTriangle(float w,int angle){
+    float h = (sqrt(3)/2.0) * w;
+
+    glm::vec2 p1 = glm::vec2(0,(2.0/3.0)*h);
+    glm::vec2 p2 = glm::vec2(-.5*w,-(1.0/3.0)*h);
+    glm::vec2 p3 = glm::vec2(.5*w,-(1.0/3.0)*h);
+
+    glm::vec2 v1 = rotatePoint(p1,angle);
+    glm::vec2 v2 = rotatePoint(p2,angle);
+    glm::vec2 v3 = rotatePoint(p3,angle);
+
+    glm::vec2 width = v3-v2;
+    glm::vec2 height = v1-((v2+v3)*.5f);
+
+    return QPair<glm::vec2,glm::vec2>(width,height);
+}
+
+glm::vec2 TriangleMesh::rotatePoint(const glm::vec2& p, int angle){
+    float radians = angle * (M_PI / 180.0);
+    float x = p.x*cos(radians)-p.y*sin(radians);
+    float y = p.y*cos(radians)+p.x*sin(radians);
+    return glm::vec2(x,y);
 }
 
 void TriangleMesh::pin(PinMode p, int r, int c){
