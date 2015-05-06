@@ -59,7 +59,7 @@ void Player::onTick(float secs)
         m_canJump = false;
         m_jump = false;
         m_jumping = true;
-        v.y = 11.5f;
+        v.y = 9.5f;
         m_jumpVel = v;
     }
 
