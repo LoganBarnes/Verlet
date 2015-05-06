@@ -152,19 +152,22 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
     ParticleSystemManager *psm = new ParticleSystemManager(GEOMETRY, shader);
     m_world->addManager(psm);
     vm->setParams(psm->getParams());
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0), glm::vec4(.5,.5,.5,0),psm);
+
+    //Add all verlet entities
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-40,0,25), glm::vec4(.5,.5,.5,0), psm);
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-40,45,25), glm::vec4(.5,.5,.5,0), psm);
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-40,45,-16), glm::vec4(.5,.5,.5,0), psm);
 
 #else
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0), glm::vec4(.5,.5,.5,0),NULL);
+
+    //Add all verlet entities
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-40,0,25), glm::vec4(.5,.5,.5,0), NULL);
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-40,45,25), glm::vec4(.5,.5,.5,0), NULL);
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-40,45,-16), glm::vec4(.5,.5,.5,0), NULL);
 
 #endif
 
 
-
-    //Add all verlet entities
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-40,0,25), glm::vec4(.5,.5,.5,0));
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-40,45,25), glm::vec4(.5,.5,.5,0));
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-40,45,-16), glm::vec4(.5,.5,.5,0));
 
 
     int row = 12;
