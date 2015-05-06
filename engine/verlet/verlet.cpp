@@ -240,7 +240,7 @@ glm::vec3 Verlet::collide(MovableEntity *e)
 
     if(count>0){
         //lower = jittery, higher = doesn't compensate for collisions
-        count *= .45;
+        count *= .3;
         translation /= count; //divide accumulative mtv by points hit
     }
 

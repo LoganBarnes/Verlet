@@ -31,8 +31,8 @@ class TriangleMesh: public Verlet
 {
 public:
     TriangleMesh(const glm::vec2& dimension, float width, const glm::vec3& start,
-                 VerletManager* vm, GLuint shader, Axis axis = X, bool flat = false,
-                 PinMode p = TOP_CORNERS, int angle = 0);
+                 VerletManager* vm, GLuint shader, int angle = 0, Axis axis = Y,
+                 PinMode p = TOP_CORNERS);
     virtual ~TriangleMesh();
 
     void pin(PinMode p, int r, int c);

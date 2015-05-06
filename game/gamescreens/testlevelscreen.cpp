@@ -124,20 +124,23 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-150,15,-40));
 
     //Add all verlet entities
-    vm->addVerlet(new TriangleMesh(glm::vec2(8,58), .6, glm::vec3(-11,1.2,-2.2), vm, shader,Z,true,HORIZONTAL_EDGE));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,40), .6, glm::vec3(-53,1.2,-8), vm, shader));
+
+    vm->addVerlet(new TriangleMesh(glm::vec2(8,58), .6, glm::vec3(-11,2.2,1.2), vm, shader,90,Y,HORIZONTAL_EDGE));
+
+    //vm->addVerlet(new TriangleMesh(glm::vec2(8,58), .6, glm::vec3(-11,1.2,-2.2), vm, shader,Z,true,HORIZONTAL_EDGE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,40), .6, glm::vec3(-53,1.2,-8), vm, shader,150));
 
     // stairs
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-85,-5,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-90,-1,-36), vm, shader));  //2
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-95,3,-36), vm, shader));   //9
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-100,7,-36), vm, shader));  //16
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-105,11,-36), vm, shader));  //23
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-110,15,-36), vm, shader));  //30
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-117,19,-36), vm, shader));  //35
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-122,23,-36), vm, shader));  //35
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-82,-5,-36), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-87,-1,-36), vm, shader,Y));  //2
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-92,3,-36), vm, shader,Y));   //9
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-97,7,-36), vm, shader,Y));  //16
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-102,11,-36), vm, shader,Y));  //23
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-107,15,-36), vm, shader,Y));  //30
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-112,19,-36), vm, shader,Y));  //35
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-117,23,-36), vm, shader,Y));  //35
 
-    vm->addVerlet(new TriangleMesh(glm::vec2(25,55), .6, glm::vec3(-136,25,-48), vm, shader,Z,true, ALL_CORNERS));
+    vm->addVerlet(new TriangleMesh(glm::vec2(25,55), .6, glm::vec3(-135,26,-33), vm, shader,90,Y, ALL_CORNERS));
 
 //    Grass* grass = new Grass(vm, shader);
 //    grass->createPatch(glm::vec2(0,0),10,island1);

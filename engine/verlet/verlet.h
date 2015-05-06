@@ -67,7 +67,7 @@ public:
 
     VerletManager* _manager;
     //between 0 and 1: how much cloth is influenced by collisions
-    float sphereInfluence = .8f;
+    float sphereInfluence = .9f;
     float rayTraceSize = .3f;
     float windNoise =.06; // how much random noise to give verlet's wind response
 

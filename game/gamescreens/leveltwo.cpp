@@ -113,20 +113,19 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0,42,-50));
 
     //Add all verlet entities
-    vm->addVerlet(new TriangleMesh(glm::vec2(5,35), .6, glm::vec3(-2,43,-3), vm, shader,X,true,TOP_EDGE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(5,35), .6, glm::vec3(-2,43,-3), vm, shader,0,Y,TOP_EDGE));
 
-    vm->addVerlet(new TriangleMesh(glm::vec2(10,40), .6, glm::vec3(0,44,-55), vm, shader,Y,true, NONE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(10,40), .6, glm::vec3(0,44,-55), vm, shader,0,Y, NONE));
     vm->addVerlet(new TriangleMesh(glm::vec2(30,30), .6, glm::vec3(0,60,0), vm, shader));
 
-
-    // stairs
-//    int numStairs = 10;
-//    int y = 5;
-//    for(int i=0; i<720; i+= 360/numStairs, y+=2){
-//        float rad = i * (PI/180.0);
-//        TriangleMesh* t = new TriangleMesh(glm::vec2(6,12), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader);
-//        vm->addVerlet(t);
-//    }
+    //stairs
+    int numStairs = 10;
+    int y = 5;
+    for(int i=0; i<720; i+= 360/numStairs, y+=2){
+        float rad = i * (PI/180.0);
+        TriangleMesh* t = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader, i);
+        vm->addVerlet(t);
+    }
 
 //    Grass* grass = new Grass(vm, shader);
 //    grass->createPatch(glm::vec2(0,0),10,island1);
