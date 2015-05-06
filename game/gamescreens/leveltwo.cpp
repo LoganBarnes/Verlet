@@ -145,49 +145,59 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
 //    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0,42,-50), glm::vec4(.5,.5,.5,0));
 
 //    //Add all verlet entities
-    int height = 9;
-    TriangleMesh* curtain = new TriangleMesh(glm::vec2(8,125), .6, glm::vec3(5,height,0), vm, shader, 0, Y, NONE);
-    vm->addVerlet(curtain);
+    int row = 12;
+    int column = 60;
+    float yOffset = 1;
+    float w = .8;
 
+    TriangleMesh* curtain = new TriangleMesh(glm::vec2(column+1,row+1), w, glm::vec3(0,yOffset,0),vm,shader);
 
-    // curtain
-    // pin the top edge along a circle
-    int r = curtain->m_row;
-    int c = curtain->m_col;
+    float length = (column-.5)*w;
+    float height = ((sqrt(3)/2.0) * w);
+    float totalHeight =height*row;
+    float radius = length/2.0/3.14;
+    float angleIncrement = 360.0/float(column*2-1);
 
-    float segment = 360.0/(float)(r);
-
-    int row = 0;
-    float radius = 7.;
-    for(float deg = 0; deg<=359.0; deg+=segment){
-
-        float rad = deg*PI/180.0;
-
-        curtain->setPos(row*c, glm::vec3(cos(rad)*radius, sqrt(3./2.)*.6*8, sin(rad)*radius));
-        curtain->createPin(row*c);
-
-        curtain->setPos((((row+1)*c)-1), glm::vec3(cos(rad)*radius, 0, sin(rad)*radius));
-        curtain->createPin(((row+1)*c)-1);
-
-        row += 1;
-
+    float angle = 0;
+    //top
+    for(int i = 0; i<column+1; i++){
+        if(i==0||i==column)
+            angle = 0;
+        else
+            angle+=angleIncrement*2;
+        float rad = angle*3.14/180.0;
+        //top
+        curtain->setPos(i, glm::vec3(cos(rad)*radius, 0+yOffset, sin(rad)*radius));
+        curtain->createPin(i);
     }
 
-//    int i, k;
-//    for(i= (r-1)*c, k=0; i < r*c-1, k<c; i++, k++, height--){
+    //bot
+    int botOffset = (column+1)*row; //find last row
+    angle = 0;
+    for(int i = 0; i<column+1; i++){
+        if(i==0||i==column)
+            angle = 0;
+        else if(i==1)
+            angle+=angleIncrement;
+        else
+            angle+=angleIncrement*2;
+        float rad = angle*3.14/180.0;
+        curtain->setPos(i+botOffset, glm::vec3(cos(rad)*radius, totalHeight+yOffset, sin(rad)*radius));
+        curtain->createPin(i+botOffset);
+    }
 
-//        // constrain the top and bottom edge to come together
-//        curtain->setPos(i, glm::vec3(cos(0)*radius, height-1, sin(0)*radius));
-//        curtain->createPin(i);
+    //sides
+    int c = column+1;
+    int r = row+1;
+    for(int i = 0; i<r; i++){
+        float rad = 0*3.14/180.0;
+        curtain->setPos(i*c,glm::vec3(cos(rad)*radius, i*height+yOffset, sin(rad)*radius));
+        curtain->createPin(i*c);
+        curtain->setPos(i*c+c-1,glm::vec3(cos(rad)*radius, i*height+yOffset, sin(rad)*radius));
+        curtain->createPin(i*c+c-1);
+    }
 
-//        curtain->setPos(k, glm::vec3(cos(0)*radius, height-1, sin(0)*radius));
-//        curtain->createPin(k);
-//    }
-
-
-
-//    vm->addVerlet(new TriangleMesh(glm::vec2(10,40), .6, glm::vec3(0,44,-55), vm, shader,Y,true, NONE));
-//    vm->addVerlet(new TriangleMesh(glm::vec2(30,30), .6, glm::vec3(0,60,0), vm, shader));
+    vm->addVerlet(curtain);
 
     //Add all verlet entities
     vm->addVerlet(new TriangleMesh(glm::vec2(5,35), .6, glm::vec3(-2,43,-3), vm, shader,0,Y,TOP_EDGE));
