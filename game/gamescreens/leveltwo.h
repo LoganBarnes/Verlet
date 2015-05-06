@@ -68,6 +68,8 @@ private:
     int m_spiralCounter;
 
     QList<Marker*> m_markers;
+
+    Marker* m_levelChanger;
 };
 
 #endif // LEVELTWO_H
