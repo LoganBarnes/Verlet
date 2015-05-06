@@ -25,6 +25,8 @@ public:
 
     void setFluidEmitter(bool emitterOn) { m_fluidEmitterOn = emitterOn; }
 
+    virtual void onKeyPressed(QKeyEvent *e);
+
 private:
     ParticleSystem *m_particleSystem;
     ParticleRenderer *m_renderer;

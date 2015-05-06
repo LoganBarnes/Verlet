@@ -31,6 +31,7 @@ ParticleSystem::ParticleSystem(float particleRadius, uint3 gridSize, uint maxPar
       m_maxBounds(maxBounds),
       m_prevTime(.01f),
       m_numTris(0),
+      m_freeze(false),
       m_solverIterations(iterations)
 {
     m_numGridCells = m_gridSize.x * m_gridSize.y * m_gridSize.z;
@@ -59,8 +60,8 @@ ParticleSystem::ParticleSystem(float particleRadius, uint3 gridSize, uint maxPar
     m_params.attraction = 0.0f;
     m_params.boundaryDamping = -0.5f;
 
-    m_params.gravity = make_float3(0.0f, -5.1f, 0.0f);
-//    m_params.gravity = make_float3(0.0f, -9.8f, 0.0f);
+//    m_params.gravity = make_float3(0.0f, -.1f, 0.0f);
+    m_params.gravity = make_float3(0.0f, -9.8f, 0.0f);
     m_params.globalDamping = 1.0f;
 
     _init(0, maxParticles);
@@ -89,7 +90,7 @@ void ParticleSystem::update(float deltaTime, float3 playerPos, float playerRadiu
     deltaTime = std::min(deltaTime, .05f);
 //    deltaTime = .01f;
 
-    if (m_numParticles == 0)
+    if (m_freeze || m_numParticles == 0)
     {
         addNewStuff();
         return;

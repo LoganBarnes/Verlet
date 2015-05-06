@@ -173,16 +173,22 @@ struct integrate_functor
         float3 pos = make_float3(posData.x, posData.y, posData.z);
         float3 prev = make_float3(prevData.x, prevData.y, prevData.z);
 
-
         float3 totalForce = params.gravity + params.globalForces;
         float3 vel = (pos - prev) / prevTime;
-        vel += totalForce * deltaTime;
-        vel *= params.globalDamping;
+        float3 goal = (params.globalForces - vel) * 3.f;
+        vel += (goal + totalForce) * deltaTime;
+//        vel *= params.globalDamping;
 
         thrust::get<1>(t) = make_float4(pos, posData.w);
 
         // new position = old position + velocity * deltaTime
         pos += vel * deltaTime;
+
+        if (pos.y < -50)
+        {
+            pos.y = 70;
+            thrust::get<1>(t) = make_float4(pos, posData.w);
+        }
 
         // store new position and velocity
         thrust::get<0>(t) = make_float4(pos, posData.w);
@@ -491,10 +497,22 @@ void collideD(float4 *newPos,               // output: new pos
 
         mag2 = dot(diff, diff);
 
+        float3 dir, p;
         if (mag2 < collideDist * collideDist)
         {
+            float r;
             group = triGroups[i];
+            dir = pos - prevPos;
+            mag2 = dot(diff, diff);
+            if (mag2 < 0.000001f)
+                continue;
 
+            mag = sqrt(mag2);
+
+            float3 u, v, w;
+            float uv, wv, vv, wu, uu;
+            float s, t, denom;
+            int triI = -1;
             for (int j = group.x; j < group.y; j++)
             {
                 data = tris[j * 3];
@@ -506,32 +524,34 @@ void collideD(float4 *newPos,               // output: new pos
                 data = tris[j*3+2];
                 c = make_float3(data);
                 n.z = data.w;
+                n = cross(b - a, c - a);
+                p = prevPos - n * params.particleRadius;
+//                n = -n;
 
                 // check for intersection with individual triangle
-//                // intersect infinite plane
-//                float t = glm::dot(-normal, p - vertices[0]) / glm::dot(normal, d);
-//                glm::vec3 point = p + d * t;
 
-//                // check if collision point is within triangle
-//                glm::vec3 pab = glm::cross(vertices[0] - point, vertices[1] - point);
-//                glm::vec3 pbc = glm::cross(vertices[1] - point, vertices[2] - point);
-//                glm::vec3 pca = glm::cross(vertices[2] - point, vertices[0] - point);
+                // intersect infinite plane
+                r = dot(n, a - p) / dot(n, dir);
 
-//                if (t < 0.f || glm::dot(pab, pbc) < 0.00001f || glm::dot(pbc, pca) < 0.00001f)
-//                    t = INFINITY;
-//                else
-//                {
-//                    if (colPoint)
-//                        *colPoint = point;
-//                    if (colNorm)
-//                        *colNorm = normal;
-//                }
+                if (r < 0.f || r > 1.f)
+                    continue;
 
-//                return t;
+                w = pos - a; u = b - a; v = c - a;
+
+                uv = dot(u,v); wv = dot(w, v); vv = dot(v, v);
+                wu = dot(w, u); uu = dot(u,u);
+
+                denom = (uv * uv) - (uu * vv);
+                s = (uv*wv - vv*wu) / denom;
+                t = (uv*wu - uu*wv) / denom;
+
+                if (s < 0.f || t < 0.f || s + t > 1.f)
+                    continue;
+
+                triI = triI * 3;
+                pos += dir * -(1-r) * 1.01f;
             }
 
-            mag = sqrt(mag2);
-            delta += (collideDist - mag) * diff / mag;
             break;
         }
     }

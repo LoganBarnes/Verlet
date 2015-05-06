@@ -42,6 +42,8 @@ public:
     uint getNumTris() { return m_numTris; }
 
     float4 mousePos;
+    void addParticle(float4 pos, float4 vel, float mass, float ro, int phase);
+    void toggleFreeze() { m_freeze = !m_freeze; }
 
 private:
     void _init(uint numParticles, uint maxParticles);
@@ -50,7 +52,6 @@ private:
     GLuint createVBO(uint size);
     void setArray(bool isVboArray, const float *data, int start, int count);
 
-    void addParticle(float4 pos, float4 vel, float mass, float ro, int phase);
     void addParticles();
 
     void addFluids();
@@ -107,6 +108,8 @@ private:
 
     float m_prevTime;
     uint m_numTris;
+
+    bool m_freeze;
 
     uint m_solverIterations;
 };
