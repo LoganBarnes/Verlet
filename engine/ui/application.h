@@ -8,8 +8,10 @@
 #endif
 
 #include "graphics.h"
+#include <QHash>
 
 class Audio;
+typedef unsigned int ALuint;
 
 enum LeapGesture
 {
@@ -68,6 +70,7 @@ public:
     void resetFBOs(int width, int height);
 
     Audio *getAudioObject();
+    void playMusic(QString file);
 
 
 private:
@@ -99,6 +102,9 @@ private:
     Audio *m_a;
 
     int m_width, m_height;
+
+    QString m_currMusic;
+    QHash<QString,ALuint> m_songs;
 
 };
 

@@ -46,7 +46,6 @@
         <file alias="Plane.obj">res/objects/Plane.obj</file>
     </qresource>
     <qresource prefix="/audio">
-        <file alias="kickDrumMod.wav">res/audio/kickDrumMod.wav</file>
-        <file alias="dreams_of_home.wav">res/audio/dreams_of_home.wav</file>
+        <file alias="darkness.wav">res/audio/darkness.wav</file>
     </qresource>
 </RCC>
