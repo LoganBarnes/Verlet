@@ -187,6 +187,7 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     Collision *col = new Collision();
     foreach (MovableEntity *me, mes)
     {
+        glm::vec3 prev = me->getPosition();
         col->mtv = collideTerrain(me) * .5f;
         col->t = onTickSecs;
         me->handleCollision(col, !solve);
@@ -194,7 +195,7 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
 
         foreach(OBJ* o, obj){
             glm::vec3 pos = me->getPosition()-glm::vec3(0,1,0);
-            o->pointOnTop(pos);
+            o->pointOnTop(pos,prev);
             pos+=glm::vec3(0,1,0);
             me->setPosition(pos);
         }

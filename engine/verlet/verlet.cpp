@@ -207,7 +207,7 @@ void Verlet::collideSurface(OBJ* obj){
         glm::vec3 prev = _prevPos[i];
         float difference = glm::length2(prev-flatPoint); //only perform check if velocity is high
         if(difference>.000001){
-            obj->pointOnSurface(_pos[i]);
+            obj->pointOnSurface(_pos[i],prev);
         }
     }
 }
