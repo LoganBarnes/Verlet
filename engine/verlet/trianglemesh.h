@@ -31,7 +31,8 @@ class TriangleMesh: public Verlet
 {
 public:
     TriangleMesh(const glm::vec2& dimension, float width, const glm::vec3& start,
-                 VerletManager* vm, GLuint shader, Axis axis = X, bool flat = false, PinMode p = TOP_CORNERS);
+                 VerletManager* vm, GLuint shader, int angle = 0, Axis axis = Y,
+                 PinMode p = TOP_CORNERS);
     virtual ~TriangleMesh();
 
     void pin(PinMode p, int r, int c);
@@ -49,6 +50,9 @@ private:
     GLuint m_shader;
     //Called in constructor to add triangles
     void triangulate(int a, int b, int c);
+    glm::vec2 rotatePoint(const glm::vec2& p, int angle);
+    QPair<glm::vec2,glm::vec2> rotateTriangle(float w, int angle);
+
     std::vector<Tri*> _triangles;
     QHash<int, int> numTri; //how many triangles each index is part of
 

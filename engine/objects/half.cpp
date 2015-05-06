@@ -1,6 +1,7 @@
 #include "half.h"
 #include "triangle.h"
 #include "ray.h"
+#include <gtx/norm.hpp>
 
 Half::Half()
 {}
@@ -67,7 +68,9 @@ bool Half::placeOnSurface(glm::vec3 &surfacePt, const glm::vec3 &prevPt){
                 float t = -(glm::dot(tri->normal,surfacePt-triPt))/(glm::dot(tri->normal,_direction));
                 glm::vec3 x = _direction*t+surfacePt;
 
-                if(t<0&&t>=-1)
+                float speed = glm::length2(_direction);
+
+                if(t<0&&t>=-1||speed<.01)
                     surfacePt = x;
                 else if(t<-3||t>3)
                       surfacePt = .999f*prevPt+.001f*x;
@@ -88,10 +91,11 @@ bool Half::placeOnSurface(glm::vec3 &surfacePt, const glm::vec3 &prevPt){
                 float t = -(glm::dot(tri->normal,surfacePt-triPt))/(glm::dot(tri->normal,_direction));
                 glm::vec3 x = _direction*t+surfacePt;
 
-                if(t<0&&t>=-1)
+                float speed = glm::length2(_direction);
+                if(t<0&&t>=-1||speed<.001)
                     surfacePt = x;
                 else if(t<-3||t>3)
-                      surfacePt = .999f*prevPt+.001f*x;
+                      surfacePt = .9999f*prevPt+.0001f*x;
                 else
                     surfacePt = .9f*prevPt+.1f*x;
                 return true;
