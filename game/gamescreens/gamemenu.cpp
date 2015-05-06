@@ -24,9 +24,9 @@ GameMenu::GameMenu(Application *parent)
     m_cursor[3][2] = -.999f;
 
     // uncomment to play sound at the origin
-//    m_st = new SoundTester(glm::vec3());
-//    m_st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
-//    m_st->playSound();
+    m_st = new SoundTester(glm::vec3());
+    m_st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
+    m_st->playSound();
 }
 
 GameMenu::~GameMenu()

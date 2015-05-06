@@ -11,7 +11,8 @@
 Application::Application()
     : m_leapLeftClick(NO_CLICK),
       m_leapRightClick(NO_CLICK),
-      m_currClick(false)
+      m_currClick(false),
+      m_currMusic("")
 {
 
 #ifdef LEAP
@@ -163,6 +164,12 @@ void Application::onTick(float secs)
     if (m_currentScreen)
         m_currentScreen->onTick(secs);
 
+    ALuint source = m_songs.value(m_currMusic, 10000);
+    if (source != 10000)
+    {
+        glm::vec3 pos = glm::vec3(m_currentScreen->getCamera()->getEye());
+        m_a->setSource(source, m_currMusic, pos, glm::vec3(0.f), true);
+    }
 
 }
 
@@ -477,6 +484,23 @@ bool Application::isMouseDecoupled()
 Audio *Application::getAudioObject()
 {
     return m_a;
+}
+
+void Application::playMusic(QString file)
+{
+    if (m_currMusic == file)
+        return;
+
+    ALuint source = m_songs.value(file, 10000);
+    if (source == 10000)
+    {
+        source = m_a->getSourceID();
+        m_songs.insert(file, source);
+    }
+
+    glm::vec3 pos = glm::vec3(m_currentScreen->getCamera()->getEye());
+    m_a->setSource(source, file, pos, glm::vec3(0.f), true);
+    m_a->playSource(source);
 }
 
 

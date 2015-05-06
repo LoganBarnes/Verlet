@@ -36,6 +36,7 @@ LevelTwo::LevelTwo(Application *parent)
     QList<Triangle *> tris;
 
     resetWorld(glm::vec3(0, 10, 0));
+    m_parentApp->playMusic("darkness.wav");
 }
 
 
