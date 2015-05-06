@@ -18,7 +18,6 @@ uniform vec4 materialColor;         // keeps diffuse color and monochromatic spe
 
 uniform float particleRadius = -1.f;
 
-
 void main()
 {
     if (particleRadius > -0.5f) // calc particle position and normal
@@ -33,11 +32,14 @@ void main()
 
         out0 = vec4(normal.xyz * particleRadius, 1);
         out1 = normal;
+        out2 = vec4(normal.x*.4, .65+normal.y*.3, .77+normal.z*.15,1);
     }
     else // do normal stuff
     {
         out0 = position_worldSpace;
         out1 = normal_worldSpace;
+        out2 = vec4(normal_worldSpace.x*.4, .65+normal_worldSpace.y*.3, .77+normal_worldSpace.z*.15,1);
     }
-    out2 = materialColor;
+
+
 }

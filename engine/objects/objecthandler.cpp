@@ -16,7 +16,7 @@ ObjectHandler::~ObjectHandler()
 }
 
 
-OBJ *ObjectHandler::getObject(const QString &path, GLuint shader, QList<Triangle *> *tris, const glm::vec3& offset)
+OBJ *ObjectHandler::getObject(const QString &path, GLuint shader, QList<Triangle *> *tris, const glm::vec3& offset, glm::vec4 color)
 {
     OBJ* obj;
 //    obj = m_objects.value(path, NULL);
@@ -27,7 +27,7 @@ OBJ *ObjectHandler::getObject(const QString &path, GLuint shader, QList<Triangle
 //        return obj;
 //    }
 
-    obj = new OBJ(shader);
+    obj = new OBJ(shader, color);
     if (obj->read(path, tris, offset))
         m_objects.append(obj);
 //        m_objects.insert(path, obj);

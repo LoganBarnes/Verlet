@@ -515,18 +515,20 @@ void collideD(float4 *newPos,               // output: new pos
             int triI = -1;
             for (int j = group.x; j < group.y; j++)
             {
-                data = tris[j * 3];
-                a = make_float3(data);
-                n.x = data.w;
                 data = tris[j*3+1];
                 b = make_float3(data);
                 n.y = data.w;
+
+                if (n.y < 0.f)
+                    continue;
+
+                data = tris[j * 3];
+                a = make_float3(data);
+                n.x = data.w;
                 data = tris[j*3+2];
                 c = make_float3(data);
                 n.z = data.w;
-                n = cross(b - a, c - a);
                 p = prevPos - n * params.particleRadius;
-//                n = -n;
 
                 // check for intersection with individual triangle
 
@@ -549,7 +551,7 @@ void collideD(float4 *newPos,               // output: new pos
                     continue;
 
                 triI = triI * 3;
-                pos += dir * -(1-r) * 1.01f;
+                pos += dir * -(1-r);
             }
 
             break;

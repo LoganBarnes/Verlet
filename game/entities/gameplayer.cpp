@@ -21,7 +21,7 @@ GamePlayer::GamePlayer(ActionCamera *camera, glm::vec3 pos)
     rs = new RenderShape();
     rs->type = SPHERE;
     rs->color = glm::vec3(.8f);
-    rs->shininess = 32.f;
+    rs->shininess = 3.f;
     rs->transparency = 1.f;
     rs->trans = glm::scale(glm::mat4(), glm::vec3(1.9f));
     rs->inv = glm::inverse(rs->trans);

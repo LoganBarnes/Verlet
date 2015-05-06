@@ -7,6 +7,7 @@ GameWorld::GameWorld()
 {
     mode = 0;
     usingFog = false;
+    freezeOn = false;
 }
 
 
@@ -16,38 +17,13 @@ GameWorld::~GameWorld()
         delete l;
 }
 
+
+
 void GameWorld::setLights(QList<Light*> l){
-//    m_lights = l;
+    m_lights = l;
 
-    m_lights.clear();
-
-    int counter = m_lights.size();
-
-    // Custom lights
-    QList<glm::vec3> positions;
-    positions.append(glm::vec3(0,3,0));
-    positions.append(glm::vec3(10,5,0));
-    positions.append(glm::vec3(-10,5,0));
-    positions.append(glm::vec3(-50,5,0));
-    positions.append(glm::vec3(0,45,0));
-
-    for(int i=0; i<positions.size(); i++){
-
-        Light* light;
-
-        light = new Light();
-        light->id = counter++;
-        light->type = POINT;
-        light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
-
-        light->posDir = positions.at(i);
-
-        light->radius = 50.f;
-        light->function = glm::vec3(1.0, .1, .01);
-
-        m_lights.append(light);
-    }
-
+    foreach(Light* light, l)
+        lightColors.append(light->color);
 }
 
 
@@ -71,6 +47,20 @@ Triangle* GameWorld::intersectWorld(glm::vec3 p, glm::vec3 d, float *t)
     return triangle;
 }
 
+void GameWorld::toggleLightColors(){
+
+    if(freezeOn){
+        // lights to grayscale
+        foreach(Light* l, m_lights)
+            l->color = glm::vec3(.5);
+    }
+    else{
+       // lights to regular
+        for(int i=0; i<m_lights.size(); i++){
+            m_lights.at(i)->color = lightColors.at(i);
+        }
+    }
+}
 
 void GameWorld::onKeyPressed(QKeyEvent *e)
 {
@@ -87,6 +77,15 @@ void GameWorld::onKeyPressed(QKeyEvent *e)
         else
             useDeferredLighting = true;
     }
+
+    if(e->key() == Qt::Key_F){
+        if(freezeOn)
+            freezeOn = false;
+        else
+            freezeOn = true;
+        toggleLightColors();
+    }
+
     World::onKeyPressed(e);
 }
 

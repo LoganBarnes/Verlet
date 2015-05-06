@@ -13,6 +13,7 @@
 #include "trianglemesh.h"
 #include "half.h"
 #include "particlesystemmanager.h"
+#include "leveltwo.h"
 
 #include "debugprinting.h"
 
@@ -20,7 +21,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     : ScreenH(parent),
       m_world(NULL),
       m_oh(NULL),
-      m_resetIndex(0)
+      m_resetIndex(4)
 {
     m_parentApp->setMouseDecoupled(true);
     m_parentApp->setLeapRightClick(GRAB);
@@ -41,9 +42,9 @@ TestLevelScreen::~TestLevelScreen()
 }
 
 
-OBJ* TestLevelScreen::addIsland(const QString& path, GLuint shader, const glm::vec3& offset){
+OBJ* TestLevelScreen::addIsland(const QString& path, GLuint shader, const glm::vec3& offset, glm::vec4 color){
     QList<Triangle *> tris;
-    OBJ *island = m_oh->getObject(path, shader, &tris, offset);
+    OBJ *island = m_oh->getObject(path, shader, &tris, offset, color);
     m_world->addObject(island);
     m_world->addToMesh(tris);
     //m_world->m_islands+=island;
@@ -51,10 +52,10 @@ OBJ* TestLevelScreen::addIsland(const QString& path, GLuint shader, const glm::v
     return island;
 }
 
-void TestLevelScreen::addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath){
+void TestLevelScreen::addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath, glm::vec4 color){
 
     QList<Triangle*> tris;
-    OBJ* objMarker = m_oh->getObject(objPath, shader, &tris, offset);
+    OBJ* objMarker = m_oh->getObject(objPath, shader, &tris, offset, color);
     Marker* marker = new Marker(objMarker, glm::vec2(0.f, 0.f), glm::vec2(1.2,1.2), signPath);
     m_markers.append(marker);
 
@@ -62,6 +63,97 @@ void TestLevelScreen::addMarker(const QString& objPath, GLuint shader, const glm
     m_world->addToMesh(tris);
 }
 
+QList<Light*> TestLevelScreen::makeLights(){
+
+    QList<Light*> lights;
+
+    int counter = 0;
+
+    //hardcoded lights
+    Light* light;
+    light = new Light();
+    light->id = counter++;
+    light->type = POINT;
+    light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
+    light->posDir = glm::vec3(0,6,0);
+
+    light->radius = 80.f;
+    light->function = glm::vec3(1.0, .1, .01);
+    light->animFunc = Light::CIRCLE;
+    light->animationPeriod = 8;
+    light->center = light->posDir;
+
+    lights.append(light);
+    //end
+
+
+    // Custom lights
+    QList<glm::vec3> positions;
+    positions.append(glm::vec3(0,3,0));
+    positions.append(glm::vec3(15,2,2));
+//    positions.append(glm::vec3(-10,5,0));
+    positions.append(glm::vec3(-25,-15,0));
+    positions.append(glm::vec3(-50,5,0));
+    positions.append(glm::vec3(0,45,0));
+    positions.append(glm::vec3(-70,0,-40));         //island bottom of stairs
+    positions.append(glm::vec3(-130,29,-40));       //island top of stairs
+
+    positions.append(glm::vec3(-170,29,-40));       //furthest last island
+
+    positions.append(glm::vec3(-150,7.,-42.5));   //bell
+    positions.append(glm::vec3(-150,20.,-42.5));
+
+
+    for(int i=0; i<positions.size(); i++){
+
+        Light* light;
+
+        light = new Light();
+        light->id = counter++;
+        light->type = POINT;
+        light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
+        light->posDir = positions.at(i);
+
+        light->radius = 80.f;
+        light->function = glm::vec3(1.0, .1, .01);
+        light->animFunc = Light::NONE;
+
+        lights.append(light);
+    }
+
+    positions.clear();
+
+    positions.append(glm::vec3(-10,12,-39));       //on stairs
+    positions.append(glm::vec3(-94,4,-39));
+    positions.append(glm::vec3(-116,20,-39));
+    positions.append(glm::vec3(-99,8,-39));
+    positions.append(glm::vec3(-109,16,-39));
+    positions.append(glm::vec3(-121,24,-39));
+    positions.append(glm::vec3(-89,1,-39));
+    positions.append(glm::vec3(-84,-2,-39));
+
+    for(int i=0; i<positions.size(); i++){
+
+        Light* light;
+        light = new Light();
+        light->id = counter++;
+        light->type = POINT;
+        light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
+        light->posDir = positions.at(i);
+
+        light->radius = 80.f;
+        light->function = glm::vec3(1.0, .1, .01);
+        light->animFunc = Light::ZSINE;
+        light->animationPeriod = 5.0;
+        light->center = light->posDir;
+
+        lights.append(light);
+    }
+
+
+    return lights;
+
+}
 
 void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 {
@@ -78,11 +170,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     // make an object handler for the lights and parse them in from an obj
     // save into a list of lights and send to the world
     LightParser lightParser;
-    QList<Light*> lights = lightParser.getLights(":/objects/LargeLights.obj", glm::vec3(0));        //either have all lights or add on a per file basis
-
-//    Light *l = lights.value(0);
-//    lights.clear();
-//    lights.append(l);
+    QList<Light*> lights = makeLights();
 
     ActionCamera *cam;
     cam = new ActionCamera();
@@ -108,10 +196,17 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 
 
     //MARKER OBJECTS:
-    addMarker(":/objects/LargeStone.obj", shader, glm::vec3(0), "basicsign.png");
-    addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-47,-.2,1), "freezesign.png");
-    addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-67,-4.8,-52), "windsign.png");
-    addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-130,34.8,-40), "tearsign.png");
+    addMarker(":/objects/LargeStone.obj", shader, glm::vec3(0), "basicsign.png", glm::vec4(.5,.5,.5,0));
+    addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-47,-.2,1), "freezesign.png", glm::vec4(.5,.5,.5,0));
+    addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-67,-4.8,-52), "windsign.png", glm::vec4(.5,.5,.5,0));
+    addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-130,24.8,-40), "tearsign.png", glm::vec4(.5,.5,.5,0));
+
+    // create end of level marker
+    QList<Triangle*> tris;
+    OBJ* objMarker = m_oh->getObject(":/objects/Bell.obj", shader, &tris, glm::vec3(-150,5.1,-42.8), glm::vec4(1,1,0,.6));
+    m_levelChanger = new Marker(objMarker, glm::vec2(0.f, 0.f), glm::vec2(1.2,1.2), "");
+    m_world->addObject(objMarker);
+    m_world->addToMesh(tris);
 
     m_world->setGravity(glm::vec3(0,-10,0));
     vm->wind = glm::vec3(0);
@@ -119,49 +214,42 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     player->setMaxOffset(50); //zoom
 
     //Add all islands
-    OBJ* island1 = addIsland(":/objects/LargeIsland.obj",shader,glm::vec3(0));
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-48,0,0));
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-70,-5,-40));
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-130,35,-40));
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-170,35,-40));
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-150,25,-40));
-
+    OBJ* island1 = addIsland(":/objects/LargeIsland.obj",shader,glm::vec3(0), glm::vec4(.5,.5,.5,0));
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-48,0,0), glm::vec4(.5,.5,.5,0));
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-70,-5,-40), glm::vec4(.5,.5,.5,0));
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-130,25,-40), glm::vec4(.5,.5,.5,0));
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-170,25,-40), glm::vec4(.5,.5,.5,0));
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-150,5,-40), glm::vec4(.5,.5,.5,0));
 
     //Add all verlet entities
-/*
-    vm->addVerlet(new TriangleMesh(glm::vec2(30,30), .4, glm::vec3(-5,15,-2.2), vm, shader,Z,false,TOP_EDGE));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-27,0,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-32,4,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-37,8,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-42,12,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-47,16,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-52,19,4), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-60,19,4), vm, shader));
-    //vm->addVerlet(new TriangleMesh(glm::vec2(6,25), .6, glm::vec3(-74,18,-2), vm, shader,Z,true, ALL_CORNERS));
-    //vm->addVerlet(new TriangleMesh(glm::vec2(8,22), .3, glm::vec3(-88,-8,-2.2), vm, shader,Z,true));
-*/
-    vm->addVerlet(new TriangleMesh(glm::vec2(8,58), .6, glm::vec3(-11,1.2,-2.2), vm, shader,Z,true,HORIZONTAL_EDGE));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,40), .6, glm::vec3(-53,1.2,-8), vm, shader));
+
+    //ribbons
+    vm->addVerlet(new TriangleMesh(glm::vec2(2,14), 1.4, glm::vec3(-2,15,0), vm, shader,60,Y,TOP_EDGE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(2,14), 1.4, glm::vec3(-1,15,1), vm, shader,30,Y,TOP_EDGE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(2,14), 1.4, glm::vec3(2,15,0), vm, shader,300,Y,TOP_EDGE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(2,14), 1.4, glm::vec3(1,15,1), vm, shader,330,Y,TOP_EDGE));
+
+    //vm->addVerlet(new TriangleMesh(glm::vec2(2,12), 1.5, glm::vec3(-2,10,8), vm, shader,270,Y,TOP_EDGE));
+
+
+    vm->addVerlet(new TriangleMesh(glm::vec2(8,58), .6, glm::vec3(-11,2.2,1.2), vm, shader,90,Y,HORIZONTAL_EDGE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,40), .6, glm::vec3(-53,1.2,-8), vm, shader,150));
 
     // stairs
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-85,-5,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-90,-1,-36), vm, shader)); //2
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-95,3,-36), vm, shader)); //9
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-100,7,-36), vm, shader));  //16
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-105,11,-36), vm, shader));  //23
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-110,15,-36), vm, shader));  //30
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-117,19,-36), vm, shader));  //35
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-122,23,-36), vm, shader));  //35
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-82,-5,-36), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-87,-1,-36), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-92,3,-36), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-97,7,-36), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-102,11,-36), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-107,15,-36), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-112,19,-36), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-117,23,-36), vm, shader,Y));
 
+    vm->addVerlet(new TriangleMesh(glm::vec2(14,25), 1.2, glm::vec3(-137,27,-32), vm, shader,90,Y, ALL_CORNERS));
 
-    vm->addVerlet(new TriangleMesh(glm::vec2(25,55), .6, glm::vec3(-136,35,-48), vm, shader,Z,true, ALL_CORNERS));
-//    vm->addVerlet(new TriangleMesh(glm::vec2(25,12), .6, glm::vec3(0,10,0), vm, shader,X,true, ALL_EDGE));
-
-//    vm->addVerlet(new TriangleMesh(glm::vec2(8,22), .3, glm::vec3(-88,-8,-2.2), vm, shader,Z,true));
-
-//    Grass* grass = new Grass(vm, shader);
-//    grass->createPatch(glm::vec2(0,0),10,island1);
-//    vm->addVerlet(grass);
+    Grass* grass = new Grass(vm, shader);
+    grass->createPatch(glm::vec2(0,5),5,island1);
+    vm->addVerlet(grass);
 
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.02f / cam->getAspectRatio(), .02f, .02f));
     m_cursor[3][2] = -.999f;
@@ -176,6 +264,8 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 // update and render
 void TestLevelScreen::onTick(float secs)
 {
+    if(m_levelChanger->isInRange(m_world->getPlayer()->getPosition(), 2.0))
+        m_parentApp->addScreen(new LevelTwo(m_parentApp));
 
     m_world->onTick(secs, m_cursor[3][0], m_cursor[3][1]);
 
@@ -195,7 +285,6 @@ void TestLevelScreen::onTick(float secs)
         }
     }
 
-//    cout<<"player pos: "<<pos.x<<" "<<pos.y<<" "<<pos.z<<endl;
 }
 
 void TestLevelScreen::onRender(Graphics *g)

@@ -32,7 +32,7 @@ public:
         Tri(const Index &a, const Index &b, const Index &c) : a(a), b(b), c(c) {}
     };
 
-    OBJ(GLuint shader);
+    OBJ(GLuint shader,glm::vec4 color);
     virtual ~OBJ();
 
     QList<glm::vec3> vertices;

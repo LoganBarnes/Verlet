@@ -42,24 +42,8 @@ void Grass::applyWind(Tri* t){
     glm::vec3 windDirection = _manager->wind;
     windDirection.x+=r;
     windDirection.z+=r;
-    /*
-    float r = (.02 * (rand() %100))-1.f;
-    glm::vec3 test = m_windDirection;
-    test.x+=r;
-    test.z+=r;
-    setWind(test);
-    //float windScalar =  glm::dot(windDirection, t->normal);
 
-    //if(windScalar<0)
-    //    windScalar*=-1;
-*/
     glm::vec3 windForce = windDirection*_manager->windPow; //*windScalar;
-/*
-    //Apply noise
-    float noise = windNoise;
-    windForce.z += -1*_manager->windSign.x*((t->random*noise)-noise*.5);
-    windForce.x += 1*_manager->windSign.z*((t->random*noise)-noise*.5);
-*/
     _acc[t->a] += windForce;
     _acc[t->b] += windForce;
     _acc[t->c] += windForce;

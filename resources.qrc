@@ -44,6 +44,7 @@
         <file alias="MediumLights.obj">res/objects/MediumLights.obj</file>
         <file alias="MediumStone.obj">res/objects/MediumStone.obj</file>
         <file alias="Plane.obj">res/objects/Plane.obj</file>
+        <file alias="Bell.obj">res/objects/Bell.obj</file>
     </qresource>
     <qresource prefix="/audio">
         <file alias="darkness.wav">res/audio/darkness.wav</file>

@@ -22,7 +22,11 @@ LevelTwo::LevelTwo(Application *parent)
     : ScreenH(parent),
       m_world(NULL),
       m_oh(NULL),
-      m_resetIndex(0)
+      m_resetIndex(0),
+      m_spiraling(false),
+      m_spiralIndex(0),
+      m_spiralDelay(30),
+      m_spiralCounter(0)
 {
     m_parentApp->setMouseDecoupled(true);
     m_parentApp->setLeapRightClick(GRAB);
@@ -31,7 +35,7 @@ LevelTwo::LevelTwo(Application *parent)
     m_oh = new ObjectHandler();
     QList<Triangle *> tris;
 
-    resetWorld(glm::vec3(0, 50, 0));
+    resetWorld(glm::vec3(0, 10, 0));
     m_parentApp->playMusic("darkness.wav");
 }
 
@@ -42,10 +46,10 @@ LevelTwo::~LevelTwo()
     delete m_oh; // m_level is deleted here
 }
 
+OBJ* LevelTwo::addIsland(const QString& path, GLuint shader, const glm::vec3& offset, glm::vec4 color, ParticleSystemManager *pcm){
 
-OBJ* LevelTwo::addIsland(const QString& path, GLuint shader, const glm::vec3& offset, ParticleSystemManager *pcm){
     QList<Triangle *> tris;
-    OBJ *island = m_oh->getObject(path, shader, &tris, offset);
+    OBJ *island = m_oh->getObject(path, shader, &tris, offset, color);
     m_world->addObject(island);
     m_world->addToMesh(tris);
     m_resetHalves.append(island->top);
@@ -56,10 +60,10 @@ OBJ* LevelTwo::addIsland(const QString& path, GLuint shader, const glm::vec3& of
     return island;
 }
 
-void LevelTwo::addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath){
+void LevelTwo::addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath, glm::vec4 color){
 
     QList<Triangle*> tris;
-    OBJ* objMarker = m_oh->getObject(objPath, shader, &tris, offset);
+    OBJ* objMarker = m_oh->getObject(objPath, shader, &tris, offset, color);
     Marker* marker = new Marker(objMarker, glm::vec2(0.f, 0.f), glm::vec2(1.2,1.2), signPath);
     m_markers.append(marker);
 
@@ -67,10 +71,39 @@ void LevelTwo::addMarker(const QString& objPath, GLuint shader, const glm::vec3&
     m_world->addToMesh(tris);
 }
 
+QList<Light*> LevelTwo::makeLights(){
+
+    QList<Light*> lights;
+    QList<glm::vec3> positions;
+
+    int counter = 0;
+    positions.append(glm::vec3(0,5,0));
+
+    for(int i=0; i<positions.size(); i++){
+
+        Light* light;
+
+        light = new Light();
+        light->id = counter++;
+        light->type = POINT;
+        light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
+        light->posDir = positions.at(i);
+
+        light->radius = 80.f;
+        light->function = glm::vec3(1.0, .1, .01);
+        light->animFunc = Light::NONE;
+
+        lights.append(light);
+    }
+
+    return lights;
+}
+
 
 void LevelTwo::resetWorld(glm::vec3 playerPos)
 {
-    //playerPos = glm::vec3(0,50,-50);
+
+//    playerPos = glm::vec3(0,50,0);
 
     if (m_world)
     {
@@ -79,11 +112,15 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
     }
     m_resetHalves.clear();
 
+    //reset spiral
+    m_spiral.clear();
+    m_spiraling=false;
+    m_spiralIndex=0;
+
     GLuint shader = m_parentApp->getShader(GEOMETRY);
 //    GLuint shader = m_parentApp->getShader(DEFAULT);
 
-    QList<Light*> lights;
-    // set lights
+    QList<Light*> lights = makeLights();
 
     ActionCamera *cam;
     cam = new ActionCamera();
@@ -94,6 +131,7 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
     VerletManager *vm = new VerletManager(cam);
+    vm->windPow=0;
 
     m_world = new GameWorld();
     m_world->setLights(lights);
@@ -107,48 +145,106 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
 
     //Add all islands
 
+
 #ifdef CUDA
     ParticleSystemManager *psm = new ParticleSystemManager(GEOMETRY, shader);
     m_world->addManager(psm);
     vm->setParams(psm->getParams());
-    //    OBJ* island1 = addIsland(":/objects/Plane.obj",shader,glm::vec3(0), psm);
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,0,0), psm);
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,42,0), psm);
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0,42,-50), psm);
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0), glm::vec4(.5,.5,.5,0),psm);
+
 #else
-//    OBJ* island1 = addIsland(":/objects/Plane.obj",shader,glm::vec3(0), NULL);
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,0,0), NULL);
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,42,0), NULL);
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0,42,-50), NULL);
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0), glm::vec4(.5,.5,.5,0),NULL);
+
 #endif
 
-    //Add all verlet entities
-    vm->addVerlet(new TriangleMesh(glm::vec2(5,35), .6, glm::vec3(-2,43,-3), vm, shader,X,true,TOP_EDGE));
 
-    vm->addVerlet(new TriangleMesh(glm::vec2(10,40), .6, glm::vec3(0,44,-55), vm, shader,Y,true, NONE));
+
+    //Add all verlet entities
+//    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,0,0),glm::vec4(.5,.5,.5,0));
+//    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,42,0), glm::vec4(.5,.5,.5,0));
+//    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0,42,-50), glm::vec4(.5,.5,.5,0));
+
+//    //Add all verlet entities
+    int row = 12;
+    int column = 60;
+    float yOffset = 1;
+    float w = .8;
+
+    TriangleMesh* curtain = new TriangleMesh(glm::vec2(column+1,row+1), w, glm::vec3(0,yOffset,0),vm,shader);
+
+    float length = (column-.5)*w;
+    float height = ((sqrt(3)/2.0) * w);
+    float totalHeight =height*row;
+    float radius = length/2.0/3.14;
+    float angleIncrement = 360.0/float(column*2-1);
+
+    float angle = 0;
+    //top
+    for(int i = 0; i<column+1; i++){
+        if(i==0||i==column)
+            angle = 0;
+        else
+            angle+=angleIncrement*2;
+        float rad = angle*3.14/180.0;
+        //top
+        curtain->setPos(i, glm::vec3(cos(rad)*radius, 0+yOffset, sin(rad)*radius));
+        curtain->createPin(i);
+    }
+
+    //bot
+    int botOffset = (column+1)*row; //find last row
+    angle = 0;
+    for(int i = 0; i<column+1; i++){
+        if(i==0||i==column)
+            angle = 0;
+        else if(i==1)
+            angle+=angleIncrement;
+        else
+            angle+=angleIncrement*2;
+        float rad = angle*3.14/180.0;
+        curtain->setPos(i+botOffset, glm::vec3(cos(rad)*radius, totalHeight+yOffset, sin(rad)*radius));
+        curtain->createPin(i+botOffset);
+    }
+
+    //sides
+    int c = column+1;
+    int r = row+1;
+    for(int i = 0; i<r; i++){
+        float rad = 0*3.14/180.0;
+        curtain->setPos(i*c,glm::vec3(cos(rad)*radius, i*height+yOffset, sin(rad)*radius));
+        curtain->createPin(i*c);
+        curtain->setPos(i*c+c-1,glm::vec3(cos(rad)*radius, i*height+yOffset, sin(rad)*radius));
+        curtain->createPin(i*c+c-1);
+    }
+
+    vm->addVerlet(curtain);
+
+    //Add all verlet entities
+    vm->addVerlet(new TriangleMesh(glm::vec2(5,35), .6, glm::vec3(-2,43,-3), vm, shader,0,Y,TOP_EDGE));
+
+    vm->addVerlet(new TriangleMesh(glm::vec2(10,40), .6, glm::vec3(0,44,-55), vm, shader,0,Y, NONE));
     vm->addVerlet(new TriangleMesh(glm::vec2(30,30), .6, glm::vec3(0,60,0), vm, shader));
 
+    //stairs
+    int numStairs = 10;
+    int y = 5;
+    for(int i=0; i<720; i+= 360/numStairs, y+=2){
+        float rad = i * (PI/180.0);
+        //TriangleMesh* t = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader, i);
+        TriangleMesh* t = new TriangleMesh(glm::vec2(8,30), .5, glm::vec3(-5*sin(rad),y,5*cos(rad)), vm, shader, i);
+        float rad1 = (i+90) * (PI/180.0);
 
-    // stairs
-//    int numStairs = 10;
-//    int y = 5;
-//    for(int i=0; i<720; i+= 360/numStairs, y+=2){
-//        float rad = i * (PI/180.0);
-//        TriangleMesh* t = new TriangleMesh(glm::vec2(6,12), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader);
-//        vm->addVerlet(t);
-//    }
+        t->setWindDirection(rad1);
+        vm->addVerlet(t);
+        this->m_spiral.push_back(t);
+    }
 
-
-
-//    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-90,2,-36), vm, shader));
-
-//    vm->addVerlet(new TriangleMesh(glm::vec2(25,55), .6, glm::vec3(-136,35,-48), vm, shader,Z,true, ALL_CORNERS));
-
-
-
-//    Grass* grass = new Grass(vm, shader);
-//    grass->createPatch(glm::vec2(0,0),10,island1);
-//    vm->addVerlet(grass);
+    // wind trigger
+    QList<Triangle*> tris;
+    OBJ* objMarker = m_oh->getObject(":/objects/Bell.obj", shader, &tris, glm::vec3(0,1,0), glm::vec4(1,1,0,.6));
+    m_spiralSensor = new Marker(objMarker, glm::vec2(0.f, 0.f), glm::vec2(2,2), "");
+    m_world->addObject(objMarker);
+    m_world->addToMesh(tris);
 
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.02f / cam->getAspectRatio(), .02f, .02f));
     m_cursor[3][2] = -.999f;
@@ -181,8 +277,17 @@ void LevelTwo::onTick(float secs)
             break;
         }
     }
-
-//    cout<<"player pos: "<<pos.x<<" "<<pos.y<<" "<<pos.z<<endl;
+    if(this->m_spiralSensor->isInRange(pos,2.0))
+        m_spiraling = true;
+    if(m_spiraling){
+        if(m_spiralCounter==0){
+            m_spiralCounter = m_spiralDelay;
+            if(m_spiralIndex<m_spiral.size())
+                m_spiral[m_spiralIndex]->controlWind=true;
+            m_spiralIndex++;
+        }
+        m_spiralCounter--;
+    }
 }
 
 

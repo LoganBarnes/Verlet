@@ -48,12 +48,20 @@ struct RenderShape
 // Data for a single light
 struct Light
 {
+    enum AnimationFunction{
+        NONE, CIRCLE, XSINE, YSINE, ZSINE
+    };
+
     int id;
     LightType type;
     glm::vec3 color;
     glm::vec3 posDir;   // position for point, direction for directional
     glm::vec3 function; // Attenuation function
     float radius;
+    AnimationFunction animFunc;
+    float animationPeriod;
+    glm::vec3 center;       // center of animation
+
 };
 
 struct ObjectsInfo
