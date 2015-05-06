@@ -182,7 +182,7 @@ void Verlet::applyWind(Tri* t){
     //Apply noise
     float noise = windNoise;
     windForce.z += -.5*_manager->windSign.z*((t->random*noise)-noise*.5)*power;
-    windForce.x += -.5*_manager->windSign.x*((t->random*noise)-noise*.5)*power;
+    windForce.x += .5*_manager->windSign.x*((t->random*noise)-noise*.5)*power;
 
     _acc[t->a] += windForce;
     _acc[t->b] += windForce;

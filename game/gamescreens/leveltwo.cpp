@@ -100,7 +100,7 @@ QList<Light*> LevelTwo::makeLights(){
 void LevelTwo::resetWorld(glm::vec3 playerPos)
 {
 
-    playerPos =  glm::vec3(-40,50,25);
+//    playerPos =  glm::vec3(-40,50,25);
 
     if (m_world)
     {
@@ -146,6 +146,61 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-40,0,25), glm::vec4(.5,.5,.5,0));
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-40,45,25), glm::vec4(.5,.5,.5,0));
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-40,45,-16), glm::vec4(.5,.5,.5,0));
+
+
+    int row = 12;
+    int column = 60;
+    float yOffset = 1;
+    float w = .8;
+
+    TriangleMesh* curtain = new TriangleMesh(glm::vec2(column+1,row+1), w, glm::vec3(0,yOffset,0),vm,shader);
+
+    float length = (column-.5)*w;
+    float height = ((sqrt(3)/2.0) * w);
+    float totalHeight =height*row;
+    float radius = length/2.0/3.14;
+    float angleIncrement = 360.0/float(column*2-1);
+
+    float angle = 0;
+    //top
+    for(int i = 0; i<column+1; i++){
+        if(i==0||i==column)
+            angle = 0;
+        else
+            angle+=angleIncrement*2;
+        float rad = angle*3.14/180.0;
+        //top
+        curtain->setPos(i, glm::vec3(cos(rad)*radius, 0+yOffset, sin(rad)*radius));
+        curtain->createPin(i);
+    }
+
+    //bot
+    int botOffset = (column+1)*row; //find last row
+    angle = 0;
+    for(int i = 0; i<column+1; i++){
+        if(i==0||i==column)
+            angle = 0;
+        else if(i==1)
+            angle+=angleIncrement;
+        else
+            angle+=angleIncrement*2;
+        float rad = angle*3.14/180.0;
+        curtain->setPos(i+botOffset, glm::vec3(cos(rad)*radius, totalHeight+yOffset, sin(rad)*radius));
+        curtain->createPin(i+botOffset);
+    }
+
+    //sides
+    int c = column+1;
+    int r = row+1;
+    for(int i = 0; i<r; i++){
+        float rad = 0*3.14/180.0;
+        curtain->setPos(i*c,glm::vec3(cos(rad)*radius, i*height+yOffset, sin(rad)*radius));
+        curtain->createPin(i*c);
+        curtain->setPos(i*c+c-1,glm::vec3(cos(rad)*radius, i*height+yOffset, sin(rad)*radius));
+        curtain->createPin(i*c+c-1);
+    }
+
+    vm->addVerlet(curtain);
 
     //Add all verlet entities
     float rad = 55 * (PI/180.0);
