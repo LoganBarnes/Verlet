@@ -11,8 +11,8 @@
 
 //******************************CONSTRUCTING**********************************//
 TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
-                           const glm::vec3& start, VerletManager* vm, GLuint shader,
-                           Axis axis, bool flat, PinMode p)
+                           const glm::vec3& start, VerletManager* vm, GLuint shader, int angle,
+                           Axis axis, PinMode p)
     : Verlet(vm),
     m_shader(shader)
 {
@@ -20,21 +20,23 @@ TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
     m_col = dimension.x;
     int r = m_row;
     int c = m_col;
-    float h = (sqrt(3)/2.0) * w;
 
     glm::vec3 width, height, half_width;
 
-    if(axis==0){ //x-axis
-        width = glm::vec3(w,0,0);
-        height = flat ? glm::vec3(0,0,-h) : glm::vec3(0,-h,0);
+    QPair<glm::vec2,glm::vec2> dim = rotateTriangle(w,angle);
+    glm::vec2 test_w = dim.first;
+    glm::vec2 test_h = dim.second;
+    if(axis==X){
+       width = glm::vec3(0,test_w.x,test_w.y);
+       height = glm::vec3(0,test_h.x,test_h.y);
     }
-    if(axis==1){ //y-axis
-        width = glm::vec3(0,w,0);
-        height = flat ? glm::vec3(-h,0,0) : glm::vec3(0,0,-h);
+    if(axis==Y){
+        width = glm::vec3(test_w.x,0,test_w.y);
+        height = glm::vec3(test_h.x,0,test_h.y);
     }
-    if(axis==2){ //z-axis
-        width = glm::vec3(0,0,w);
-        height = flat ? glm::vec3(-h,0,0) : glm::vec3(0,-h,0);
+    if(axis==Z){
+        width = glm::vec3(test_w.x,test_w.y,0);
+        height = glm::vec3(test_h.x,test_h.y,0);
     }
     half_width = width*.5f;
 
@@ -134,6 +136,35 @@ TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
 
     //pin
     pin(p,r,c);
+}
+
+QPair<glm::vec2,glm::vec2> TriangleMesh::rotateTriangle(float _w,int angle){
+    float h = (sqrt(3)/2.0) * _w;
+    float w = -_w;
+    if(h<0){
+//        h*=-1;
+        w*=-1;
+    }
+
+    glm::vec2 p1 = glm::vec2(0,(2.0/3.0)*h);
+    glm::vec2 p2 = glm::vec2(-.5*w,-(1.0/3.0)*h);
+    glm::vec2 p3 = glm::vec2(.5*w,-(1.0/3.0)*h);
+
+    glm::vec2 v1 = rotatePoint(p1,angle);
+    glm::vec2 v2 = rotatePoint(p2,angle);
+    glm::vec2 v3 = rotatePoint(p3,angle);
+
+    glm::vec2 width = v3-v2;
+    glm::vec2 height = v1-((v2+v3)*.5f);
+
+    return QPair<glm::vec2,glm::vec2>(width,height);
+}
+
+glm::vec2 TriangleMesh::rotatePoint(const glm::vec2& p, int angle){
+    float radians = angle * (M_PI / 180.0);
+    float x = p.x*cos(radians)-p.y*sin(radians);
+    float y = p.y*cos(radians)+p.x*sin(radians);
+    return glm::vec2(x,y);
 }
 
 void TriangleMesh::pin(PinMode p, int r, int c){

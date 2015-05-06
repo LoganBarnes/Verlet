@@ -74,7 +74,7 @@ protected:
 
     QList<Light*> m_lights;
 
-    float m_timeElapsed;
+    double m_timeElapsed;
 
 };
 

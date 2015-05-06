@@ -40,9 +40,9 @@ public:
     // resize
     virtual void onResize(int w, int h);
 
-    OBJ* addIsland(const QString& path, GLuint shader, const glm::vec3& offset, ParticleSystemManager *pcm);
-    void addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath);
-
+    OBJ* addIsland(const QString& path, GLuint shader, const glm::vec3& offset, glm::vec4 color, ParticleSystemManager *pcm);
+    void addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath, glm::vec4 color);
+    QList<Light*> makeLights();
 
 private:
     void render2D(Graphics *g);
@@ -60,7 +60,13 @@ private:
     bool m_drawCursor;
     glm::vec2 m_deltas;
 
-    int _island;
+    //int _island;
+    QList<Verlet*> m_spiral;
+    Marker* m_spiralSensor;
+    bool m_spiraling;
+    int m_spiralIndex;
+    int m_spiralDelay;
+    int m_spiralCounter;
 
     QList<Marker*> m_markers;
 };

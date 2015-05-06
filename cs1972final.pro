@@ -131,7 +131,9 @@ SOURCES += \
     engine/verlet/bend.cpp \
     engine/particles_cuda/particlesystemmanager.cpp \
     engine/particles_cuda/particlerenderer.cpp \
-    engine/particles_cuda/particlesystem.cpp
+    engine/particles_cuda/particlesystem.cpp \
+    game/entities/token.cpp \
+    game/entities/spiralsensor.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -196,7 +198,9 @@ HEADERS += \
     engine/verlet/bend.h \
     engine/particles_cuda/particlesystemmanager.h \
     engine/particles_cuda/particlerenderer.h \
-    engine/particles_cuda/particlesystem.h
+    engine/particles_cuda/particlesystem.h \
+    game/entities/token.h \
+    game/entities/spiralsensor.h
 
 
 FORMS += engine/ui/mainwindow.ui
