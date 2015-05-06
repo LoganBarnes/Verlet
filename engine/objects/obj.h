@@ -56,8 +56,8 @@ public:
     Half* top;
     Half* bot;
     //Adjust a point within a Half's hitbox to be outside of the mesh
-    bool pointOnTop(glm::vec3 &surfacePt);
-    bool pointOnSurface(glm::vec3 &surfacePt);
+    bool pointOnTop(glm::vec3 &surfacePt, const glm::vec3 &prevPt);
+    bool pointOnSurface(glm::vec3 &surfacePt, const glm::vec3 &prevPt);
     //Returns y on mesh corresponding w/ given point on x-z plane. Defaults to top half
     bool findY(const glm::vec2& coor, float& y, bool surface = true);
     //Checks if pos is within specified range of top+bot's cylinderical hitboxes

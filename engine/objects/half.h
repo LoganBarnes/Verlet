@@ -18,7 +18,7 @@ public:
     ~Half();
 
     //Adjusts given point if it's below/ above the mesh- takes hitbox into account
-    bool placeOnSurface(glm::vec3& surfacePt);
+    bool placeOnSurface(glm::vec3& surfacePt, const glm::vec3 &prevPt);
     //Returns y corresponding w/ given x+z- doesn't consider hitbox
     bool findY(const glm::vec2 &coord, float& y);
 

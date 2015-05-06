@@ -48,7 +48,7 @@ bool Half::inHitBox(const glm::vec3& pos){
             pos.y > yLimits.x && pos.y < yLimits.y+2);
 }
 
-bool Half::placeOnSurface(glm::vec3 &surfacePt){
+bool Half::placeOnSurface(glm::vec3 &surfacePt, const glm::vec3 &prevPt){
     if(!(surfacePt.y>yLimits.x && surfacePt.y<yLimits.y))
         return false;
     if(surfacePt.x>center.x+radius||surfacePt.x<center.x-radius)
@@ -62,15 +62,38 @@ bool Half::placeOnSurface(glm::vec3 &surfacePt){
             Ray r = Ray(surfacePt,glm::vec3(0,-1,0));
             glm::vec3 pointOnSurface = r.getPointonPlane(tri->vertices[0],tri->normal)+glm::vec3(0,allowance,0);
             if(surfacePt.y<pointOnSurface.y){
-                surfacePt = pointOnSurface;
+                glm::vec3 _direction = surfacePt-prevPt;
+                glm::vec3 triPt = tri->vertices[0]+glm::vec3(0,allowance,0);
+                float t = -(glm::dot(tri->normal,surfacePt-triPt))/(glm::dot(tri->normal,_direction));
+                glm::vec3 x = _direction*t+surfacePt;
+
+                if(t<0&&t>=-1)
+                    surfacePt = x;
+                else if(t<-3||t>3)
+                      surfacePt = .999f*prevPt+.001f*x;
+                else
+                    surfacePt = .9f*prevPt+.1f*x;
+
                 return true;
+                //surfacePt = pointOnSurface;
+                //return true;
             }
         }
         else if(!top){
             Ray r = Ray(surfacePt,glm::vec3(0,1,0));
             glm::vec3 pointOnSurface = r.getPointonPlane(tri->vertices[0],tri->normal)+glm::vec3(0,-allowance,0);
             if(surfacePt.y>pointOnSurface.y){
-                surfacePt = pointOnSurface;
+                glm::vec3 _direction = surfacePt-prevPt;
+                glm::vec3 triPt = tri->vertices[0]+glm::vec3(0,-allowance,0);
+                float t = -(glm::dot(tri->normal,surfacePt-triPt))/(glm::dot(tri->normal,_direction));
+                glm::vec3 x = _direction*t+surfacePt;
+
+                if(t<0&&t>=-1)
+                    surfacePt = x;
+                else if(t<-3||t>3)
+                      surfacePt = .999f*prevPt+.001f*x;
+                else
+                    surfacePt = .9f*prevPt+.1f*x;
                 return true;
             }
         }
