@@ -57,6 +57,7 @@ void Player::onTick(float secs)
         force.x += 1;
     if (m_jump && m_canJump){
         m_canJump = false;
+        m_jump = false;
         m_jumping = true;
         v.y = 11.5f;
         m_jumpVel = v;
@@ -93,9 +94,7 @@ void Player::onTick(float secs)
 //    if (m_canJump)
 //        applyForce(glm::vec3(0, 10, 0) * getMass()); // no gravity on cloth hack
     MovableEntity::onTick(secs);
-
-    //m_canJump = false; //jump latency issue due to this being set to false before space is activated?
-    m_jump = false;
+    m_jump = false;  //jump latency issue due to this being set to false before space is activated?
 }
 
 
@@ -203,11 +202,14 @@ void Player::onKeyReleased(QKeyEvent *e)
 
 void Player::handleCollision(Collision *col, bool resetVel)
 {
-    //if (glm::dot(col->impulse, glm::vec3(0, 1, 0)) > 1)
-    if(col->impulse.y>0)
+    if (glm::dot(col->impulse, glm::vec3(0, 1, 0)) > .5)
+    //if(col->impulse.y>0)
     {
-        m_jumping = false;
-        m_canJump = true;
+        glm::vec3 v = getVelocity();
+        if(v.y<0){
+            m_jumping = false;
+            m_canJump = true;
+        }
         if (resetVel)
         {
             glm::vec3 v = getVelocity();
@@ -215,7 +217,6 @@ void Player::handleCollision(Collision *col, bool resetVel)
             setVelocity(v);
         }
     }
-
 }
 
 // unused

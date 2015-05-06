@@ -31,7 +31,7 @@ LevelTwo::LevelTwo(Application *parent)
     m_oh = new ObjectHandler();
     QList<Triangle *> tris;
 
-    resetWorld(glm::vec3(0, 10, 0));
+    resetWorld(glm::vec3(0, 50, 0));
 }
 
 
@@ -42,12 +42,16 @@ LevelTwo::~LevelTwo()
 }
 
 
-OBJ* LevelTwo::addIsland(const QString& path, GLuint shader, const glm::vec3& offset){
+OBJ* LevelTwo::addIsland(const QString& path, GLuint shader, const glm::vec3& offset, ParticleSystemManager *pcm){
     QList<Triangle *> tris;
     OBJ *island = m_oh->getObject(path, shader, &tris, offset);
     m_world->addObject(island);
     m_world->addToMesh(tris);
     m_resetHalves.append(island->top);
+
+#ifdef CUDA
+    pcm->addTriangles(&tris, island->top->getCenterPoint(), island->top->getRadius());
+#endif
     return island;
 }
 
@@ -65,7 +69,7 @@ void LevelTwo::addMarker(const QString& objPath, GLuint shader, const glm::vec3&
 
 void LevelTwo::resetWorld(glm::vec3 playerPos)
 {
-    playerPos = glm::vec3(0,50,-50);
+    //playerPos = glm::vec3(0,50,-50);
 
     if (m_world)
     {
@@ -96,35 +100,42 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
     m_world->addManager(vm);
     m_world->setPlayer(player);
 
-#ifdef CUDA
-    ParticleSystemManager *pcm = new ParticleSystemManager(GEOMETRY, shader);
-    m_world->addManager(pcm);
-#endif
-
     m_world->setGravity(glm::vec3(0,-10,0));
     setCamera(cam);
     player->setMaxOffset(50); //zoom
 
     //Add all islands
-//    OBJ* island1 = addIsland(":/objects/Plane.obj",shader,glm::vec3(0));
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,0,0));
-    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,42,0));
-    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0,42,-50));
+
+#ifdef CUDA
+    ParticleSystemManager *psm = new ParticleSystemManager(GEOMETRY, shader);
+    m_world->addManager(psm);
+    vm->setParams(psm->getParams());
+    //    OBJ* island1 = addIsland(":/objects/Plane.obj",shader,glm::vec3(0), psm);
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,0,0), psm);
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,42,0), psm);
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0,42,-50), psm);
+#else
+//    OBJ* island1 = addIsland(":/objects/Plane.obj",shader,glm::vec3(0), NULL);
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,0,0), NULL);
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(0,42,0), NULL);
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(0,42,-50), NULL);
+#endif
 
     //Add all verlet entities
     vm->addVerlet(new TriangleMesh(glm::vec2(5,35), .6, glm::vec3(-2,43,-3), vm, shader,X,true,TOP_EDGE));
 
     vm->addVerlet(new TriangleMesh(glm::vec2(10,40), .6, glm::vec3(0,44,-55), vm, shader,Y,true, NONE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(30,30), .6, glm::vec3(0,60,0), vm, shader));
+
 
     // stairs
-    int numStairs = 10;
-    int y = 5;
-    for(int i=0; i<720; i+= 360/numStairs, y+=2){
-
-        float rad = i * (PI/180.0);
-        TriangleMesh* t = new TriangleMesh(glm::vec2(6,12), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader);
-        vm->addVerlet(t);
-    }
+//    int numStairs = 10;
+//    int y = 5;
+//    for(int i=0; i<720; i+= 360/numStairs, y+=2){
+//        float rad = i * (PI/180.0);
+//        TriangleMesh* t = new TriangleMesh(glm::vec2(6,12), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader);
+//        vm->addVerlet(t);
+//    }
 
 
 

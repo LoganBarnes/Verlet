@@ -17,6 +17,7 @@ struct SimParams
 //    float  colliderRadius;
 
     float3 gravity;
+    float3 globalForces;
     float globalDamping;
     float particleRadius;
 

@@ -10,7 +10,8 @@
 #include <gtx/transform.hpp>
 
 GameMenu::GameMenu(Application *parent)
-    : ScreenH(parent)
+    : ScreenH(parent),
+      m_st(NULL)
 {
     float aspect = m_camera->getAspectRatio();
 
@@ -23,15 +24,16 @@ GameMenu::GameMenu(Application *parent)
     m_cursor[3][2] = -.999f;
 
     // uncomment to play sound at the origin
-    m_st = new SoundTester(glm::vec3());
-    m_st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
-    m_st->playSound();
+//    m_st = new SoundTester(glm::vec3());
+//    m_st->setSound(m_parentApp->getAudioObject(), "dreams_of_home.wav", true);
+//    m_st->playSound();
 }
 
 GameMenu::~GameMenu()
 {
     delete m_startButton;
-    delete m_st;
+    if (m_st)
+        delete m_st;
 }
 
 // update and render

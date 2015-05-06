@@ -22,7 +22,7 @@
 #define EPS 0.001f
 
 ////////////// fluid constants /////////////
-#define MAX_FLUID_NEIGHBORS 500
+#define MAX_FLUID_NEIGHBORS 50
 
 #define H 2.f       // kernel radius
 #define H2 4.f      // H^2
@@ -157,22 +157,29 @@ struct collide_world_functor
 
 struct integrate_functor
 {
+    float prevTime;
     float deltaTime;
 
     __host__ __device__
-    integrate_functor(float delta_time)
-        : deltaTime(delta_time) {}
+    integrate_functor(float prev_time, float delta_time)
+        : prevTime(prev_time), deltaTime(delta_time) {}
 
     template <typename Tuple>
     __device__
     void operator()(Tuple t)
     {
         volatile float4 posData = thrust::get<0>(t);
-        volatile float4 velData = thrust::get<1>(t);
+        volatile float4 prevData = thrust::get<1>(t);
         float3 pos = make_float3(posData.x, posData.y, posData.z);
-        float3 vel = make_float3(velData.x, velData.y, velData.z);
+        float3 prev = make_float3(prevData.x, prevData.y, prevData.z);
 
-        vel += params.gravity * deltaTime;
+
+        float3 totalForce = params.gravity + params.globalForces;
+        float3 vel = (pos - prev) / prevTime;
+        vel += totalForce * deltaTime;
+        vel *= params.globalDamping;
+
+        thrust::get<1>(t) = make_float4(pos, posData.w);
 
         // new position = old position + velocity * deltaTime
         pos += vel * deltaTime;
@@ -304,7 +311,6 @@ void collideCell(int3    gridPos,
                  uint    index,
                  float3  pos,
                  int     phase,
-                 float4 *oldPos,
                  uint   *cellStart,
                  uint   *cellEnd,
                  uint   *neighbors,
@@ -345,8 +351,6 @@ void collideCell(int3    gridPos,
                     // neighbor stuff
                     neighbors[index * MAX_FLUID_NEIGHBORS + numNeighbors[index]] = j;
                     numNeighbors[index] += 1;
-
-//                    delta += diff * (sqrt(mag2) - collideDist) * -.5f;
                 }
             }
         }
@@ -357,15 +361,18 @@ void collideCell(int3    gridPos,
 __global__
 void collideD(float4 *newPos,               // output: new pos
               float4 *prevPositions,
-              float4 *sortedPos,               // input: sorted positions
-              float  *sortedW,
-              int    *sortedPhase,
               uint   *gridParticleIndex,    // input: sorted particle indices
               uint   *cellStart,
               uint   *cellEnd,
               uint    numParticles,
               uint   *neighbors,
-              uint   *numNeighbors)
+              uint   *numNeighbors,
+              float3  playerPos,
+              float   playerRadius,
+              float4 *tris,
+              uint2  *triGroups,
+              float4 *centRads,
+              uint    numTriGroups)
 {
     uint index = __mul24(blockIdx.x,blockDim.x) + threadIdx.x;
 
@@ -391,7 +398,7 @@ void collideD(float4 *newPos,               // output: new pos
             for (int x=-1; x<=1; x++)
             {
                 int3 neighbourPos = gridPos + make_int3(x, y, z);
-                collideCell(neighbourPos, index, pos, phase, sortedPos, cellStart, cellEnd, neighbors, numNeighbors);
+                collideCell(neighbourPos, index, pos, phase, cellStart, cellEnd, neighbors, numNeighbors);
             }
         }
     }
@@ -455,8 +462,81 @@ void collideD(float4 *newPos,               // output: new pos
         else
             delta -= dpt * min((K_FRICTION) * dist / ldpt, 1.f);
     }
+    // collide with player sphere
+    collideDist = playerRadius + params.particleRadius;
+    float3 diff = pos - playerPos;
 
-    // write new velocity back to original unsorted location
+    float mag2 = dot(diff, diff);
+    float mag;
+
+    if (mag2 < collideDist * collideDist)
+    {
+        mag = sqrt(mag2);
+        delta += (collideDist - mag) * diff / mag;
+    }
+
+    // check triangle collisions
+    float4 centRad;
+    uint2  group;
+
+    float4 data;
+    float3 a, b, c, n;
+
+    for (uint i = 0; i < numTriGroups; i++)
+    {
+        centRad = centRads[i];
+        collideDist = centRad.w + params.particleRadius;
+
+        diff = pos - make_float3(centRad);
+
+        mag2 = dot(diff, diff);
+
+        if (mag2 < collideDist * collideDist)
+        {
+            group = triGroups[i];
+
+            for (int j = group.x; j < group.y; j++)
+            {
+                data = tris[j * 3];
+                a = make_float3(data);
+                n.x = data.w;
+                data = tris[j*3+1];
+                b = make_float3(data);
+                n.y = data.w;
+                data = tris[j*3+2];
+                c = make_float3(data);
+                n.z = data.w;
+
+                // check for intersection with individual triangle
+//                // intersect infinite plane
+//                float t = glm::dot(-normal, p - vertices[0]) / glm::dot(normal, d);
+//                glm::vec3 point = p + d * t;
+
+//                // check if collision point is within triangle
+//                glm::vec3 pab = glm::cross(vertices[0] - point, vertices[1] - point);
+//                glm::vec3 pbc = glm::cross(vertices[1] - point, vertices[2] - point);
+//                glm::vec3 pca = glm::cross(vertices[2] - point, vertices[0] - point);
+
+//                if (t < 0.f || glm::dot(pab, pbc) < 0.00001f || glm::dot(pbc, pca) < 0.00001f)
+//                    t = INFINITY;
+//                else
+//                {
+//                    if (colPoint)
+//                        *colPoint = point;
+//                    if (colNorm)
+//                        *colNorm = normal;
+//                }
+
+//                return t;
+            }
+
+            mag = sqrt(mag2);
+            delta += (collideDist - mag) * diff / mag;
+            break;
+        }
+    }
+
+    // write new pos back to original unsorted location
     newPos[originalIndex] = make_float4(pos + delta, 1.0f);
 }
 
@@ -469,7 +549,7 @@ struct subtract_functor
 
     __device__
     float4 operator()(const float4& orig, const float4& solved) const {
-        return (solved - orig) / -time;
+        return (orig - solved) / time;
     }
 };
 

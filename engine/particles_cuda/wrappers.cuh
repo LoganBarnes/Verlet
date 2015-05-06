@@ -15,11 +15,15 @@ extern "C"
 
     void appendIntegrationParticle(float4 v, float ro, uint iterations);
 
+    void addTriGroup(uint start, uint end, float3 center, float radius);
+
+    void addTriangle(float3 a, float3 b, float3 c, float3 n);
     void freeIntegrationVectors();
 
     void setParameters(SimParams *hostParams);
 
     void integrateSystem(float *pos,
+                         float prevTime,
                          float deltaTime,
                          uint numParticles);
 
@@ -55,12 +59,14 @@ extern "C"
                  uint  *cellStart,
                  uint  *cellEnd,
                  uint   numParticles,
-                 uint   numCells);
+                 uint   numCells,
+                 float3 playerPos,
+                 float  playerRadius);
 
     void sortByType(float *dPos, uint numParticles);
 
 
-    void calcVelocity(float *dpos, float deltaTime, uint numParticles);
+//    void calcVelocity(float *dpos, float deltaTime, uint numParticles);
 
 
     /*

@@ -6,6 +6,7 @@
 #include "link.h"
 #include <QHash>
 #include "graphics.h"
+class Bend;
 class VerletManager;
 class Graphics;
 class MovableEntity;
@@ -47,11 +48,22 @@ struct Tri
     }
 };
 
+struct LinkMap{
+    QList<Link*> links;
+    QList<Bend*> crosses;
+    QList<Bend*> shears;
+
+    LinkMap(){}
+};
+
 class Verlet
 {
 public:
     Verlet(VerletManager* m);
     virtual ~Verlet();
+
+    //Maximum points, for declaring arrays
+    static const int NUM = 10000;
 
     VerletManager* _manager;
     //between 0 and 1: how much cloth is influenced by collisions
@@ -81,9 +93,11 @@ public:
     virtual glm::vec3 collide(MovableEntity *e);
     virtual void collideSurface(OBJ* obj);
 
-    virtual Link* closestLink(int id, const glm::vec3& point);
+    //QHash<int, QList<Link*> > link_map;
+    LinkMap _linkMap[NUM];
     virtual void tearLink(Link* l);
-    QHash<int, QList<Link*> > link_map;
+    Link* findLink(int a, int b);
+    void removeLink(Link* l);
 
     glm::vec3 *getPosArray() { return _pos; }
     glm::vec3 *getNormArray() { return _normal; }
@@ -97,12 +111,10 @@ protected:
     //Creates new point (at index numPoints) w/ given position
     void createPoint(const glm::vec3& pos);
     //Specify indices of two pre-existing points
-    Link* createLink(int a, int b);
+    Link* createLink(int a, int b,bool sort = true);
 
     //Actual number of points
     int numPoints = 0;
-    //Maximum points, for declaring arrays
-    static const int NUM = 300000;
     //Points
     glm::vec3 _pos[NUM];
     glm::vec3 _prevPos[NUM];
@@ -117,11 +129,7 @@ protected:
     std::vector<Pin> pins;
     std::vector<Link*> links;
 
-    //Utility for editing links (tearing)
-    void removeLink(Link* l);
-    Link* findLink(int a, int b);
-    void replaceLink(Link* key, Link* oldLink, Link* newLink,
-                     QHash<Link*, QList<Link*> >& hash);
+
 };
 
 #endif // VERLET_H

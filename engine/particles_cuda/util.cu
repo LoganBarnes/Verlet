@@ -33,6 +33,11 @@ extern "C"
         }
     }
 
+    void threadSync()
+    {
+        checkCudaErrors(cudaDeviceSynchronize());
+    }
+
     void copyArrayToDevice(void *device, const void *host, int offset, int size)
     {
         checkCudaErrors(cudaMemcpy((char *) device + offset, host, size, cudaMemcpyHostToDevice));

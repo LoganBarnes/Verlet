@@ -52,7 +52,6 @@ extern "C"
         checkCudaErrors(cusparseCreateMatDescr(&matDescr));
         cusparseSetMatType(matDescr, CUSPARSE_MATRIX_TYPE_GENERAL);
         cusparseSetMatIndexBase(matDescr,CUSPARSE_INDEX_BASE_ZERO);
-
     }
 
     void destroyHandles()

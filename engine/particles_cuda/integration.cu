@@ -1,5 +1,7 @@
 
 #include <cuda_runtime.h>
+#include <cuda_gl_interop.h>
+
 #include <curand.h>
 #include <stdio.h>
 
@@ -18,7 +20,7 @@
 
 curandGenerator_t gen(0);
 
-thrust::device_vector<float> V; // particle velocities
+thrust::device_vector<float> prev; // previous positions
 thrust::device_vector<float> lambda;
 thrust::device_vector<float> denom;
 
@@ -26,6 +28,10 @@ thrust::device_vector<float> ros;
 
 thrust::device_vector<uint> neighbors;
 thrust::device_vector<uint> numNeighbors;
+
+thrust::device_vector<float> tris;
+thrust::device_vector<uint> trisGroup;
+thrust::device_vector<float> centRad;
 
 float *rands;
 
@@ -43,37 +49,69 @@ extern "C"
         checkCudaErrors(curandSetPseudoRandomGeneratorSeed(gen, 1234ULL));
     }
 
-    void appendIntegrationParticle(float4 v, float ro, uint iterations)
+    void appendIntegrationParticle(float4 pos, float ro, uint iterations)
     {
         for (int i = 0; i < iterations; i++)
         {
-            V.push_back(v.x);
-            V.push_back(v.y);
-            V.push_back(v.z);
-            V.push_back(v.w);
+            prev.push_back(pos.x);
+            prev.push_back(pos.y);
+            prev.push_back(pos.z);
+            prev.push_back(pos.w);
 
             ros.push_back(ro);
             numNeighbors.push_back(0);
             lambda.push_back(0.f);
         }
-        neighbors.resize(V.size() * MAX_FLUID_NEIGHBORS);
+        neighbors.resize(prev.size() * MAX_FLUID_NEIGHBORS);
+    }
+
+    void addTriGroup(uint start, uint end, float3 center, float radius)
+    {
+        trisGroup.push_back(start);
+        trisGroup.push_back(end);
+        centRad.push_back(center.x);
+        centRad.push_back(center.y);
+        centRad.push_back(center.z);
+        centRad.push_back(radius);
+    }
+
+    void addTriangle(float3 a, float3 b, float3 c, float3 n)
+    {
+        tris.push_back(a.x);
+        tris.push_back(a.y);
+        tris.push_back(a.z);
+        tris.push_back(n.x);
+        tris.push_back(b.x);
+        tris.push_back(b.y);
+        tris.push_back(b.z);
+        tris.push_back(n.y);
+        tris.push_back(c.x);
+        tris.push_back(c.y);
+        tris.push_back(c.z);
+        tris.push_back(n.z);
     }
 
     void freeIntegrationVectors()
     {
-         V.clear();
+         prev.clear();
          lambda.clear();
          denom.clear();
          ros.clear();
          neighbors.clear();
          numNeighbors.clear();
+         tris.clear();
+         trisGroup.clear();
+         centRad.clear();
 
-         V.shrink_to_fit();
+         prev.shrink_to_fit();
          lambda.shrink_to_fit();
          denom.shrink_to_fit();
          ros.shrink_to_fit();
          neighbors.shrink_to_fit();
          numNeighbors.shrink_to_fit();
+         tris.shrink_to_fit();
+         trisGroup.shrink_to_fit();
+         centRad.shrink_to_fit();
 
          checkCudaErrors(curandDestroyGenerator(gen));
          freeArray(rands);
@@ -105,19 +143,19 @@ extern "C"
      *                              UPDATE POSITIONS
      *****************************************************************************/
 
-    void integrateSystem(float *pos, float deltaTime, uint numParticles)
+    void integrateSystem(float *pos, float prevTime, float deltaTime, uint numParticles)
     {
-        thrust::device_ptr<float4> d_pos4((float4 *)pos);
-        thrust::device_ptr<float4> d_vel4((float4 *)thrust::raw_pointer_cast(V.data()));
+        thrust::device_ptr<float4> d_pos4((float4*)pos);
+        thrust::device_ptr<float4> d_prev4((float4*)thrust::raw_pointer_cast(prev.data()));
 
         // copy current positions for reference later
-        copyToXstar(pos, numParticles);
+//        copyToXstar(pos, numParticles);
 
         // guess new positions based on forces
         thrust::for_each(
-            thrust::make_zip_iterator(thrust::make_tuple(d_pos4, d_vel4)),
-            thrust::make_zip_iterator(thrust::make_tuple(d_pos4+numParticles, d_vel4+numParticles)),
-            integrate_functor(deltaTime));
+            thrust::make_zip_iterator(thrust::make_tuple(d_pos4, d_prev4)),
+            thrust::make_zip_iterator(thrust::make_tuple(d_pos4+numParticles, d_prev4+numParticles)),
+            integrate_functor(prevTime, deltaTime));
     }
 
 
@@ -282,10 +320,10 @@ extern "C"
 
     }
 
-    void collideWorld(float *pos, float *sortedPos, uint numParticles, int3 minBounds, int3 maxBounds)
+    void collideWorld(float *pos, float *sortedPos, uint numParticles, float3 playerPos, float playerRadius, int3 minBounds, int3 maxBounds)
     {
         thrust::device_ptr<float4> d_pos4((float4 *)pos);
-        thrust::device_ptr<float4> d_Xstar((float4*)getXstarRawPtr());
+        thrust::device_ptr<float4> d_prev4((float4*)thrust::raw_pointer_cast(prev.data()));
         thrust::device_ptr<int> d_phase(getPhaseRawPtr());
 
         // create random vars for boundary collisions
@@ -296,8 +334,8 @@ extern "C"
 //        thrust::transform(d_pos4, d_pos4 + numParticles, d_Xstar, d_pos4, collide_world_functor(rands, minBounds, maxBounds));
 
         thrust::for_each(
-            thrust::make_zip_iterator(thrust::make_tuple(d_pos4, d_Xstar, d_phase)),
-            thrust::make_zip_iterator(thrust::make_tuple(d_pos4+numParticles, d_Xstar+numParticles, d_phase+numParticles)),
+            thrust::make_zip_iterator(thrust::make_tuple(d_pos4, d_prev4, d_phase)),
+            thrust::make_zip_iterator(thrust::make_tuple(d_pos4+numParticles, d_prev4+numParticles, d_phase+numParticles)),
             collide_world_functor(rands, minBounds, maxBounds));
     }
 
@@ -309,7 +347,9 @@ extern "C"
                  uint  *cellStart,
                  uint  *cellEnd,
                  uint   numParticles,
-                 uint   numCells)
+                 uint   numCells,
+                 float3 playerPos,
+                 float  playerRadius)
     {
         checkCudaErrors(cudaBindTexture(0, oldPosTex, sortedPos, numParticles*sizeof(float4)));
         checkCudaErrors(cudaBindTexture(0, invMassTex, sortedW, numParticles*sizeof(float)));
@@ -321,7 +361,10 @@ extern "C"
         // store neighbors
         uint *dNeighbors = thrust::raw_pointer_cast(neighbors.data());
         uint *dNumNeighbors = thrust::raw_pointer_cast(numNeighbors.data());
-        float *dXstar = getXstarRawPtr();
+        float *dPrev = thrust::raw_pointer_cast(prev.data());
+        float4 *dTris = (float4*) thrust::raw_pointer_cast(tris.data());
+        uint2 *dTrisGroup = (uint2*) thrust::raw_pointer_cast(trisGroup.data());
+        float4 *dCentRad = (float4*) thrust::raw_pointer_cast(centRad.data());
 
         // thread per particle
         uint numThreads, numBlocks;
@@ -329,16 +372,19 @@ extern "C"
 
         // execute the kernel
         collideD<<< numBlocks, numThreads >>>((float4 *)particles,
-                                              (float4 *)dXstar,
-                                              (float4 *)sortedPos,
-                                              sortedW,
-                                              sortedPhase,
+                                              (float4 *)dPrev,
                                               gridParticleIndex,
                                               cellStart,
                                               cellEnd,
                                               numParticles,
                                               dNeighbors,
-                                              dNumNeighbors);
+                                              dNumNeighbors,
+                                              playerPos,
+                                              playerRadius,
+                                              dTris,
+                                              dTrisGroup,
+                                              dCentRad,
+                                              trisGroup.size() / 2);
 
         // check if kernel invocation generated an error
         getLastCudaError("Kernel execution failed");
@@ -379,17 +425,17 @@ extern "C"
      *                              UPDATE VELOCITIES
      *****************************************************************************/
 
-    void calcVelocity(float *dpos, float deltaTime, uint numParticles)
-    {
-        float *dXstar = getXstarRawPtr();
-        thrust::device_ptr<float4> d_Xstar((float4*)dXstar);
-        thrust::device_ptr<float4> d_pos((float4*)dpos);
-        thrust::device_ptr<float4> d_vel((float4*)thrust::raw_pointer_cast(V.data()));
+//    void calcVelocity(float *dpos, float deltaTime, uint numParticles)
+//    {
+//        float *dXstar = getXstarRawPtr();
+//        thrust::device_ptr<float4> d_Xstar((float4*)dXstar);
+//        thrust::device_ptr<float4> d_pos((float4*)dpos);
+//        thrust::device_ptr<float4> d_vel((float4*)thrust::raw_pointer_cast(V.data()));
 
 
-        thrust::transform(d_pos, d_pos + numParticles, d_Xstar, d_vel, subtract_functor(deltaTime));
+//        thrust::transform(d_pos, d_pos + numParticles, d_Xstar, d_vel, subtract_functor(deltaTime));
 
-    }
+//    }
 
 
 

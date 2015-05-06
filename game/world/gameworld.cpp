@@ -71,6 +71,7 @@ Triangle* GameWorld::intersectWorld(glm::vec3 p, glm::vec3 d, float *t)
     return triangle;
 }
 
+
 void GameWorld::onKeyPressed(QKeyEvent *e)
 {
     // temp lighting controls

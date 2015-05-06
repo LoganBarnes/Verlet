@@ -7,6 +7,8 @@ extern "C"
 {
     void cudaInit();
 
+    void threadSync();
+
     void allocateArray(void **devPtr, int size);
     void freeArray(void *devPtr);
 

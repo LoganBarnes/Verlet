@@ -2,6 +2,7 @@
 #include "verletmanager.h"
 #include "graphics.h"
 #include "movableentity.h"
+#include "bend.h"
 #include "obj.h"
 #define GLM_FORCE_RADIANS
 #include <gtx/norm.hpp>
@@ -35,12 +36,21 @@ void Verlet::createPin(int index){
 }
 
 //***************************editing links*****************************//
-Link* Verlet::createLink(int a, int b){
+Link* Verlet::createLink(int a, int b, bool sort){
     float length = glm::length(_pos[b]-_pos[a]);
     Link* l = new Link(a, b, length);
+
+    if(!sort){
+        l->pointA=a;
+        l->pointB=b;
+    }
+
     links.push_back(l);
-    link_map[a]+=l;
-    link_map[b]+=l;
+    _linkMap[a].links+=l;
+    _linkMap[b].links+=l;
+    //link_map[a]+=l;
+    //link_map[b]+=l;
+
     return l;
 }
 
@@ -57,42 +67,30 @@ Link* Verlet::findLink(int a, int b){
 
 void Verlet::removeLink(Link* l){
     //remove link from 'link_map' of a and b
-    link_map[l->pointA].removeOne(l);
-    link_map[l->pointB].removeOne(l);
+    //link_map[l->pointA].removeOne(l);
+    //link_map[l->pointB].removeOne(l);
+
+    _linkMap[l->pointA].links.removeOne(l);
+    _linkMap[l->pointB].links.removeOne(l);
+
+    QList<Bend*> crossA = _linkMap[l->pointA].crosses;
+    foreach(Bend* b, crossA){
+        if(b->seg1==l)
+            b->seg1=NULL;
+        if(b->seg2==l)
+            b->seg1=NULL;
+    }
+    QList<Bend*> crossB = _linkMap[l->pointB].crosses;
+    foreach(Bend* b, crossB){
+        if(b->seg1==l)
+            b->seg1=NULL;
+        if(b->seg2==l)
+            b->seg1=NULL;
+    }
+
     //remove link from 'links'
     links.erase(std::remove(links.begin(), links.end(), l), links.end());
     delete l;
-}
-
-void Verlet::replaceLink(Link* key, Link* oldLink, Link* newLink,
-                               QHash<Link*, QList<Link*> >& hash){
-    hash[key].removeOne(oldLink);
-    hash[key]+=newLink;
-}
-//***************************for tearing*****************************//
-Link* Verlet::closestLink(int id, const glm::vec3& point){
-    //Find all points id is connected to
-    std::vector<int> indices;
-    QList<Link*> list = link_map[id];
-    foreach(Link* l, list){
-        if(l->pointA!=id)
-            indices.push_back(l->pointA);
-        else
-            indices.push_back(l->pointB);
-    }
-    //Find which of these points is closest to 'point'
-    float nearest = 100000000;
-    int closest = id;
-    for(uint i = 0; i<indices.size(); i++){
-        int index = indices.at(i);
-        float distance = glm::length2(_pos[index]-point);
-        if(distance<nearest){
-            closest = index;
-            nearest = distance;
-        }
-    }
-    //return the link between id + closest point
-    return findLink(id,closest);
 }
 
 void Verlet::tearLink(Link* ){}
@@ -175,9 +173,9 @@ void Verlet::applyWind(Tri* t){
     glm::vec3 windForce = windDirection*_manager->windPow*windScalar;
 
     //Apply noise
-    float noise = windNoise;
-    windForce.z += -1*_manager->windSign.z*((t->random*noise)-noise*.5);
-    windForce.x += -1*_manager->windSign.x*((t->random*noise)-noise*.5);
+    //float noise = windNoise;
+    //windForce.z += -.5*_manager->windSign.z*((t->random*noise)-noise*.5)*_manager->windPow;
+    //windForce.x += -.5*_manager->windSign.x*((t->random*noise)-noise*.5)*_manager->windPow;
 
     _acc[t->a] += windForce;
     _acc[t->b] += windForce;
@@ -209,7 +207,7 @@ void Verlet::collideSurface(OBJ* obj){
         glm::vec3 prev = _prevPos[i];
         float difference = glm::length2(prev-flatPoint); //only perform check if velocity is high
         if(difference>.000001){
-            obj->pointOnSurface(_pos[i]);
+            obj->pointOnSurface(_pos[i],prev);
         }
     }
 }

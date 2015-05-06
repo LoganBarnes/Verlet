@@ -12,6 +12,7 @@
 #include "grass.h"
 #include "trianglemesh.h"
 #include "half.h"
+#include "particlesystemmanager.h"
 
 #include "debugprinting.h"
 
@@ -44,6 +45,7 @@ OBJ* TestLevelScreen::addIsland(const QString& path, GLuint shader, const glm::v
     OBJ *island = m_oh->getObject(path, shader, &tris, offset);
     m_world->addObject(island);
     m_world->addToMesh(tris);
+    //m_world->m_islands+=island;
     m_resetHalves.append(island->top);
     return island;
 }
@@ -97,6 +99,13 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_world->addManager(vm);
     m_world->setPlayer(player);
 
+
+#ifdef CUDA
+    ParticleSystemManager *pcm = new ParticleSystemManager(GEOMETRY, shader);
+    m_world->addManager(pcm);
+#endif
+
+
     //MARKER OBJECTS:
     addMarker(":/objects/LargeStone.obj", shader, glm::vec3(0), "basicsign.png");
     addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-47,-.2,1), "freezesign.png");
@@ -104,6 +113,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     addMarker(":/objects/MediumStone.obj", shader, glm::vec3(-130,34.8,-40), "tearsign.png");
 
     m_world->setGravity(glm::vec3(0,-10,0));
+    vm->wind = glm::vec3(0);
     setCamera(cam);
     player->setMaxOffset(50); //zoom
 
@@ -117,18 +127,30 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 
 
     //Add all verlet entities
+/*
+    vm->addVerlet(new TriangleMesh(glm::vec2(30,30), .4, glm::vec3(-5,15,-2.2), vm, shader,Z,false,TOP_EDGE));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-27,0,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-32,4,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-37,8,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-42,12,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-47,16,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-52,19,4), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-60,19,4), vm, shader));
+    //vm->addVerlet(new TriangleMesh(glm::vec2(6,25), .6, glm::vec3(-74,18,-2), vm, shader,Z,true, ALL_CORNERS));
+    //vm->addVerlet(new TriangleMesh(glm::vec2(8,22), .3, glm::vec3(-88,-8,-2.2), vm, shader,Z,true));
+*/
     vm->addVerlet(new TriangleMesh(glm::vec2(8,58), .6, glm::vec3(-11,1.2,-2.2), vm, shader,Z,true,HORIZONTAL_EDGE));
     vm->addVerlet(new TriangleMesh(glm::vec2(6,40), .6, glm::vec3(-53,1.2,-8), vm, shader));
 
     // stairs
     vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-85,-5,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-90,2,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-95,9,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-100,16,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-105,23,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-110,30,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-117,35,-36), vm, shader));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-122,35,-36), vm, shader));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-90,-1,-36), vm, shader)); //2
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-95,3,-36), vm, shader)); //9
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-100,7,-36), vm, shader));  //16
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-105,11,-36), vm, shader));  //23
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-110,15,-36), vm, shader));  //30
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-117,19,-36), vm, shader));  //35
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-122,23,-36), vm, shader));  //35
 
 
     vm->addVerlet(new TriangleMesh(glm::vec2(25,55), .6, glm::vec3(-136,35,-48), vm, shader,Z,true, ALL_CORNERS));
@@ -174,7 +196,6 @@ void TestLevelScreen::onTick(float secs)
 
 //    cout<<"player pos: "<<pos.x<<" "<<pos.y<<" "<<pos.z<<endl;
 }
-
 
 void TestLevelScreen::onRender(Graphics *g)
 {

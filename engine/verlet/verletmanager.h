@@ -10,6 +10,7 @@ class OBJ;
 class Ellipsoid;
 class Ray;
 struct Link;
+struct SimParams;
 
 class VerletManager: public Manager
 {
@@ -40,7 +41,7 @@ public:
 
     //Settings
     glm::vec3 gravity = glm::vec3(0,-1.5,0);
-    glm::vec3 wind = glm::vec3(0,0,0.5);
+    glm::vec3 wind = glm::vec3(0,0,0);
     //multiplier for noise (in applyWind) based on signs of 'wind'
     glm::vec3 windSign = glm::vec3(1,1,1);
     float windPow;
@@ -49,6 +50,8 @@ public:
 
     //Whether constraints are solved
     bool solve = true;
+
+    void setParams(SimParams *params) { m_params = params; }
 
 private:
     //Verlet objects manager maintains
@@ -106,14 +109,19 @@ private:
     //World-space pt: where cursor's ray intersects w/ tear's plane
     int m_tear_ptA;
     int m_tear_ptB;
+    int m_tear_prevA;
     Verlet* m_tearVerlet;
     Link* m_tearLink;
+    int m_tearDelay;
+    int m_tearTimer;
     int rayTrace(float x, float y, std::vector<int> points, Verlet* v);
 
 
     int m_curV;
     int m_curI;
     Ray *m_ray;
+
+    SimParams *m_params;
 };
 
 #endif // VERLETMANAGER_H

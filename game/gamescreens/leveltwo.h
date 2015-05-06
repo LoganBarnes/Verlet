@@ -13,6 +13,7 @@ class VerletManager;
 class Verlet;
 struct Link;
 class Half;
+class ParticleSystemManager;
 
 class LevelTwo : public ScreenH
 {
@@ -39,7 +40,7 @@ public:
     // resize
     virtual void onResize(int w, int h);
 
-    OBJ* addIsland(const QString& path, GLuint shader, const glm::vec3& offset);
+    OBJ* addIsland(const QString& path, GLuint shader, const glm::vec3& offset, ParticleSystemManager *pcm);
     void addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath);
 
 

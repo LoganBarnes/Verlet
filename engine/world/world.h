@@ -26,6 +26,7 @@ public:
 
     QList<MovableEntity *> getMovableEntities();
     QList<OBJ* > getObjs();
+    //virtual QList<OBJ* > getTerrain(){}
     QList<StaticEntity *> getStaticEntities();
     QList<Triangle *> getMesh();
 

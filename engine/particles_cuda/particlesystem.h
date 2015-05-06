@@ -1,9 +1,9 @@
 #ifndef PARTICLESYSTEM_H
 #define PARTICLESYSTEM_H
 
-#include "kernel.cuh"
 #include <deque>
 #include <vector>
+#include "kernel.cuh"
 
 typedef unsigned int GLuint;
 typedef unsigned int uint;
@@ -14,14 +14,19 @@ public:
     ParticleSystem(float particleRadius, uint3 gridSize, uint maxParticles, int3 minBounds, int3 maxBounds, int iterations);
     ~ParticleSystem();
 
-    void update(float deltaTime);
+    void update(float deltaTime, float3 playerPos, float playerRadius);
     void resetGrid();
 
-    void addFluid(int3 ll, int3 ur, float mass, float density, float3 color);
+    void addFluid(int3 ll, int3 ur, float mass, float density);
     void addParticleGrid(int3 ll, int3 ur, float mass, bool addJitter);
     void addHorizCloth(int2 ll, int2 ur, float3 spacing, float2 dist, float mass, bool holdEdges);
     void addRope(float3 start, float3 spacing, float dist, int numLinks, float mass, bool constrainStart);
+    void addGrassBlade(float3 start, float3 spacing, float bendDist, int numLinks, float mass);
+    void addGrass(int2 ll, int2 ur, float3 spacing);
     void addStaticSphere(int3 ll, int3 ur, float spacing);
+
+    void addCollisionTriangleGroup(uint start, uint end, float3 center, float radius);
+    void addCollisionTriangle(float3 a, float3 b, float3 c, float3 n);
 
     void setParticleToAdd(float3 pos, float3 vel, float mass);
     void setFluidToAdd(float3 pos, float3 color, float mass, float density);
@@ -33,6 +38,8 @@ public:
     GLuint getCurrentReadBuffer() const { return m_posVbo; }
     uint getNumParticles() const { return m_numParticles; }
     float getParticleRadius() const { return m_particleRadius; }
+    SimParams *getParams() { return &m_params; }
+    uint getNumTris() { return m_numTris; }
 
     float4 mousePos;
 
@@ -97,6 +104,9 @@ private:
 
     int3 m_minBounds;
     int3 m_maxBounds;
+
+    float m_prevTime;
+    uint m_numTris;
 
     uint m_solverIterations;
 };

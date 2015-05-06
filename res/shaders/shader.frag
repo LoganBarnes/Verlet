@@ -35,11 +35,30 @@ uniform vec3 allWhite = vec3(0.0);
 uniform sampler2D tex;
 uniform int useTexture = 0;
 
+uniform float particleRadius = -1.0;
+
 void main()
 {
     vec4 norm_camSpace = normal_cameraSpace;
     if (!gl_FrontFacing)
         norm_camSpace = -normal_cameraSpace;
+
+    if (particleRadius > -0.5f) // calc particle position and normal
+    {
+        vec4 normal_worldspace = vec4(0);
+        normal_worldspace.xy = gl_PointCoord * vec2(2.0, -2.0) + vec2(-1.0, 1.0);
+        float mag = dot(normal_worldspace.xy, normal_worldspace.xy);
+
+        if (mag > 1.0) discard;
+
+        normal_worldspace.z = sqrt(1.0 - mag);
+
+        vec4 position_worldspace = vec4(normal_worldspace.xyz * particleRadius, 1);
+
+        // temp
+        fragColor = vec4(.5,.4,.2,1);
+        return;
+    }
 
     vec3 diffCol = diffuse_color + norm_camSpace.xyz * .1;
 //    vec3 diffCol = diffuse_color;

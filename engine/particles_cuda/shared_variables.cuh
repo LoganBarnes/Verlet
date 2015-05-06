@@ -15,15 +15,15 @@ extern "C"
 
     void appendPhaseAndMass(int fase, uint mass, uint iterations);
 
-	void copyToXstar(float *pos, uint numParticles);
+//	void copyToXstar(float *pos, uint numParticles);
 	
 	int *getPhaseRawPtr();
 
-    float *getXstarRawPtr();
+//    float *getXstarRawPtr();
 
     float *getWRawPtr();
 
-    void printXstar();
+//    void printXstar();
     
     // void bindOldPos();
        

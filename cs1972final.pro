@@ -128,6 +128,7 @@ SOURCES += \
     engine/objects/lightparser.cpp \
     game/entities/marker.cpp \
     game/gamescreens/leveltwo.cpp \
+    engine/verlet/bend.cpp \
     engine/particles_cuda/particlesystemmanager.cpp \
     engine/particles_cuda/particlerenderer.cpp \
     engine/particles_cuda/particlesystem.cpp
@@ -192,6 +193,7 @@ HEADERS += \
     engine/objects/lightparser.h \
     game/entities/marker.h \
     game/gamescreens/leveltwo.h \
+    engine/verlet/bend.h \
     engine/particles_cuda/particlesystemmanager.h \
     engine/particles_cuda/particlerenderer.h \
     engine/particles_cuda/particlesystem.h
@@ -240,13 +242,15 @@ unix:!macx {
 }
 macx {
     # Path to cuda stuff
-    CUDA_DIR = /Developer/NVIDIA/CUDA-7.0
+    CUDA_DIR = /usr/local/cuda
     CUDA_LIB = $$CUDA_DIR/lib
 
     # GPU architecture
     CUDA_ARCH     = sm_30 # should be able to detect this somehow instead of hardcoding
 
     SED_STUFF = 2>&1 | sed -E \"s/\\(([0-9]+)\\)/:\\1/g\" 1>&2
+
+    NVCCFLAGS += --std=c++11
 }
 
 if ( exists( $$CUDA_DIR/ ) ) {
@@ -289,7 +293,7 @@ if ( exists( $$CUDA_DIR/ ) ) {
     CUDA_LIBS = $$LIBS
     CUDA_LIBS -= $$NON_CUDA_LIBS
     # Some default NVCC flags?
-    NVCCFLAGS     += --compiler-options -fno-strict-aliasing -use_fast_math --ptxas-options=-v #--std=c++11
+    NVCCFLAGS     += --compiler-options -fno-strict-aliasing -use_fast_math --ptxas-options=-v
 
     # Prepare the extra compiler configuration (taken from the nvidia forum)
     CUDA_INC = $$join(INCLUDEPATH,' -I','-I',' ')

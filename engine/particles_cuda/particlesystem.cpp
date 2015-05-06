@@ -1,16 +1,19 @@
 #include "particlesystem.h"
-#include "GL/glew.h"
+#include <GL/glew.h>
+#include <cuda_runtime.h>
+#include <cuda_gl_interop.h>
 #include <string.h>
 #include <assert.h>
 #include <math.h>
 
 
-#include "util.cuh"
+//#include "util.cuh"
 #include "wrappers.cuh"
 #include "kernel.cuh"
 #include "util.cuh"
 #include "shared_variables.cuh"
 #include "helper_math.h"
+#include "triangle.h"
 
 //#include "debugprinting.h"
 
@@ -26,6 +29,8 @@ ParticleSystem::ParticleSystem(float particleRadius, uint3 gridSize, uint maxPar
       m_rigidIndex(0),
       m_minBounds(minBounds),
       m_maxBounds(maxBounds),
+      m_prevTime(.01f),
+      m_numTris(0),
       m_solverIterations(iterations)
 {
     m_numGridCells = m_gridSize.x * m_gridSize.y * m_gridSize.z;
@@ -54,7 +59,7 @@ ParticleSystem::ParticleSystem(float particleRadius, uint3 gridSize, uint maxPar
     m_params.attraction = 0.0f;
     m_params.boundaryDamping = -0.5f;
 
-    m_params.gravity = make_float3(0.0f, -.0f, 0.0f);
+    m_params.gravity = make_float3(0.0f, -5.1f, 0.0f);
 //    m_params.gravity = make_float3(0.0f, -9.8f, 0.0f);
     m_params.globalDamping = 1.0f;
 
@@ -76,7 +81,7 @@ inline float frand()
 }
 
 // step the simulation
-void ParticleSystem::update(float deltaTime)
+void ParticleSystem::update(float deltaTime, float3 playerPos, float playerRadius)
 {
     assert(m_initialized);
 
@@ -95,81 +100,14 @@ void ParticleSystem::update(float deltaTime)
     // update constants
     setParameters(&m_params);
 
-    /* ALGORITHM 1 SIMULATION LOOP */
-
-    /**********************************************************************************
-     * 1    for all particles i do:
-     * 2 (x)    apply forces vi = vi + deltaTime * forcesExt(xi)
-     * 3 (x)    apply forces xi* = xi + deltaTime * vi
-     * 4        apply mass scaling mi* = mi * exp(-k*h(xi*))
-     * 5    end for
-     */
 
     integrateSystem(dPos,
+                    m_prevTime,
                     deltaTime,
                     m_numParticles);
 
-    /**********************************************************************************
-     * 6    for all particles i do:
-     * 7        find neighboring particles Ni(xi*)
-     * 8        find solid contacts
-     * 9    end for
-     */
-
-//    // calculate grid hash
-//    calcHash(   m_dGridParticleHash,
-//                m_dGridParticleIndex,
-//                dPos,
-//                m_numParticles);
-
-//    // sort particles based on hash
-//    sortParticles(m_dGridParticleHash, m_dGridParticleIndex, m_numParticles);
-
-//    // reorder particle arrays into sorted order and
-//    // find start and end of each cell
-//    reorderDataAndFindCellStart(
-//                m_dCellStart,
-//                m_dCellEnd,
-//                m_dSortedPos,
-//                m_dGridParticleHash,
-//                m_dGridParticleIndex,
-//                dPos,
-//                m_numParticles,
-//                m_numGridCells);
-
-
-    //    /**********************************************************************************
-    //     * 10   while iter < stabalizationIterations do:
-    //     * 11       deltaX = 0, n = 0
-    //     * 12       solve contact constraints for deltaX, n
-    //     * 13       update x  =  x + deltaX / n
-    //     * 14       update x* = x* + deltaX / n
-    //     * 15   end while
-    //     */
-
-//    collide(    dPos,
-//                m_dSortedPos,
-//                m_dGridParticleIndex,
-//                m_dCellStart,
-//                m_dCellEnd,
-//                m_numParticles,
-//                m_numGridCells);
-
-//    collideWorld(dPos,
-//                 m_numParticles);
-
-    /**********************************************************************************
-     * 16   while iter < solverIterations do:
-     * 17       for each constraint group G do:
-     * 18           deltaX = 0, n = 0
-     * 19           solve all constraints in G for deltaX, n
-     * 24           update x* = x* + deltaX / n
-     * 21       end for
-     * 22   end while
-     */
-
-    sortByType(dPos,
-               m_numParticles);
+//    unmapGLBufferObject(m_cuda_posvbo_resource);
+//    assert(0);
 
     for (uint i = 0; i < m_solverIterations; i++)
     {
@@ -205,23 +143,25 @@ void ParticleSystem::update(float deltaTime)
                     m_dCellStart,
                     m_dCellEnd,
                     m_numParticles,
-                    m_numGridCells);
+                    m_numGridCells,
+                    playerPos,
+                    playerRadius);
 
-        solveFluids(    m_dSortedPos,
-                        m_dSortedPhase,
-                        m_dGridParticleIndex,
-                        m_dCellStart,
-                        m_dCellEnd,
-                        dPos,
-                        m_numParticles,
-                        m_numGridCells,
-                        mousePos);
+//        solveFluids(    m_dSortedPos,
+//                        m_dSortedPhase,
+//                        m_dGridParticleIndex,
+//                        m_dCellStart,
+//                        m_dCellEnd,
+//                        dPos,
+//                        m_numParticles,
+//                        m_numGridCells,
+//                        mousePos);
 
-        collideWorld(dPos,
-                     m_dSortedPos,
-                     m_numParticles,
-                     m_minBounds,
-                     m_maxBounds);
+//        collideWorld(dPos,
+//                     m_dSortedPos,
+//                     m_numParticles,
+//                     m_minBounds,
+//                     m_maxBounds);
 
 
         solveDistanceConstraints(dPos);
@@ -240,14 +180,15 @@ void ParticleSystem::update(float deltaTime)
      * 28   end for
      */
 
-    calcVelocity(dPos,
-                 deltaTime,
-                 m_numParticles);
+//    calcVelocity(dPos,
+//                 deltaTime,
+//                 m_numParticles);
 
     // note: do unmap at end here to avoid unnecessary graphics/CUDA context switch
     unmapGLBufferObject(m_cuda_posvbo_resource);
 
     addNewStuff();
+    m_prevTime = deltaTime;
 }
 
 
@@ -279,8 +220,6 @@ void ParticleSystem::addFluids()
 {
     if (m_fluidsToAdd.empty())
         return;
-
-    uint start = m_numParticles;
 
     uint size = m_fluidsToAdd.size() / 2;
     float4 pos, color;
@@ -323,7 +262,7 @@ void ParticleSystem::setParticleToAdd(float3 pos, float3 vel, float mass)
 }
 
 
-void ParticleSystem::addParticle(float4 pos, float4 vel, float mass, float ro, int phase)
+void ParticleSystem::addParticle(float4 pos, float4 , float mass, float ro, int phase)
 {
     if (m_numParticles == m_maxParticles)
         return;
@@ -335,7 +274,7 @@ void ParticleSystem::addParticle(float4 pos, float4 vel, float mass, float ro, i
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     registerGLBufferObject(m_posVbo, &m_cuda_posvbo_resource);
 
-    appendIntegrationParticle(vel, ro, 1);
+    appendIntegrationParticle(pos, ro, 1);
     appendPhaseAndMass(phase, mass, 1);
     appendSolverParticle();
     m_numParticles++;
@@ -348,9 +287,8 @@ void ParticleSystem::setFluidToAdd(float3 pos, float3 color, float mass, float d
 }
 
 
-void ParticleSystem::addFluid(int3 ll, int3 ur, float mass, float density, float3 color)
+void ParticleSystem::addFluid(int3 ll, int3 ur, float mass, float density)
 {
-    int start = m_numParticles;
     float jitter = m_particleRadius * 0.01f;
     float distance = m_particleRadius * 2.5f/*1.667 * density*/;
 
@@ -390,7 +328,6 @@ void ParticleSystem::addFluid(int3 ll, int3 ur, float mass, float density, float
 
 void ParticleSystem::addParticleGrid(int3 ll, int3 ur, float mass, bool addJitter)
 {
-    int start = m_numParticles;
     float jitter = 0.f;
     if (addJitter)
         jitter = m_particleRadius * 0.01f;
@@ -398,7 +335,6 @@ void ParticleSystem::addParticleGrid(int3 ll, int3 ur, float mass, bool addJitte
 
     int3 count = make_int3((int)ceil(ur.x - ll.x) / distance, (int)ceil(ur.y - ll.y) / distance, (int)ceil(ur.z - ll.z) / distance);
 
-    std::cout << count.x << ", " << count.y << ", " << count.z << std::endl;
     float4 pos;
 
 #ifndef TWOD
@@ -434,7 +370,6 @@ void ParticleSystem::addHorizCloth(int2 ll, int2 ur, float3 spacing, float2 dist
 
     int2 count = make_int2((int)ceil(ur.x - ll.x) / spacing.x, (int)ceil(ur.y - ll.y) / spacing.z);
 
-    std::cout << count.x << ", " << count.y << std::endl;
     float4 pos;
 
 #ifndef TWOD
@@ -494,9 +429,51 @@ void ParticleSystem::addRope(float3 start, float3 spacing, float dist, int numLi
     m_rigidIndex++;
 }
 
+
+void ParticleSystem::addGrassBlade(float3 start, float3 spacing, float bendDist, int numLinks, float mass)
+{
+    int startI = m_numParticles;
+
+    addParticle(make_float4(start-spacing, 1.f), make_float4(0.f), mass, 1.f, SOLID);
+    addPointConstraint(startI, start-spacing);
+
+    addParticle(make_float4(start, 1.f), make_float4(0.f), mass, 1.f, SOLID);
+    addPointConstraint(startI+1, start);
+
+    float dist = length(spacing);
+
+    float4 pos;
+    for (int i = 2; i < numLinks; i++)
+    {
+        pos = make_float4(start + (i-1) * spacing, 1.f);
+        addParticle(pos, make_float4(0.f), mass, 1.f, SOLID);
+        addDistanceConstraint(make_uint2(startI + i-1, startI + i), dist);
+        addDistanceConstraint(make_uint2(startI + i-2, startI + i), bendDist);
+    }
+    addDistanceConstraint(make_uint2(startI, m_numParticles-1), dist * numLinks);
+}
+
+void ParticleSystem::addGrass(int2 ll, int2 ur, float3 spacing)
+{
+    int2 count = make_int2((int)ceil(ur.x - ll.x) / spacing.x, (int)ceil(ur.y - ll.y) / spacing.z);
+
+    float3 pos;
+    for (int z = 0; z < count.y; z++)
+    {
+        for (int x = 0; x < count.x; x++)
+        {
+            pos = make_float3(ll.x + x * spacing.x,
+                              spacing.y,
+                              ll.y + z * spacing.z);
+
+            addGrassBlade(pos, make_float3(0,.12f,0), .24f, 5, 1.f);
+        }
+    }
+}
+
+
 void ParticleSystem::addStaticSphere(int3 ll, int3 ur, float spacing)
 {
-    uint startI = m_numParticles;
     int3 count = make_int3((int)ceil(ur.x - ll.x) / spacing, (int)ceil(ur.y - ll.y) / spacing, (int)ceil(ur.z - ll.z) / spacing);
     float4 pos;
     float radius = (ur.x - ll.x) * .5f;
@@ -627,5 +604,16 @@ void ParticleSystem::_finalize()
     freeSolverVectors();
     freeSharedVectors();
     destroyHandles();
+}
+
+void ParticleSystem::addCollisionTriangleGroup(uint start, uint end, float3 center, float radius)
+{
+    addTriGroup(start, end, center, radius);
+}
+
+void ParticleSystem::addCollisionTriangle(float3 a, float3 b, float3 c, float3 n)
+{
+    addTriangle(a, b, c, n);
+    m_numTris++;
 }
 
