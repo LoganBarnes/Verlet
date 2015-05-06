@@ -12,8 +12,8 @@ struct SimParams;
 class ParticleSystemManager : public Manager
 {
 public:
-    ParticleSystemManager();
-    ParticleSystemManager(GraphicsMode gm, GLuint shader);
+    ParticleSystemManager(glm::vec3 playerPos);
+    ParticleSystemManager(glm::vec3 playerPos, GraphicsMode gm, GLuint shader);
     virtual ~ParticleSystemManager();
 
     virtual void manage(World *world, float onTickSecs, float mouseX, float mouseY);
