@@ -1,6 +1,8 @@
 #include "half.h"
 #include "triangle.h"
 #include "ray.h"
+
+#define GLM_FORCE_RADIANS
 #include <gtx/norm.hpp>
 
 Half::Half()
