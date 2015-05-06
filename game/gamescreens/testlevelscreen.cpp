@@ -21,7 +21,7 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     : ScreenH(parent),
       m_world(NULL),
       m_oh(NULL),
-      m_resetIndex(4)
+      m_resetIndex(0)
 {
     m_parentApp->setMouseDecoupled(true);
     m_parentApp->setLeapRightClick(GRAB);
@@ -123,14 +123,14 @@ QList<Light*> TestLevelScreen::makeLights(){
 
     positions.clear();
 
-    positions.append(glm::vec3(-8,12,-39));       //on stairs
-    positions.append(glm::vec3(-92,4,-39));
-    positions.append(glm::vec3(-114,20,-39));
-    positions.append(glm::vec3(-97,8,-39));
-    positions.append(glm::vec3(-107,16,-39));
-    positions.append(glm::vec3(-119,24,-39));
-    positions.append(glm::vec3(-87,1,-39));
-    positions.append(glm::vec3(-82,-2,-39));
+    positions.append(glm::vec3(-9,10,-39));       //on stairs
+    positions.append(glm::vec3(-92,2,-39));
+    positions.append(glm::vec3(-114,18,-39));
+    positions.append(glm::vec3(-97,6,-39));
+    positions.append(glm::vec3(-107,14,-39));
+    positions.append(glm::vec3(-119,22,-39));
+    positions.append(glm::vec3(-87,-1,-39));
+    positions.append(glm::vec3(-82,-4,-39));
 
     for(int i=0; i<positions.size(); i++){
 
@@ -237,14 +237,14 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     vm->addVerlet(new TriangleMesh(glm::vec2(6,40), .6, glm::vec3(-53,1.2,-8), vm, shader,150));
 
     // stairs
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-82,-5,-36), vm, shader,Y));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-87,-1,-36), vm, shader,Y));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-92,3,-36), vm, shader,Y));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-97,7,-36), vm, shader,Y));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-102,11,-36), vm, shader,Y));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-107,15,-36), vm, shader,Y));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-112,19,-36), vm, shader,Y));
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-117,23,-36), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-82,-5,-45), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-87,-1,-45), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-92,3,-45), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-97,7,-45), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-102,11,-45), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-107,15,-45), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-112,19,-45), vm, shader,Y));
+    vm->addVerlet(new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-117,23,-45), vm, shader,Y));
 
     vm->addVerlet(new TriangleMesh(glm::vec2(14,25), 1.2, glm::vec3(-137,27,-32), vm, shader,90,Y, ALL_CORNERS));
 
