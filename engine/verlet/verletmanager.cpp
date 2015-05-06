@@ -16,7 +16,7 @@
 
 VerletManager::VerletManager(Camera *cam)
     : Manager(DEFAULT),
-      windPow(0),
+      windPow(1),
       m_dragMode(false),
       m_draggedPoint(0),
       m_draggedVerlet(NULL),

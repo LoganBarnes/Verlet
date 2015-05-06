@@ -178,7 +178,12 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
     int y = 5;
     for(int i=0; i<720; i+= 360/numStairs, y+=2){
         float rad = i * (PI/180.0);
-        TriangleMesh* t = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader, i);
+        //TriangleMesh* t = new TriangleMesh(glm::vec2(6,20), .6, glm::vec3(-10*sin(rad),y,10*cos(rad)), vm, shader, i);
+        TriangleMesh* t = new TriangleMesh(glm::vec2(8,30), .5, glm::vec3(-5*sin(rad),y,5*cos(rad)), vm, shader, i);
+        t->controlWind=true;
+        float rad1 = (i+90) * (PI/180.0);
+
+        t->setWindDirection(rad1);
         vm->addVerlet(t);
     }
 

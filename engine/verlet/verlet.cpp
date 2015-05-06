@@ -154,16 +154,21 @@ void Verlet::onDraw(Graphics *g){
 void Verlet::onTick(float ){}
 
 //***************************Updating triangles*****************************//
+void Verlet::setWindDirection(float radian){
+    float x = cos(radian);
+    float y = sin(radian);
+    glm::vec3 w = glm::vec3(x,.2,y);
+    w=glm::normalize(w);
+    this->windDirection = w;
+}
 
 void Verlet::applyWind(Tri* t){
     //wind has full effect to perpendicular cloth, none on parallel cloth
     //glm::vec3 windDirection = _manager->wind;
-    //float r = (.01 * (rand() %100))-0.5f;
-
-    glm::vec3 windDirection = _manager->wind;
+    //float r = (.01 * (rand() %100))-0.5f;        
+    glm::vec3 windDirection = (controlWind) ? this->windDirection : _manager->wind;
     //windDirection.x+=r;
     //windDirection.z+=r;
-
 
     float windScalar =  glm::dot(windDirection, t->normal);
 

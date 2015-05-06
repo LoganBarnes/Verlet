@@ -70,6 +70,8 @@ public:
     float sphereInfluence = .9f;
     float rayTraceSize = .3f;
     float windNoise =.06; // how much random noise to give verlet's wind response
+    bool controlWind = false;
+    glm::vec3 windDirection = glm::vec3(0);
 
     int getSize(){return numPoints;}
     glm::vec3 getPoint(const int& id){return _pos[id];}
@@ -107,6 +109,7 @@ public:
     void calculate(Tri* t);
     //@param wind: normalized vector representing wind direction
     virtual void applyWind(Tri* t);
+    void setWindDirection(float radian);
 protected:
     //Creates new point (at index numPoints) w/ given position
     void createPoint(const glm::vec3& pos);

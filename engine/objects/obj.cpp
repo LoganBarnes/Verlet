@@ -36,7 +36,7 @@ bool OBJ::pointOnTop(glm::vec3 &surfacePt, const glm::vec3 &prevPt){
 }
 
 bool OBJ::pointOnSurface(glm::vec3 &surfacePt, const glm::vec3 &prevPt){
-    //return top->placeOnSurface(surfacePt, prevPt);
+//    return top->placeOnSurface(surfacePt, prevPt);
     if(top->placeOnSurface(surfacePt,prevPt))
         return true;
     else

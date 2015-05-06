@@ -38,20 +38,6 @@ TriangleMesh::TriangleMesh(const glm::vec2& dimension, float w,
         width = glm::vec3(test_w.x,test_w.y,0);
         height = glm::vec3(test_h.x,test_h.y,0);
     }
-
-//    float h = (sqrt(3)/2.0) * w;
-//    if(axis==0){ //x-axis
-//        width = glm::vec3(w,0,0);
-//        height = flat ? glm::vec3(0,0,-h) : glm::vec3(0,-h,0);
-//    }
-//    if(axis==1){ //y-axis
-//        width = glm::vec3(0,w,0);
-//        height = flat ? glm::vec3(-h,0,0) : glm::vec3(0,0,-h);
-//    }
-//    if(axis==2){ //z-axis
-//        width = glm::vec3(0,0,w);
-//        height = flat ? glm::vec3(-h,0,0) : glm::vec3(0,-h,0);
-//    }
     half_width = width*.5f;
 
     //Create points
