@@ -89,7 +89,7 @@ void GameWorld::onKeyPressed(QKeyEvent *e)
     World::onKeyPressed(e);
 }
 
-void GameWorld::drawShapes(Graphics *g, int pass, GLuint shader){
+void GameWorld::drawShapes(Graphics *, int , GLuint ){
     /*
      * Drawing shapes.
      * Set the color of the shape (including transparency and shininess)

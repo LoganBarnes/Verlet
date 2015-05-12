@@ -21,14 +21,13 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     : ScreenH(parent),
       m_world(NULL),
       m_oh(NULL),
-      m_resetIndex(0)
+      m_resetIndex(4)
 {
     m_parentApp->setMouseDecoupled(true);
     m_parentApp->setLeapRightClick(GRAB);
     m_parentApp->setLeapLeftClick(PINCH);
 
     m_oh = new ObjectHandler();
-    QList<Triangle *> tris;
 
     resetWorld(glm::vec3(0, 10, 0));
     m_parentApp->playMusic("darkness.wav");
@@ -266,7 +265,10 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 void TestLevelScreen::onTick(float secs)
 {
     if(m_levelChanger->isInRange(m_world->getPlayer()->getPosition(), 2.0))
-        m_parentApp->addScreen(new LevelTwo(m_parentApp));
+    {
+        m_parentApp->popScreens(1, new LevelTwo(m_parentApp));
+        return;
+    }
 
     m_world->onTick(secs, m_cursor[3][0], m_cursor[3][1]);
 

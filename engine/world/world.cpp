@@ -126,23 +126,25 @@ void World::onTick(float secs, float mouseX, float mouseY)
     foreach(Light* light, m_lights){
         Light::AnimationFunction func = light->animFunc;
         switch(func){
-            case Light::NONE:
-            {
+        case Light::NONE:
+        {
+        break;
+        }
+        case Light::ZSINE:
+        {
+            // move based on period and position
+            double periodFunc = sin(m_timeElapsed)*light->animationPeriod;
+            light->posDir = glm::vec3(light->center.x, light->center.y, light->center.z+periodFunc);
             break;
-            }
-            case Light::ZSINE:
-            {
-                // move based on period and position
-                double periodFunc = sin(m_timeElapsed)*light->animationPeriod;
-                light->posDir = glm::vec3(light->center.x, light->center.y, light->center.z+periodFunc);
-                break;
-            }
-            case Light::CIRCLE:
-            {
-                glm::vec3 circle = glm::vec3(sin(m_timeElapsed/2.)*light->animationPeriod, 0, cos(m_timeElapsed/2.)*light->animationPeriod);
-                light->posDir = circle + light->center;
-                break;
-            }
+        }
+        case Light::CIRCLE:
+        {
+            glm::vec3 circle = glm::vec3(sin(m_timeElapsed/2.)*light->animationPeriod, 0, cos(m_timeElapsed/2.)*light->animationPeriod);
+            light->posDir = circle + light->center;
+            break;
+        }
+        default:
+            break;
         }
     }
 

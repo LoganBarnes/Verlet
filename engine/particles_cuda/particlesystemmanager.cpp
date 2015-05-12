@@ -29,8 +29,21 @@ ParticleSystemManager::ParticleSystemManager(glm::vec3 playerPos)
       m_fluidEmitterOn(false),
       m_timer(-1.f)
 {
-//    m_particleSystem = new ParticleSystem(PARTICLE_RADIUS, GRID_SIZE, MAX_PARTICLES, make_int3(-50), make_int3(50), 5);
-//    m_particleSystem->addParticleGrid(make_int3(-1,50,-1), make_int3(1,55,1), 1.f, true);
+    m_particleSystem = new ParticleSystem(PARTICLE_RADIUS, GRID_SIZE, MAX_PARTICLES, make_int3(-50, 0, -50), make_int3(50, 200, 50), 5);
+
+    float4 vel = make_float4(0.f);
+    float4 pos;
+
+    for (int i = 0; i < 100; i++)
+    {
+        pos = make_float4(
+                    frand() * 30 - 15 + playerPos.x,
+                    frand() * 20 + playerPos.x,
+                    frand() * 30 - 15 + playerPos.x,
+                    1.f);
+        m_particleSystem->addParticle(pos, vel, 1.f, 1.5f, SOLID);
+    }
+    m_fluidEmitterOn = true;
 }
 
 

@@ -72,7 +72,7 @@ bool Half::placeOnSurface(glm::vec3 &surfacePt, const glm::vec3 &prevPt){
 
                 float speed = glm::length2(_direction);
 
-                if(t<0&&t>=-1||speed<.01)
+                if((t < 0 && t >= -1) || (speed<.01))
                     surfacePt = x;
                 else if(t<-3||t>3)
                       surfacePt = .999f*prevPt+.001f*x;
@@ -94,7 +94,7 @@ bool Half::placeOnSurface(glm::vec3 &surfacePt, const glm::vec3 &prevPt){
                 glm::vec3 x = _direction*t+surfacePt;
 
                 float speed = glm::length2(_direction);
-                if(t<0&&t>=-1||speed<.001)
+                if((t<0&&t>=-1)||(speed<.001))
                     surfacePt = x;
                 else if(t<-3||t>3)
                       surfacePt = .9999f*prevPt+.0001f*x;

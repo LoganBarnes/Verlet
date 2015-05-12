@@ -80,7 +80,7 @@ void Application::addScreen(ScreenH *s)
     m_currentScreen->onResize(m_width, m_height);
 }
 
-void Application::popScreens(int num)
+void Application::popScreens(int num, ScreenH *s)
 {
     while (num-- > 0)
     {
@@ -95,6 +95,8 @@ void Application::popScreens(int num)
             break;
         }
     }
+    if (s)
+        addScreen(s);
 }
 
 // leap motion stuff for personal mac
@@ -500,7 +502,7 @@ void Application::playMusic(QString file)
 
     glm::vec3 pos = glm::vec3(m_currentScreen->getCamera()->getEye());
     m_a->setSource(source, file, pos, glm::vec3(0.f), true);
-    m_a->playSource(source);
+//    m_a->playSource(source);
 }
 
 

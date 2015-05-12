@@ -434,6 +434,10 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, m_textures["normalAttachment"]);
 
+        glUniform1i( m_lightLocs["depth"], 2 );
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, m_textures["depthAttachment"]);
+
         glUniform2f(glGetUniformLocation(m_shaders["lightShader"], "viewport") , m_w, m_h);
         break;
     }

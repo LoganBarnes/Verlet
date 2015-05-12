@@ -28,7 +28,7 @@ public:
 
     // set the current screen
     void addScreen(ScreenH *s);
-    void popScreens(int num);
+    void popScreens(int num, ScreenH *s = NULL);
 
     // leap motion stuff for personal mac
     void useLeapMotion(bool useLeap);
