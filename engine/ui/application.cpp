@@ -80,7 +80,7 @@ void Application::addScreen(ScreenH *s)
     m_currentScreen->onResize(m_width, m_height);
 }
 
-void Application::popScreens(int num, ScreenH *s)
+void Application::popScreens(int num)
 {
     while (num-- > 0)
     {
@@ -95,8 +95,6 @@ void Application::popScreens(int num, ScreenH *s)
             break;
         }
     }
-    if (s)
-        addScreen(s);
 }
 
 // leap motion stuff for personal mac

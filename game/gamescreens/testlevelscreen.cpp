@@ -12,8 +12,10 @@
 #include "grass.h"
 #include "trianglemesh.h"
 #include "half.h"
-#include "particlesystemmanager.h"
 #include "leveltwo.h"
+#ifdef CUDA
+#include "particlesystemmanager.h"
+#endif
 
 #include "debugprinting.h"
 
@@ -41,13 +43,17 @@ TestLevelScreen::~TestLevelScreen()
 }
 
 
-OBJ* TestLevelScreen::addIsland(const QString& path, GLuint shader, const glm::vec3& offset, glm::vec4 color){
+OBJ* TestLevelScreen::addIsland(const QString& path, GLuint shader, const glm::vec3& offset, glm::vec4 color, ParticleSystemManager *psm){
     QList<Triangle *> tris;
     OBJ *island = m_oh->getObject(path, shader, &tris, offset, color);
     m_world->addObject(island);
     m_world->addToMesh(tris);
     //m_world->m_islands+=island;
     m_resetHalves.append(island->top);
+
+#ifdef CUDA
+    psm->addTriangles(&tris, island->top->getCenterPoint(), island->top->getRadius());
+#endif
     return island;
 }
 
@@ -188,12 +194,6 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     m_world->setPlayer(player);
 
 
-#ifdef CUDA
-    ParticleSystemManager *psm = new ParticleSystemManager(playerPos, GEOMETRY, shader);
-    m_world->addManager(psm);
-    vm->setParams(psm->getParams());
-#endif
-
 
     //MARKER OBJECTS:
     addMarker(":/objects/LargeStone.obj", shader, glm::vec3(0), "basicsign.png", glm::vec4(.5,.5,.5,0));
@@ -213,13 +213,27 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     setCamera(cam);
     player->setMaxOffset(50); //zoom
 
+
+#ifdef CUDA
+    ParticleSystemManager *psm = new ParticleSystemManager(playerPos, GEOMETRY, shader);
+    m_world->addManager(psm);
+    vm->setParams(psm->getParams());
+
     //Add all islands
+    OBJ* island1 = addIsland(":/objects/LargeIsland.obj",shader,glm::vec3(0), glm::vec4(.5,.5,.5,0), psm);
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-48,0,0), glm::vec4(.5,.5,.5,0), psm);
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-70,-5,-40), glm::vec4(.5,.5,.5,0), psm);
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-130,25,-40), glm::vec4(.5,.5,.5,0), psm);
+    addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-170,25,-40), glm::vec4(.5,.5,.5,0), psm);
+    addIsland(":/objects/testsmall.obj", shader, glm::vec3(-150,5,-40), glm::vec4(.5,.5,.5,0), psm);
+#else
     OBJ* island1 = addIsland(":/objects/LargeIsland.obj",shader,glm::vec3(0), glm::vec4(.5,.5,.5,0));
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-48,0,0), glm::vec4(.5,.5,.5,0));
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-70,-5,-40), glm::vec4(.5,.5,.5,0));
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-130,25,-40), glm::vec4(.5,.5,.5,0));
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-170,25,-40), glm::vec4(.5,.5,.5,0));
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-150,5,-40), glm::vec4(.5,.5,.5,0));
+#endif
 
     //Add all verlet entities
 
@@ -266,7 +280,8 @@ void TestLevelScreen::onTick(float secs)
 {
     if(m_levelChanger->isInRange(m_world->getPlayer()->getPosition(), 2.0))
     {
-        m_parentApp->popScreens(1, new LevelTwo(m_parentApp));
+        m_parentApp->popScreens(1);
+//        m_parentApp->addScreen(new LevelTwo(m_parentApp));
         return;
     }
 

@@ -5,6 +5,7 @@
 #include "audio.h"
 #include "lightparser.h"
 #include "marker.h"
+#include <glm.hpp>
 
 class GameWorld;
 class ObjectHandler;
@@ -40,7 +41,7 @@ public:
     // resize
     virtual void onResize(int w, int h);
 
-    OBJ* addIsland(const QString& path, GLuint shader, const glm::vec3& offset, glm::vec4 color, ParticleSystemManager *pcm);
+    OBJ* addIsland(const QString& path, GLuint shader, const glm::vec3& offset, glm::vec4 color, ParticleSystemManager *psm = NULL);
     void addMarker(const QString& objPath, GLuint shader, const glm::vec3& offset, const QString& signPath, glm::vec4 color);
     QList<Light*> makeLights();
 

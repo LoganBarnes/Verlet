@@ -12,7 +12,9 @@
 #include "grass.h"
 #include "trianglemesh.h"
 #include "half.h"
+#ifdef CUDA
 #include "particlesystemmanager.h"
+#endif
 
 #define PI 3.1415926535897932f
 
@@ -33,7 +35,6 @@ LevelTwo::LevelTwo(Application *parent)
     m_parentApp->setLeapLeftClick(PINCH);
 
     m_oh = new ObjectHandler();
-    QList<Triangle *> tris;
 
     resetWorld(glm::vec3(0, 10, 0));
     m_parentApp->playMusic("darkness.wav");
@@ -46,7 +47,7 @@ LevelTwo::~LevelTwo()
     delete m_oh; // m_level is deleted here
 }
 
-OBJ* LevelTwo::addIsland(const QString& path, GLuint shader, const glm::vec3& offset, glm::vec4 color, ParticleSystemManager *pcm){
+OBJ* LevelTwo::addIsland(const QString& path, GLuint shader, const glm::vec3& offset, glm::vec4 color, ParticleSystemManager *psm){
 
     QList<Triangle *> tris;
     OBJ *island = m_oh->getObject(path, shader, &tris, offset, color);
@@ -55,8 +56,9 @@ OBJ* LevelTwo::addIsland(const QString& path, GLuint shader, const glm::vec3& of
     m_resetHalves.append(island->top);
 
 #ifdef CUDA
-    pcm->addTriangles(&tris, island->top->getCenterPoint(), island->top->getRadius());
+    psm->addTriangles(&tris, island->top->getCenterPoint(), island->top->getRadius());
 #endif
+
     return island;
 }
 
@@ -106,8 +108,6 @@ QList<Light*> LevelTwo::makeLights(){
 
 void LevelTwo::resetWorld(glm::vec3 playerPos)
 {
-
-//    playerPos =  glm::vec3(-40,50,25);
 
     if (m_world)
     {

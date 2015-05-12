@@ -4,8 +4,14 @@ TARGET = cs1972final
 TEMPLATE = app
 
 # project build directories
-DESTDIR     = $$system(pwd)
-OBJECTS_DIR = $$DESTDIR/bin
+DESTDIR     = $$system(pwd) # target dir
+BUILDDIR    = $$DESTDIR/build
+
+MOC_DIR     = $$BUILDDIR # moc_...
+RCC_DIR     = $$BUILDDIR # qrc_resources.cpp
+UI_DIR      = $$BUILDDIR # ui_mainwindow.cpp
+
+OBJECTS_DIR = $$BUILDDIR/bin # .o files
 
 unix:!macx {
     NON_CUDA_LIBS += -lGLU -lalut
@@ -129,11 +135,9 @@ SOURCES += \
     game/entities/marker.cpp \
     game/gamescreens/leveltwo.cpp \
     engine/verlet/bend.cpp \
-    engine/particles_cuda/particlesystemmanager.cpp \
-    engine/particles_cuda/particlerenderer.cpp \
-    engine/particles_cuda/particlesystem.cpp \
     game/entities/token.cpp \
-    game/entities/spiralsensor.cpp
+    game/entities/spiralsensor.cpp \
+    game/world/level1.cpp
 
 HEADERS += \
     engine/ui/mainwindow.h \
@@ -196,11 +200,9 @@ HEADERS += \
     game/entities/marker.h \
     game/gamescreens/leveltwo.h \
     engine/verlet/bend.h \
-    engine/particles_cuda/particlesystemmanager.h \
-    engine/particles_cuda/particlerenderer.h \
-    engine/particles_cuda/particlesystem.h \
     game/entities/token.h \
-    game/entities/spiralsensor.h
+    game/entities/spiralsensor.h \
+    game/world/level1.h
 
 
 FORMS += engine/ui/mainwindow.ui
@@ -260,6 +262,16 @@ macx {
 if ( exists( $$CUDA_DIR/ ) ) {
     message( "Configuring for cuda..." );
     DEFINES += CUDA
+
+    SOURCES += \
+               engine/particles_cuda/particlesystemmanager.cpp \
+               engine/particles_cuda/particlerenderer.cpp \
+               engine/particles_cuda/particlesystem.cpp
+
+    HEADERS += \
+               engine/particles_cuda/particlesystemmanager.h \
+               engine/particles_cuda/particlerenderer.h \
+               engine/particles_cuda/particlesystem.h
 
     # Cuda sources
     CUDA_SOURCES += \

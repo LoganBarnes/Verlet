@@ -47,6 +47,5 @@
         <file alias="Bell.obj">res/objects/Bell.obj</file>
     </qresource>
     <qresource prefix="/audio">
-        <file alias="darkness.wav">res/audio/darkness.wav</file>
     </qresource>
 </RCC>
