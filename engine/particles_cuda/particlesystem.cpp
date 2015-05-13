@@ -555,7 +555,6 @@ void ParticleSystem::_init(uint numParticles, uint maxParticles)
 {
     m_maxParticles = maxParticles;
     m_numParticles = numParticles;
-    cudaInit();
     initIntegration();
     initHandles();
 

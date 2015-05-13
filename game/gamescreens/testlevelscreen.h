@@ -64,7 +64,7 @@ private:
     glm::vec2 m_deltas;
 
     QList<Marker*> m_markers;
-    //QList<OBJ*> m_islands;
+    int m_psmIndex;
 
 protected:
     Marker* m_levelChanger;

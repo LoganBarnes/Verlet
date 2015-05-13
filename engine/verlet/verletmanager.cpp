@@ -7,8 +7,11 @@
 #include "world.h"
 #include "obj.h"
 #include "verlet.h"
+
+#ifdef CUDA
 #include "helper_math.h"
 #include "kernel.cuh"
+#endif
 
 #define GLM_FORCE_RADIANS
 #include <gtc/matrix_transform.hpp>
@@ -184,8 +187,10 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
 */
     setWind(m_windDirection);
 
+#ifdef CUDA
     if (m_params)
         m_params->globalForces = make_float3(m_windDirection.x, m_windDirection.y, m_windDirection.z);
+#endif
 
     QList<MovableEntity *> mes = world->getMovableEntities();
     QList<OBJ* > obj = world->getObjs();

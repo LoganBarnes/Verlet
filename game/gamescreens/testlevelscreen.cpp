@@ -23,7 +23,8 @@ TestLevelScreen::TestLevelScreen(Application *parent)
     : ScreenH(parent),
       m_world(NULL),
       m_oh(NULL),
-      m_resetIndex(4)
+      m_resetIndex(0),
+      m_psmIndex(-1)
 {
     m_parentApp->setMouseDecoupled(true);
     m_parentApp->setLeapRightClick(GRAB);
@@ -216,7 +217,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 
 #ifdef CUDA
     ParticleSystemManager *psm = new ParticleSystemManager(playerPos, GEOMETRY, shader);
-    m_world->addManager(psm);
+    m_psmIndex = m_world->addManager(psm);
     vm->setParams(psm->getParams());
 
     //Add all islands
@@ -280,8 +281,13 @@ void TestLevelScreen::onTick(float secs)
 {
     if(m_levelChanger->isInRange(m_world->getPlayer()->getPosition(), 2.0))
     {
-        m_parentApp->popScreens(1);
-//        m_parentApp->addScreen(new LevelTwo(m_parentApp));
+        if (m_psmIndex > -1)
+        {
+            Manager *m = m_world->getManager(m_psmIndex);
+            delete m;
+            m_psmIndex = -1;
+        }
+        m_parentApp->addScreen(new LevelTwo(m_parentApp));
         return;
     }
 
