@@ -205,9 +205,11 @@ void World::onDraw(Graphics *g)
         e->onDrawTransparent(g);
 }
 
-void World::addManager(Manager *m)
+int World::addManager(Manager *m)
 {
+    int i = m_managers.size();
     m_managers.append(m);
+    return i;
 }
 
 Player *World::getPlayer()

@@ -37,11 +37,13 @@ public:
     virtual void onDraw(Graphics *g);
 //    virtual void onDraw(Graphics *g);
 
-    void addManager(Manager *m);
+    int addManager(Manager *m);
     void setGravity(glm::vec3 gravity);
     void setPlayer(Player *player);
     void setLights(QList<Light*> l);
     Player *getPlayer();
+
+    Manager *getManager(int i) { return m_managers.takeAt(i); }
 
     ObjectsInfo *getObjectInfo();
 
