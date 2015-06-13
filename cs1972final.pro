@@ -18,13 +18,17 @@ unix:!macx {
     NON_CUDA_LIBS += -lGLU -lalut
     #glew
     NON_CUDA_LIBS += -L/usr/local/Cellar/glew/1.11.0/lib/ -lGLEW
-    #unix: LIBS += -L/usr/local/Cellar/glew/1.11.0/lib/ -lGLEW
     LIBS += $$NON_CUDA_LIBS
-    QMAKE_CXXFLAGS += -std=c++11
     DEFINES += LINUX
 }
 macx {
     NON_CUDA_LIBS += -stdlib=libc++ -framework OpenAL
+    #glew
+    #If you are setting up local development on Mac, fill in the correct path to your glew and uncomment the following lines:
+    NON_CUDA_LIBS += -L/usr/local/Cellar/glew/1.11.0/lib/ -lGLEW
+    INCLUDEPATH+=/usr/local/Cellar/glew/1.11.0/include
+    DEPENDPATH+=/usr/local/Cellar/glew/1.11.0/include
+
     LIBS += $$NON_CUDA_LIBS
 
     QMAKE_CXXFLAGS += -Wno-c++11-extensions
@@ -37,12 +41,6 @@ macx {
     if( exists( $$MAC_SDK) ) {
         QMAKE_MAC_SDK = macosx10.9
     }
-
-
-    #glew
-    #If you are setting up local development on Mac, fill in the correct path to your glew and uncomment the following lines:
-    INCLUDEPATH+=/usr/local/Cellar/glew/1.11.0/include
-    DEPENDPATH+=/usr/local/Cellar/glew/1.11.0/include
 }
 win32 {
     #Note: using the 32 bit version of minGW
