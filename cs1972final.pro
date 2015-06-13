@@ -53,11 +53,11 @@ win32 {
 
     #glew
     #If you are setting up local development on Windows, fill in the correct path to your glew and uncomment the following lines:
-    #Hacky solution: put the libglew32.dll where the executable is (build.../debug/)
     INCLUDEPATH+=C:/GameEngine/glew-gcc-1.10.0-win32/include
     DEPENDPATH+=C:/GameEngine/glew-gcc-1.10.0-win32/bin
     DEPENDPATH+=C:/GameEngine/glew-gcc-1.10.0-win32/lib
     NON_CUDA_LIBS += -L"C:/GameEngine/glew-gcc-1.10.0-win32/lib" -lglew32
+    NON_CUDA_LIBS += -L"C:/GameEngine/glew-gcc-1.10.0-win32/bin"
     LIBS += $$NON_CUDA_LIBS
 }
 
