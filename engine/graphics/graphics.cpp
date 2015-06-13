@@ -883,7 +883,7 @@ void Graphics::drawLightShapes(glm::vec3 eyePos, GLuint lightShader, QList<Light
         bool inLight = isInLight(light, eyePos);
 //        inLight = true;
 
-        if(light->type==POINT){
+        if(light->type==POINTLIGHT){
             glUniform1i( glGetUniformLocation(lightShader, "inLight"), inLight );
 
             // check if eye position is in light radius
@@ -902,7 +902,7 @@ void Graphics::drawLightShapes(glm::vec3 eyePos, GLuint lightShader, QList<Light
 // returns whether or not given position is in light
 bool Graphics::isInLight(Light* l, glm::vec3 pos){
 
-    if(l->type==POINT){
+    if(l->type==POINTLIGHT){
         glm::vec3 diff = pos - l->posDir;
         float lengthSquared = diff.x*diff.x + diff.y*diff.y + diff.z*diff.z;
         float r = l->radius+1;

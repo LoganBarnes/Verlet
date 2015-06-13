@@ -13,8 +13,12 @@ UI_DIR      = $$BUILDDIR # ui_mainwindow.cpp
 
 OBJECTS_DIR = $$BUILDDIR/bin # .o files
 
+QMAKE_CXXFLAGS += -std=c++11
 unix:!macx {
     NON_CUDA_LIBS += -lGLU -lalut
+    #glew
+    NON_CUDA_LIBS += -L/usr/local/Cellar/glew/1.11.0/lib/ -lGLEW
+    #unix: LIBS += -L/usr/local/Cellar/glew/1.11.0/lib/ -lGLEW
     LIBS += $$NON_CUDA_LIBS
     QMAKE_CXXFLAGS += -std=c++11
     DEFINES += LINUX
@@ -23,8 +27,8 @@ macx {
     NON_CUDA_LIBS += -stdlib=libc++ -framework OpenAL
     LIBS += $$NON_CUDA_LIBS
 
+    QMAKE_CXXFLAGS += -Wno-c++11-extensions
     QMAKE_CXXFLAGS += -stdlib=libc++
-    QMAKE_CXXFLAGS += -std=c++11
     QMAKE_CXXFLAGS += -mmacosx-version-min=10.7
     QMAKE_LFLAGS += -mmacosx-version-min=10.7
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
@@ -34,7 +38,29 @@ macx {
         QMAKE_MAC_SDK = macosx10.9
     }
 
+
+    #glew
+    #If you are setting up local development on Mac, fill in the correct path to your glew and uncomment the following lines:
+    INCLUDEPATH+=/usr/local/Cellar/glew/1.11.0/include
+    DEPENDPATH+=/usr/local/Cellar/glew/1.11.0/include
+}
+win32 {
+    #Note: using the 32 bit version of minGW
     QMAKE_CXXFLAGS += -Wno-c++11-extensions
+
+    #OpenAL
+    OPENAL_DIR = $$PWD/lib/openal
+    NON_CUDA_LIBS += -L$$OPENAL_DIR/libs/Win32/ -lOpenAL32
+    INCLUDEPATH +=  $$OPENAL_DIR/include
+
+    #glew
+    #If you are setting up local development on Windows, fill in the correct path to your glew and uncomment the following lines:
+    #Hacky solution: put the libglew32.dll where the executable is (build.../debug/)
+    INCLUDEPATH+=C:/GameEngine/glew-gcc-1.10.0-win32/include
+    DEPENDPATH+=C:/GameEngine/glew-gcc-1.10.0-win32/bin
+    DEPENDPATH+=C:/GameEngine/glew-gcc-1.10.0-win32/lib
+    NON_CUDA_LIBS += -L"C:/GameEngine/glew-gcc-1.10.0-win32/lib" -lglew32
+    LIBS += $$NON_CUDA_LIBS
 }
 
 QMAKE_CXXFLAGS += -isystem "lib/glm"
@@ -207,15 +233,6 @@ HEADERS += \
 
 FORMS += engine/ui/mainwindow.ui
 
-#TODO (Windows): If you are setting up local development on Windows (NOT Mac), comment out the following lines
-win32:CONFIG(release, debug|release): LIBS += -L/course/cs123/lib/glew/glew-1.10.0/lib/release/ -lGLEW
-else:win32:CONFIG(debug, debug|release): LIBS += -L/course/cs123/lib/glew/glew-1.10.0/lib/debug/ -lGLEW
-else:unix: LIBS += -L/usr/local/Cellar/glew/1.11.0/lib/ -lGLEW
-
-#TODO (Windows or Mac): If you are setting up local development on Windows OR Mac, fill in the correct path to your glew and uncomment the following lines:
-INCLUDEPATH+=/usr/local/Cellar/glew/1.11.0/include
-DEPENDPATH+=/usr/local/Cellar/glew/1.11.0/include
-
 RESOURCES += \
     resources.qrc
 
@@ -257,6 +274,15 @@ macx {
     SED_STUFF = 2>&1 | sed -E \"s/\\(([0-9]+)\\)/:\\1/g\" 1>&2
 
     NVCCFLAGS += --std=c++11
+}
+win32 {
+    # Path to cuda stuff
+    CUDA_DIR = /usr/local/cuda
+    CUDA_LIB = $$CUDA_DIR/lib
+    # GPU architecture
+    CUDA_ARCH     = sm_21 # should be able to detect this somehow instead of hardcoding
+    # Path to cuda stuff
+    SED_STUFF = 2>&1 | sed -E \"s/\\(([0-9]+)\\)/:\\1/g\" 1>&2
 }
 
 if ( exists( $$CUDA_DIR/ ) ) {

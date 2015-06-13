@@ -7,6 +7,9 @@
 #elif __linux
 #include <AL/al.h>
 #include <AL/alc.h>
+#elif __WIN32
+#include <al.h>
+#include <alc.h>
 #endif
 
 #include <glm.hpp>

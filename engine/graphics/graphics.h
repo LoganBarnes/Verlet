@@ -30,7 +30,7 @@ enum ShapeType
 
 enum LightType
 {
-    POINT, DIRECTIONAL
+    POINTLIGHT, DIRECTIONAL
 };
 
 struct RenderShape

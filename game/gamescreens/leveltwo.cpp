@@ -91,7 +91,7 @@ QList<Light*> LevelTwo::makeLights(){
 
         light = new Light();
         light->id = counter++;
-        light->type = POINT;
+        light->type = POINTLIGHT;
         light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
         light->posDir = positions.at(i);
 
@@ -255,7 +255,7 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
 
         light = new Light();
         light->id = counter++;
-        light->type = POINT;
+        light->type = POINTLIGHT;
         light->color = glm::vec3(.20, .740, .6f);  // rgb color
         light->posDir = pos + glm::vec3(0,2,0);
 

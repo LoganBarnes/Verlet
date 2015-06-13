@@ -79,7 +79,7 @@ QList<Light*> TestLevelScreen::makeLights(){
     Light* light;
     light = new Light();
     light->id = counter++;
-    light->type = POINT;
+    light->type = POINTLIGHT;
     light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
     light->posDir = glm::vec3(0,6,0);
 
@@ -116,7 +116,7 @@ QList<Light*> TestLevelScreen::makeLights(){
 
         light = new Light();
         light->id = counter++;
-        light->type = POINT;
+        light->type = POINTLIGHT;
         light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
         light->posDir = positions.at(i);
 
@@ -143,7 +143,7 @@ QList<Light*> TestLevelScreen::makeLights(){
         Light* light;
         light = new Light();
         light->id = counter++;
-        light->type = POINT;
+        light->type = POINTLIGHT;
         light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
         light->posDir = positions.at(i);
 
