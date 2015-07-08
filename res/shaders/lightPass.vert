@@ -18,8 +18,8 @@ void main()
     uv = texCoord;
     worldPos = position;
 
-    if(inLight)
+//    if(inLight)
         gl_Position =  vec4(position,1.0);          //render as full screen quad
-    else
-        gl_Position = projection*view*model*vec4(position,1.0);
+//    else
+//        gl_Position = projection*view*model*vec4(position,1.0);
 }

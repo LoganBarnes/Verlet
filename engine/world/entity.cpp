@@ -1,6 +1,7 @@
 #include "entity.h"
 #include "collisionshape.h"
 #include "audio.h"
+#include "debugprinting.h"
 
 #define GLM_FORCE_RADIANS
 #include <gtx/transform.hpp>
@@ -109,7 +110,7 @@ void Entity::drawFromList(Graphics *g, QList<RenderShape *> shapes, glm::mat4 po
     foreach(RenderShape *rs, shapes)
     {
         g->setTexture(rs->texture, rs->repeatU, rs->repeatV);
-        g->setColor(rs->color.r, rs->color.g, rs->color.b, rs->transparency, rs->shininess);
+        g->setColor(rs->color.r, rs->color.g, rs->color.b, rs->transparency, 3.0);
         glm::mat4 trans = posMat * rs->trans;
 
         switch (rs->type)

@@ -251,7 +251,7 @@ void Graphics::loadDeferredLightFBOs(int width, int height){
     glBindTexture( GL_TEXTURE_2D, positionAttachment );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
     glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, positionAttachment, 0);
 
     glActiveTexture( GL_TEXTURE1 );
@@ -259,7 +259,7 @@ void Graphics::loadDeferredLightFBOs(int width, int height){
     glBindTexture( GL_TEXTURE_2D, normalAttachment );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
     glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normalAttachment, 0);
 
     // material properties:
@@ -269,7 +269,7 @@ void Graphics::loadDeferredLightFBOs(int width, int height){
     glBindTexture( GL_TEXTURE_2D, materialColorAttachment );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
     glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, materialColorAttachment, 0);
 
     // depth buffer
@@ -295,7 +295,7 @@ void Graphics::loadDeferredLightFBOs(int width, int height){
     glBindTexture( GL_TEXTURE_2D, diffuseAttachment);
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
     glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, diffuseAttachment, 0);
 
     glActiveTexture( GL_TEXTURE1 );
@@ -303,7 +303,7 @@ void Graphics::loadDeferredLightFBOs(int width, int height){
     glBindTexture( GL_TEXTURE_2D, specularAttachment);
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
     glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, specularAttachment, 0);
 
     m_fbos.insert("lightPass", lightPass);
@@ -321,7 +321,7 @@ void Graphics::loadDeferredLightFBOs(int width, int height){
     glBindTexture( GL_TEXTURE_2D, fullLightAttachment);
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL );
     glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fullLightAttachment, 0);
 
     m_fbos.insert("finalPass", finalPass);
@@ -438,6 +438,12 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, m_textures["depthAttachment"]);
 
+        //added for third pass
+        glUniform1i( glGetUniformLocation(m_currentShader, "materialColors"), 2 );
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, m_textures["materialColorAttachment"]);
+        //end
+
         glUniform2f(glGetUniformLocation(m_shaders["lightShader"], "viewport") , m_w, m_h);
         break;
     }
@@ -447,13 +453,13 @@ GLuint Graphics::setGraphicsMode(GraphicsMode gm)
         glUseProgram(m_currentShader);
 
         // Send attachments from the geometry fbo as textures to lightPass
-        glUniform1i( glGetUniformLocation(m_currentShader, "diffuseLights"), 0 );
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_textures["diffuseAttachment"]);
+//        glUniform1i( glGetUniformLocation(m_currentShader, "diffuseLights"), 0 );
+//        glActiveTexture(GL_TEXTURE0);
+//        glBindTexture(GL_TEXTURE_2D, m_textures["diffuseAttachment"]);
 
-        glUniform1i( glGetUniformLocation(m_currentShader, "specularLights"), 1 );
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, m_textures["specularAttachment"]);
+//        glUniform1i( glGetUniformLocation(m_currentShader, "specularLights"), 1 );
+//        glActiveTexture(GL_TEXTURE1);
+//        glBindTexture(GL_TEXTURE_2D, m_textures["specularAttachment"]);
 
         glUniform1i( glGetUniformLocation(m_currentShader, "materialColors"), 2 );
         glActiveTexture(GL_TEXTURE2);
@@ -693,6 +699,22 @@ void Graphics::addLight(const Light &light)
 }
 
 
+void Graphics::addLightToSecondPass(const Light &light)
+{
+    std::ostringstream os;
+    os << light.id;
+    std::string indexString = "[" + os.str() + "]"; // e.g. [0], [1], etc.
+
+    glUniform1i(glGetUniformLocation(m_shaders["lightShader"], ("lightTypes" + indexString).c_str()), light.type);
+    glUniform3fv(glGetUniformLocation(m_shaders["lightShader"], ("lightPositions" + indexString).c_str()), 1,
+            glm::value_ptr(light.posDir));
+    glUniform3fv(glGetUniformLocation(m_shaders["lightShader"], ("lightColors" + indexString).c_str()), 1,
+                glm::value_ptr(light.color));
+    glUniform3fv(glGetUniformLocation(m_shaders["lightShader"], ("lightAttenuations" + indexString).c_str()), 1,
+            glm::value_ptr(light.function));
+}
+
+
 void Graphics::drawLineSeg(glm::vec3 p1, glm::vec3 p2, float width, GLenum mode)
 {
     glm::vec3 d = p2 - p1;
@@ -829,18 +851,13 @@ GLuint Graphics::setupFirstPass(){
 
 GLuint Graphics::setupSecondPass(){
 
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["lightPass"]);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
+//    glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["finalPass"]);
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
 
-    // Necessary to enable multiple drawing targets
-    GLenum buffersToDraw[] = { GL_COLOR_ATTACHMENT0 , GL_COLOR_ATTACHMENT1 };
-    glDrawBuffers( 2, buffersToDraw );
-
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE);
+////     Necessary to enable multiple drawing targets
+//    GLenum buffersToDraw[] = { GL_COLOR_ATTACHMENT0 };
+//    glDrawBuffers( 1, buffersToDraw );
 
     return setGraphicsMode(LIGHT);
 }

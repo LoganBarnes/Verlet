@@ -100,6 +100,7 @@ public:
     void drawCubeMap(Camera *camera);
 
     void addLight(const Light &light);
+    void addLightToSecondPass(const Light &light);
 
     void drawLineSeg(glm::vec3 p1, glm::vec3 p2, float width, GLenum mode = GL_TRIANGLE_STRIP);
     void drawQuad(glm::mat4 trans, GLenum mode = GL_TRIANGLE_STRIP);
