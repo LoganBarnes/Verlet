@@ -851,13 +851,13 @@ GLuint Graphics::setupFirstPass(){
 
 GLuint Graphics::setupSecondPass(){
 
-//    glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["finalPass"]);
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["finalPass"]);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
 
-////     Necessary to enable multiple drawing targets
-//    GLenum buffersToDraw[] = { GL_COLOR_ATTACHMENT0 };
-//    glDrawBuffers( 1, buffersToDraw );
+//     Necessary to enable multiple drawing targets
+    GLenum buffersToDraw[] = { GL_COLOR_ATTACHMENT0 };
+    glDrawBuffers( 1, buffersToDraw );
 
     return setGraphicsMode(LIGHT);
 }

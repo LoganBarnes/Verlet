@@ -163,6 +163,9 @@ void GameWorld::drawShapes(Graphics *, int , GLuint ){
 
 void GameWorld::onDraw(Graphics *g){
 
+
+    if(useDeferredLighting){
+
         GLuint shader = g->setGraphicsMode(GEOMETRY);
 
         // first pass:
@@ -188,14 +191,40 @@ void GameWorld::onDraw(Graphics *g){
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glUseProgram(0);
 
-//        // fog pass:
-//        glm::vec3 playerPos = m_player->getPosition();
-//        // fog pass:
-//        GLuint fogShader = g->setupFogPass(usingFog);
-//        glUniform3f(glGetUniformLocation(fogShader, "eyePos"),pos.x, pos.y, pos.z);
-//        glUniform3f(glGetUniformLocation(fogShader, "playerPos"),playerPos.x, playerPos.y, playerPos.z);
-//        g->drawFullScreenQuad(glm::mat4());
-//        glBindFramebuffer( GL_FRAMEBUFFER,0 );
-//        glUseProgram(0);
+        // fog pass:
+        glm::vec3 playerPos = m_player->getPosition();
+        // fog pass:
+        GLuint fogShader = g->setupFogPass(usingFog);
+        glUniform3f(glGetUniformLocation(fogShader, "eyePos"),pos.x, pos.y, pos.z);
+        glUniform3f(glGetUniformLocation(fogShader, "playerPos"),playerPos.x, playerPos.y, playerPos.z);
+        g->drawFullScreenQuad(glm::mat4());
+        glBindFramebuffer( GL_FRAMEBUFFER,0 );
+        glUseProgram(0);
+
+    }
+    else{
+            g->setGraphicsMode(DEFAULT);
+            foreach(Light* l, m_lights)
+                g->addLight(*l);
+            World::onDraw(g);
+
+            glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(.5f));
+            glm::mat4 posMat = glm::mat4();
+
+            g->setAllWhite(true);
+    //        g->setTransparentMode(true);
+            g->setColor(1, 1, 1, .2, 0);
+            foreach (Light *l, m_lights)
+            {
+                posMat[3] = glm::vec4(l->posDir, 1);
+                g->drawSphere(posMat * trans);
+            }
+            g->setAllWhite(false);
+    //        g->setTransparentMode(false);
+        }
+
+
+
+
 
 }

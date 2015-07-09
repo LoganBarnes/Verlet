@@ -17,7 +17,7 @@ void main(){
 
     float distance = length(eyePos - position.xyz);
     float camToPlayer = length(eyePos - playerPos);
-    vec4 fogColor = vec4(.7,.8,.8,1);
+    vec4 fogColor = vec4(.7,.8,.82,1);
 //    vec4 fogColor = vec4(.27,.27,.32,1);
 
     float interpVal;
