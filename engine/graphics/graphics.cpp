@@ -863,6 +863,7 @@ GLuint Graphics::setupSecondPass(){
 }
 
 GLuint Graphics::setupFinalPass(){
+
     // composite the final image from lighting
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbos["finalPass"]);
 

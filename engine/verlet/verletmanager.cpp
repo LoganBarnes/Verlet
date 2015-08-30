@@ -292,12 +292,38 @@ void VerletManager::manage(World *world, float onTickSecs, float mouseX, float m
     // range check first
 
     if(solve){
-        verlet(onTickSecs);
-        for(int i=0; i<_numSolves; i++)
-            constraints();
-        for(unsigned int i=0; i<verlets.size(); i++)
-            verlets.at(i)->onTick(onTickSecs);
-        updateBuffer();
+//        verlet(onTickSecs);
+        for(unsigned int i=0; i<verlets.size(); i++){
+            Verlet* curr = verlets.at(i);
+            if(curr->inView)
+                curr->verlet(onTickSecs);
+        }
+
+        for(int i=0; i<_numSolves; i++){
+//            constraints();
+            for(unsigned int i=0; i<verlets.size(); i++) {
+                Verlet* v = verlets.at(i);
+                if(v->inView){
+                    v->linkConstraint();
+                    v->pinConstraint();
+                }
+            }
+        }
+
+        for(unsigned int i=0; i<verlets.size(); i++){
+            Verlet* curr = verlets.at(i);
+            if(curr->inView){
+                curr->onTick(onTickSecs);
+            }
+        }
+
+//        updateBuffer();
+        for(unsigned int i=0; i<verlets.size(); i++){
+            Verlet* curr = verlets.at(i);
+            if(curr->inView){
+                curr->updateBuffer();
+            }
+        }
     }
 
     //Collide verlet against terrain
@@ -438,6 +464,11 @@ void VerletManager::onKeyReleased(QKeyEvent *e)
     default:
         break;
     }
+}
+
+void VerletManager::handleFrustumCulling(glm::vec3 camPos){
+    foreach(Verlet* v, verlets)
+        v->handleFrustumCulling(camPos);
 }
 
 

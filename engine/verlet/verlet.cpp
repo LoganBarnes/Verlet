@@ -292,4 +292,10 @@ glm::vec3 Verlet::collide(MovableEntity *e)
     toMove+=translation;
     e->setMove(toMove);
     */
+
+}
+
+void Verlet::handleFrustumCulling(glm::vec3 camPos){
+    // check if the verlet first point is within certain critical distance of camera
+    inView = (glm::length(camPos - _pos[0])<75.);
 }
