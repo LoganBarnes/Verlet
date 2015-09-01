@@ -69,6 +69,7 @@ private:
 protected:
     Marker* m_levelChanger;
     VerletManager *vm;
+    Light* characterLight;
 };
 
 #endif // TESTLEVELSCREEN_H

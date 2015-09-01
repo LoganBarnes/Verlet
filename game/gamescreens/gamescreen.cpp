@@ -74,69 +74,7 @@ void GameScreen::onRender(Graphics *g)
     // ambient intensity for the world
     g->setWorldColor(.2f, .2f, .2f);
 
-    // a translation matrix representing a shape's position/scale/rotation
-    // gets passed to the graphics object each time a shape is drawn.
-//    glm::mat4 trans = glm::scale(glm::mat4(), glm::vec3(.1f));
 
-    /*
-     * Adding and drawing lights.
-     * (lights don't need to be drawn but it can help to see them in the scene)
-     */
-//    g->setAllWhite(true);// this sets all objects to be completely white
-//    foreach(Light *light, m_tempLights)
-//    {
-//        g->addLight(*light); // add a light struct to the scene
-////        g->drawSphere(glm::translate(glm::mat4(), light->posDir) * trans); // draw a sphere for the light
-//    }
-//    g->setAllWhite(false); // back to normal rendering
-
-
-
-
-    //add light types to the gpu
-    //add lights method
-
-
-
-
-
-
-
-//    /*
-//     * Drawing shapes.
-//     * Set the color of the shape (including transparency and shininess)
-//     * then call the appropriate draw<shape>() method.
-//     */
-
-//    // sphere
-//    trans = glm::translate(glm::mat4(), glm::vec3(-5, 0, -15));
-//    g->setColor(1, 0, 0, 1, 0);
-//    g->drawSphere(trans);
-
-//    // cone
-//    trans = glm::translate(glm::mat4(), glm::vec3(-2.5, 0, -15));
-//    g->setColor(1, .5, 0, 1, 0);
-//    g->drawCone(trans);
-
-//    // cube
-//    trans = glm::translate(glm::mat4(), glm::vec3(0, 0, -15));
-//    g->setColor(.5, 1, 0, 1, 0);
-//    g->drawCube(trans);
-
-//    // cylinder
-//    trans = glm::translate(glm::mat4(), glm::vec3(2.5, 0, -15));
-//    g->setColor(0, 1, .3, 1, 0);
-//    g->drawCylinder(trans);
-
-//    // quad
-//    trans = glm::translate(glm::mat4(), glm::vec3(5, 0, -15));
-//    g->setColor(0, 0, 1, 1, 0);
-//    g->drawQuad(trans);
-
-    /////////////////////////////////////////////////////////
-
-    // draw world (draws whatever has been added to the world)
-//    m_world->onDraw(g);
 }
 
 void GameScreen::render2D(Graphics *)

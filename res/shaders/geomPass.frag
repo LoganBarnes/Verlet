@@ -3,11 +3,6 @@
 in vec4 position_worldSpace;
 in vec4 normal_worldSpace;
 
-//in vec4 position_cameraSpace;
-//in vec4 normal_cameraSpace;
-//in vec2 texc;
-//in mat4 viewMat;
-
 layout(location=0) out vec4 out0;
 layout(location=1) out vec4 out1;
 layout(location=2) out vec4 out2;

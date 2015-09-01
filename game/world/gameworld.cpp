@@ -105,9 +105,10 @@ void GameWorld::onDraw(Graphics *g){
         // second pass:
         GLuint secondPassShader = g->setupSecondPass();
         glm::vec4 pos = m_player->getCamEye();
-        glUniform3f(glGetUniformLocation(secondPassShader, "eyePos"),pos.x, pos.y, pos.z);
-        // set global coefficients ka,kd,ks
-        glUniform3f( glGetUniformLocation(secondPassShader, "globalConstants"), 1.0, 1.0, 1.0 );
+        glm::vec3 playerPos = m_player->getPosition();
+        glUniform3f(glGetUniformLocation(secondPassShader, "playerPos"),playerPos.x, playerPos.y, playerPos.z);
+        glUniform3f( glGetUniformLocation(secondPassShader, "eyePos"), pos.x, pos.y, pos.z);
+
         //Instead of additive blending, add all the light info to the shader then render a full screen quad to the framebuffer
 
         glUniform1i(glGetUniformLocation(secondPassShader, "usingFog"), usingFog);

@@ -15,7 +15,10 @@ void main(){
     vec4 position = texture(positions, tCoord);
 
     float distance = length(eyePos - position.xyz);
-    vec4 fogColor = vec4(.7,.8,.82,1);
+    vec4 fogColor = vec4(.78,.92,1.,1);
+//    vec4 fogColor = vec4(.7,.9,.8,1);
+
+//     vec4 fogColor = vec4(.1,.75,.75,1);
 
     float interpVal;
 
@@ -28,7 +31,7 @@ void main(){
 
         // exponential interpolation
         float b = .05;
-        interpVal = 1.0/(exp(b*distance)) ;
+        interpVal = 1.0/(exp(b*distance)) + .2;
         clamp(interpVal, 0.0, 1.0);
 
         fragColor = vec4((image*(interpVal) + fogColor*(1.0-interpVal)).xyz,1);

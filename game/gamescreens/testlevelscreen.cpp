@@ -75,29 +75,29 @@ QList<Light*> TestLevelScreen::makeLights(){
 
     int counter = 0;
 
-    //hardcoded lights
-    Light* light;
-    light = new Light();
-    light->id = counter++;
-    light->type = POINTLIGHT;
-    light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
-    light->posDir = glm::vec3(0,6,0);
+    //initialize character light
+    characterLight = new Light();
+    characterLight->id = counter++;
+    characterLight->type = POINTLIGHT;
+    characterLight->color = glm::vec3(.750, .750, 1.5f);  // rgb color
+    characterLight->posDir = glm::vec3(0,6,0);
 
-    light->radius = 80.f;
-    light->function = glm::vec3(1.0, .1, .01);
-    light->animFunc = Light::CIRCLE;
-    light->animationPeriod = 8;
-    light->center = light->posDir;
+    characterLight->radius = 80.f;
+    characterLight->function = glm::vec3(1.0, .1, .01);
+    characterLight->animFunc = Light::NONE;
+    characterLight->animationPeriod = 8;
+    characterLight->center = characterLight->posDir;
 
-    lights.append(light);
+    lights.append(characterLight);
     //end
 
+    // circle animation exists
 
-    // Custom lights
+    // Regular lights
     QList<glm::vec3> positions;
-    positions.append(glm::vec3(0,3,0));
+    positions.append(glm::vec3(0,6,0));
+
     positions.append(glm::vec3(15,2,2));
-//    positions.append(glm::vec3(-10,5,0));
     positions.append(glm::vec3(-25,-15,0));
     positions.append(glm::vec3(-50,5,0));
     positions.append(glm::vec3(0,45,0));
@@ -117,7 +117,7 @@ QList<Light*> TestLevelScreen::makeLights(){
         light = new Light();
         light->id = counter++;
         light->type = POINTLIGHT;
-        light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
+        light->color = glm::vec3(.75, .75, 1.5f);  // rgb color
         light->posDir = positions.at(i);
 
         light->radius = 80.f;
@@ -144,7 +144,7 @@ QList<Light*> TestLevelScreen::makeLights(){
         light = new Light();
         light->id = counter++;
         light->type = POINTLIGHT;
-        light->color = glm::vec3(.750, .750, 1.5f);  // rgb color
+        light->color = glm::vec3(.60, .60, .8f);  // rgb color
         light->posDir = positions.at(i);
 
         light->radius = 80.f;
@@ -225,6 +225,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-130,25,-40), glm::vec4(.5,.5,.5,0), psm);
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-170,25,-40), glm::vec4(.5,.5,.5,0), psm);
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-150,5,-40), glm::vec4(.5,.5,.5,0), psm);
+
 #else
     OBJ* island1 = addIsland(":/objects/LargeIsland.obj",shader,glm::vec3(0), glm::vec4(.5,.5,.5,0));
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-48,0,0), glm::vec4(.5,.5,.5,0));
@@ -232,6 +233,7 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-130,25,-40), glm::vec4(.5,.5,.5,0));
     addIsland(":/objects/MediumIsland.obj", shader, glm::vec3(-170,25,-40), glm::vec4(.5,.5,.5,0));
     addIsland(":/objects/testsmall.obj", shader, glm::vec3(-150,5,-40), glm::vec4(.5,.5,.5,0));
+
 #endif
 
     //Add all verlet entities
@@ -260,9 +262,9 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
 
     vm->addVerlet(new TriangleMesh(glm::vec2(14,25), 1.2, glm::vec3(-137,27,-32), vm, shader,90,Y, ALL_CORNERS));
 
-    Grass* grass = new Grass(vm, shader);
-    grass->createPatch(glm::vec2(0,5),5,island1);
-    vm->addVerlet(grass);
+//    Grass* grass = new Grass(vm, shader);
+//    grass->createPatch(glm::vec2(0,5),5,island1);
+//    vm->addVerlet(grass);
 
     m_cursor = glm::scale(glm::mat4(), glm::vec3(.02f / cam->getAspectRatio(), .02f, .02f));
     m_cursor[3][2] = -.999f;
@@ -309,6 +311,9 @@ void TestLevelScreen::onTick(float secs)
 
     glm::vec4 camPos = m_world->getPlayer()->getCamEye();
     vm->handleFrustumCulling(glm::vec3(camPos.x,camPos.y,camPos.z));
+
+    // lock the character light to follow player
+    characterLight->posDir = pos + glm::vec3(0,3,0);
 
 }
 
