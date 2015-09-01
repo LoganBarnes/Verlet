@@ -176,8 +176,8 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
 
 
 
-    int row = 12;
-    int column = 60;
+    int row = 10;
+    int column = 50;
     float yOffset = 1;
     float w = .8;
 
@@ -232,12 +232,12 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
 
     //Add all verlet entities
     float rad = 55 * (PI/180.0);
-    TriangleMesh* tri = new TriangleMesh(glm::vec2(8,80), .5, glm::vec3(-7*sin(rad),2,7*cos(rad)), vm, shader, 55);
-    tri->createPin(79*8);
-    tri->createPin(80*8-1);
+    //TriangleMesh* tri = new TriangleMesh(glm::vec2(8,80), .5, glm::vec3(-7*sin(rad),2,7*cos(rad)), vm, shader, 55);
+    TriangleMesh* tri = new TriangleMesh(glm::vec2(4,30), 1, glm::vec3(-7*sin(rad),2,7*cos(rad)), vm, shader, 55, Y, ALL_CORNERS);
     vm->addVerlet(tri);
 
-    vm->addVerlet(new TriangleMesh(glm::vec2(6,25), .6, glm::vec3(-40,46,22), vm, shader,0,Y, TOP_CORNERS));    // final bridge
+    //vm->addVerlet(new TriangleMesh(glm::vec2(6,25), .6, glm::vec3(-40,46,22), vm, shader,0,Y, TOP_CORNERS));    // final bridge
+    vm->addVerlet(new TriangleMesh(glm::vec2(3,12), 1, glm::vec3(-40,46,22), vm, shader,0,Y, TOP_CORNERS));    // final bridge
 
     //stairs
     int counter = lights.size();
@@ -246,7 +246,9 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
     for(int i=0; i<720; i+= 360/numStairs, y+=2){
         float rad = i * (PI/180.0);
         glm::vec3 pos = glm::vec3(-5*sin(rad),y,5*cos(rad))+glm::vec3(-40,0,25);
-        TriangleMesh* t = new TriangleMesh(glm::vec2(8,30), .5, pos, vm, shader, i);
+        //TriangleMesh* t = new TriangleMesh(glm::vec2(8,30), .5, pos, vm, shader, i);
+        TriangleMesh* t = new TriangleMesh(glm::vec2(4,12), 1, pos, vm, shader, i);
+
         float rad1 = (i+90) * (PI/180.0);
 
 

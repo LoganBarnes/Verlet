@@ -56,8 +56,7 @@ win32 {
     INCLUDEPATH+=C:/GameEngine/glew-gcc-1.10.0-win32/include
     DEPENDPATH+=C:/GameEngine/glew-gcc-1.10.0-win32/bin
     DEPENDPATH+=C:/GameEngine/glew-gcc-1.10.0-win32/lib
-    NON_CUDA_LIBS += -L"C:/GameEngine/glew-gcc-1.10.0-win32/lib" -lglew32
-    NON_CUDA_LIBS += -L"C:/GameEngine/glew-gcc-1.10.0-win32/bin"
+    NON_CUDA_LIBS += -L"C:/GameEngine/glew-gcc-1.10.0-win32/bin" -lglew32
     LIBS += $$NON_CUDA_LIBS
 }
 
