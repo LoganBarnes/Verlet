@@ -186,15 +186,13 @@ void TestLevelScreen::resetWorld(glm::vec3 playerPos)
     player->useSound(m_parentApp->getAudioObject());
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
-    VerletManager *vm = new VerletManager(cam);
+    vm = new VerletManager(cam);
 
     m_world = new GameWorld();
     m_world->setLights(lights);
     m_world->addManager(gcm);
     m_world->addManager(vm);
     m_world->setPlayer(player);
-
-
 
     //MARKER OBJECTS:
     addMarker(":/objects/LargeStone.obj", shader, glm::vec3(0), "basicsign.png", glm::vec4(.5,.5,.5,0));
@@ -309,10 +307,14 @@ void TestLevelScreen::onTick(float secs)
         }
     }
 
+    glm::vec4 camPos = m_world->getPlayer()->getCamEye();
+    vm->handleFrustumCulling(glm::vec3(camPos.x,camPos.y,camPos.z));
+
 }
 
 void TestLevelScreen::onRender(Graphics *g)
 {
+
     // draw markers first
     foreach(Marker* marker, m_markers){
         if(marker->isInRange(m_world->getPlayer()->getPosition(), 1.8))

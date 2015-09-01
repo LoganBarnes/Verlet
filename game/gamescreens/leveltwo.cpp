@@ -134,7 +134,7 @@ void LevelTwo::resetWorld(glm::vec3 playerPos)
     player->useSound(m_parentApp->getAudioObject());
 
     GeometricCollisionManager *gcm = new GeometricCollisionManager();
-    VerletManager *vm = new VerletManager(cam);
+    vm = new VerletManager(cam);
     vm->windPow=0;
 
     m_world = new GameWorld();
@@ -332,6 +332,9 @@ void LevelTwo::onTick(float secs)
         }
         m_spiralCounter--;
     }
+
+    glm::vec4 camPos = m_world->getPlayer()->getCamEye();
+    vm->handleFrustumCulling(glm::vec3(camPos.x,camPos.y,camPos.z));
 }
 
 

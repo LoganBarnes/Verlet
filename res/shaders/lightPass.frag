@@ -8,11 +8,8 @@ in vec3 worldPos;
 layout(location=0) out vec4 out0;
 //layout(location=1) out vec4 out1;
 
-//out vec4 fragColor;
-
 uniform sampler2D positions;    // color attachments from the geometry FBO
 uniform sampler2D normals;
-
 uniform vec3 eyePos;            // eye position in world space
 
 // Light data
@@ -33,7 +30,6 @@ uniform vec2 viewport;
 uniform int mode;
 
 // fog stuff:
-uniform vec3 playerPos;            // player position in world space
 uniform bool usingFog;
 
 void main(){
@@ -101,7 +97,6 @@ void main(){
     vec3 finalColor = ambient+diffuse+specular;
     finalColor = clamp(finalColor + vec3(0.0), 0.0, 1.0) * vec3(1.0);
 
-//    fragColor = vec4(finalColor,1);
 
     out0 = vec4(finalColor,1);
 

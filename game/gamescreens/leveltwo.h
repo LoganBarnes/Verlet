@@ -71,6 +71,7 @@ private:
 
     QList<Marker*> m_markers;
 
+    VerletManager *vm;
     Marker* m_levelChanger;
 };
 

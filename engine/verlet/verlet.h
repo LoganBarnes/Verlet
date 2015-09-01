@@ -110,6 +110,10 @@ public:
     //@param wind: normalized vector representing wind direction
     virtual void applyWind(Tri* t);
     void setWindDirection(float radian);
+
+    void handleFrustumCulling(glm::vec3 camPos);
+    bool inView;
+
 protected:
     //Creates new point (at index numPoints) w/ given position
     void createPoint(const glm::vec3& pos);
@@ -131,7 +135,6 @@ protected:
     }Pin;
     std::vector<Pin> pins;
     std::vector<Link*> links;
-
 
 };
 

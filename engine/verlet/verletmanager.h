@@ -22,6 +22,9 @@ public:
     Verlet* getVerlet(int i){return verlets[i];}
 
     void enableSolve(){solve = !solve;}
+
+    void handleFrustumCulling(glm::vec3 camPos);
+
     void setWind(const glm::vec3& w){wind = w;}
 
     virtual void manage(World *world, float onTickSecs, float mouseX, float mouseY);
