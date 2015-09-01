@@ -20,23 +20,24 @@ void main(){
 
 //     vec4 fogColor = vec4(.1,.75,.75,1);
 
-    float interpVal;
+//    float interpVal;
 
-    if(usingFog){
-        // clear color
-        if(!(position.w>.99 && position.w<1.1)){
-            fragColor = fogColor;
-            return;
-        }
+//    if(usingFog){
+//        // clear color
+//        if(!(position.w>.99 && position.w<1.1)){
+//            fragColor = fogColor;
+//            return;
+//        }
 
-        // exponential interpolation
-        float b = .05;
-        interpVal = 1.0/(exp(b*distance)) + .2;
-        clamp(interpVal, 0.0, 1.0);
+//        // exponential interpolation
+//        float b = .05;
+//        interpVal = 1.0/(exp(b*distance)) + .2;
+//        clamp(interpVal, 0.0, 1.0);
 
-        fragColor = vec4((image*(interpVal) + fogColor*(1.0-interpVal)).xyz,1);
-    }
-    else
-        fragColor = image;
+//        fragColor = vec4((image*(interpVal) + fogColor*(1.0-interpVal)).xyz,1);
+//    }
+//    else
+//        fragColor = image;
 
+    fragColor = image;
 }

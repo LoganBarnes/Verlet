@@ -95,11 +95,11 @@ QList<Light*> TestLevelScreen::makeLights(){
 
     // Regular lights
     QList<glm::vec3> positions;
-    positions.append(glm::vec3(0,6,0));
+    positions.append(glm::vec3(0,20,0));
 
     positions.append(glm::vec3(15,2,2));
     positions.append(glm::vec3(-25,-15,0));
-    positions.append(glm::vec3(-50,5,0));
+    positions.append(glm::vec3(-50,8,0));         //second island
     positions.append(glm::vec3(0,45,0));
     positions.append(glm::vec3(-70,0,-40));         //island bottom of stairs
     positions.append(glm::vec3(-130,29,-40));       //island top of stairs
