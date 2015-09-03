@@ -32,8 +32,7 @@ float intersectPlayer(vec3 p, vec3 d){
     float t1=-1;
     float t2=-1;
 
-    float playerRad = .750;
-    //vec3 playerPos = vec3(0,3,0);
+    float playerRad = .90;
 
     //quadratic terms in world space
     float a = d.x*d.x + d.y*d.y + d.z*d.z;

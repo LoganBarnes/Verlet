@@ -79,10 +79,11 @@ QList<Light*> TestLevelScreen::makeLights(){
     characterLight = new Light();
     characterLight->id = counter++;
     characterLight->type = POINTLIGHT;
-    characterLight->color = glm::vec3(.750, .750, 1.5f);  // rgb color
+    characterLight->color = glm::vec3(2.50, 2.50, 3.25f);  // rgb color
+//    characterLight->color = glm::vec3(.750, .750, 1.5f);  // rgb color
     characterLight->posDir = glm::vec3(0,6,0);
 
-    characterLight->radius = 80.f;
+    characterLight->radius = 10.f;
     characterLight->function = glm::vec3(1.0, .1, .01);
     characterLight->animFunc = Light::NONE;
     characterLight->animationPeriod = 8;
@@ -129,14 +130,14 @@ QList<Light*> TestLevelScreen::makeLights(){
 
     positions.clear();
 
-    positions.append(glm::vec3(-9,10,-39));       //on stairs
-    positions.append(glm::vec3(-92,2,-39));
-    positions.append(glm::vec3(-114,18,-39));
-    positions.append(glm::vec3(-97,6,-39));
-    positions.append(glm::vec3(-107,14,-39));
-    positions.append(glm::vec3(-119,22,-39));
-    positions.append(glm::vec3(-87,-1,-39));
-    positions.append(glm::vec3(-82,-4,-39));
+    positions.append(glm::vec3(-9,12,-39));       //on stairs
+    positions.append(glm::vec3(-92,4,-39));
+    positions.append(glm::vec3(-114,20,-39));       // more on island
+    positions.append(glm::vec3(-97,8,-39));
+    positions.append(glm::vec3(-107,16,-39));
+    positions.append(glm::vec3(-119,24,-39));
+    positions.append(glm::vec3(-87,1,-39));
+    positions.append(glm::vec3(-82,-2,-39));
 
     for(int i=0; i<positions.size(); i++){
 
@@ -144,10 +145,10 @@ QList<Light*> TestLevelScreen::makeLights(){
         light = new Light();
         light->id = counter++;
         light->type = POINTLIGHT;
-        light->color = glm::vec3(.60, .60, .8f);  // rgb color
+        light->color = glm::vec3(.40, .40, .6f);  // rgb color
         light->posDir = positions.at(i);
 
-        light->radius = 80.f;
+        light->radius = 20.f;
         light->function = glm::vec3(1.0, .1, .01);
         light->animFunc = Light::ZSINE;
         light->animationPeriod = 5.0;
@@ -313,7 +314,9 @@ void TestLevelScreen::onTick(float secs)
     vm->handleFrustumCulling(glm::vec3(camPos.x,camPos.y,camPos.z));
 
     // lock the character light to follow player
-    characterLight->posDir = pos + glm::vec3(0,3,0);
+    characterLight->posDir = pos + glm::vec3(0,10,0);
+
+//    characterLight->posDir = pos + glm::vec3(0,3,0);
 
 }
 
