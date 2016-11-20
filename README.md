@@ -1,4 +1,4 @@
-![Verlet](http://giant.gfycat.com/SneakySlushyArctichare.gif)
+![Verlet](res/images/SneakySlushyArctichare.gif)
 
 View gameplay footage on <a href="https://vimeo.com/127674223" target="_blank">Vimeo</a>.
 
